@@ -1,0 +1,1 @@
+g++ msg.pb.cc main.cpp -o main -lprotobuf `pkg-config --cflags --libs protobuf`

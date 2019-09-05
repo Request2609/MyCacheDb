@@ -1,0 +1,20 @@
+syntax = "proto2" ; 
+
+package Messages ;
+
+
+//命令的值
+message Value {
+    repeated string val = 1;
+}
+
+message Command {
+    //命令
+    required string cmd = 2;
+    //命令长度
+    required int32 len = 3 ;   
+    //命令的键
+    required string key =4 ;
+    repeated  Value vals  = 5;
+}   
+
