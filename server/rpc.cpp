@@ -4,6 +4,7 @@
 shared_ptr<Command> rpc :: getParseString(string* buff) {
     //在消息处理处，反序列化
     auto res = parseMethod(buff) ;
+    cout << "反序列化！" << res->cmd() << endl ;
     return res ;
 }
 

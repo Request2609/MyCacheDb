@@ -25,7 +25,6 @@ int request :: processCmd(vector<string>&res, Command&com) {
             cout << "error usage" << endl ;        
             return -1 ;
         }
-        com.set_num(num) ;
         com.set_cmd(res[0]) ;
         Key* key = com.add_keys() ;
         string* k = key->add_key() ;
@@ -44,7 +43,6 @@ int request :: processCmd(vector<string>&res, Command&com) {
             cout << "error command!" << endl ;
             return -1 ;
         }
-        com.set_num(num) ;
         com.set_cmd("get") ;
         Key* key = com.add_keys() ;
         string* k = key->add_key() ;
@@ -58,11 +56,11 @@ int request :: processCmd(vector<string>&res, Command&com) {
 }
 
 int request :: sendReq(int fd, vector<string>&res, int num) {
-    this->num = num ;
     Command cmd ;
     cmds cd ;
     cd.build() ;
     auto ret = cd.cmdList.find(res[0]) ;
+    cmd.set_num(num) ;
     //没找到命令
     if(ret == cd.cmdList.end()) {
         cout << "command not found!"<< endl ;  
@@ -109,10 +107,13 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
     if(ret == 0) {
         return 5 ;
     }
-    
-    if(send(fd, a.c_str(), len+1, 0) < 0) {
+    char buff[REQ_SIZE] ;
+    bzero(buff, sizeof(buff)) ;
+    strcpy(buff, a.c_str()) ;
+    if(send(fd, buff, sizeof(buff), 0) < 0) {
         cout << "errno connect" << endl ;
         return -1;
     }
+    cmd.clear_cmd() ;
 }
 

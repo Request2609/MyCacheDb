@@ -24,7 +24,8 @@ private :
     int num ;
     vector<shared_ptr<dbObject>> db ;
 public :
-
+    string findGetRequest(string name) ;
+    void queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
     void append(shared_ptr<dbObject>rdb) { db.push_back(rdb); }
     //命令键
     int isExist(shared_ptr<Command>&cmds) ;
@@ -40,12 +41,16 @@ public:
     virtual ~dbObject() {}
 public :
     //set操作
+    virtual void setNum(int num) = 0;
     virtual void setKey(string k) = 0;
     virtual void setValue(string v) = 0;
+    virtual void setName(string name) = 0;
+
     virtual string getKey() = 0;
     virtual string getValue() = 0;
     //获取命令编号
     virtual int getNum() = 0 ;
+    virtual string  getName() = 0;
 private :
     //保存所有键的过期时间
     //redis对象管理dict对象
@@ -60,16 +65,28 @@ public :
 public :
     void setKey(string k) { this->key = k ; } 
     void setValue(string value)  { this->value = value ; }
-    string  getName() { return key ; }
-    string getKey() { return value ; }
+    void setName(string name) { this->name = name ; }
+    void setNum(int num) { this->num = num ; }
+
+    string  getName() { return name ; }
+    string getKey() { return key ; }
     int getNum() { return num ; }
-    string getValue() {}
+    string getValue() { return value ; }
+    
 public :
+    //命令名称
+    string name ;
+    //当前设置的超时时间
     map<string, long long> expire ;
+    //所在数据库编号
     int num ;
+    //命令键值
     string key ;
     string value ;
-   // map<string, string>common ;
+} ;
+
+class getCommand : public dbObject {
+    
 } ;
 
 class hsetCmd : public dbObject {

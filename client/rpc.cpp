@@ -63,6 +63,9 @@ int rpc :: sendRequest(vector<string>&argStl, int num) {
             }
         }
     }
+    else {
+        return 1 ;
+    }
     ret = request(conFd, argStl, num) ;
     if(ret < 0) {
         return -1 ;

@@ -3,15 +3,14 @@
 #include "cmdProcess.h"
 
 int readOnMessage(shared_ptr<aeEvent>tmp) { 
-    cout << "hello msg!" << endl ;
     //处理事件    
     static cmdProcess cmdPro ;
     //设置rpc
     static shared_ptr<rpc>rc = make_shared<rpc>() ;
     cmdPro.setRpc(rc) ;
     //处理消息
+    cout <<"消息："  << tmp->getBuf()->getBuf() << endl ;
     int ret = cmdPro.processMsg(tmp) ;    
-
     return ret ;
 }
 

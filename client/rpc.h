@@ -22,7 +22,7 @@ public :
     void setCallMethod(parse par) ; 
     //ip和端口
     void setAddress(string ip, string port) { ipPort.first = ip;  ipPort.second = port ;}
-    int sendRequest(vector<string>&argStl) ;
+    int sendRequest(vector<string>&argStl, int num) ;
     int Connect() ;
     void disConnect() { close(conFd) ; }
     string getResponse() ;

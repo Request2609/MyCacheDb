@@ -6,7 +6,6 @@
 #include "redisDb.h"
 #include "aeEvent.h"
 #include "msg.pb.h"
-#include "cmd.h"
 
 using namespace std  ;
 using namespace Messages ;
@@ -28,8 +27,7 @@ class redisCommand ;
 
 class redisCommand {
     //该命令的的处理函数
-    typedef function<int(shared_ptr<redisDb>&, shared_ptr<Command>&)>call ;
-    typedef function<string(shared_ptr<redisDb>&, shared_ptr<Command>&)>getCall ;
+    typedef function<int(shared_ptr<redisDb>&, shared_ptr<Command>&, shared_ptr<Response>&)>call ;
 public :
     redisCommand(string name, int arity, string flag,  
                  int fir, int last, int keyStep, long long msecond, long long calls) {
@@ -45,15 +43,12 @@ public :
     } 
     ~redisCommand() {}
 public :
-    void setSetCallBack(call cb) { this->callBack = cb ; }
-    int cmdSet() ;
-    int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd) { 
-        return callBack(db, wcmd);  
-    }
+    int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
+    void setCallBack(call cb) { this->callBack = cb ; }
     //函数指针，指向命令的具体实现
-  //  string redisCommandProc(shared_ptr<Command>cd) ;
 private :
     call callBack ;
+private :
     string stringRes ;
     string name ;
     //参数数量限制,用于验证参数是否正确
@@ -87,7 +82,7 @@ public:
         cmdList.insert(make_pair("set", tset)) ;
 
         shared_ptr<redisCommand>tget(new redisCommand("get", -3, "wm",  1, 1, 1, 0, 0)) ;
-        tget->setGetCallBack(getCmd) ;
+        tget->setCallBack(getCmd) ;
         cmdList.insert(make_pair("get", tget)) ;
     } 
 
@@ -98,11 +93,14 @@ public :
     //扩大数据库
     //返回命令集合
     int findCmd(string cmd) ;  
+    shared_ptr<Response> getResponse() { return response ; }
 public :
     static int isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) ;
-    static int setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp) ;
-    static string getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp) ;
+    static int setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res);
+    static int getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
 private:
+    //回复，响应
+    shared_ptr<Response> response ;
     //数据库,键值是数据库编号码,之后数据库对象
     vector<pair<int, shared_ptr<redisDb>>>dbLs ;
     //命令名称，命令类型

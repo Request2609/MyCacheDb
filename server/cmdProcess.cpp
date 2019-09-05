@@ -12,8 +12,9 @@ int cmdProcess :: findCmd(const shared_ptr<Command>tmp) {
 
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
-
+    
     buffer* bf = tmp->getBuf() ;
+    cout << "消息---->:" << bf->getBuf() << endl ;
     //获取到对端序列化的结果
     string* buff = bf->getBuf() ;
     //获取对端序列化到结果
@@ -35,7 +36,11 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         //获取当前所在数据库
         //shared_ptr<redisDb> tmp = cmdSet_.getDB(num) ;
         //没找到
-        int ret = cmdSet_->redisCommandProc(num, wcmd) ;
+        cmdSet_->redisCommandProc(num, wcmd) ;
+        shared_ptr<Response>r = cmdSet_->getResponse() ;
+        res.set_reply(r->reply()) ;
+        //销毁响应的智能指针
+        r = nullptr ;/*
         //传入的键值不合法
         if(ret == NOT_FOUND) {
         } 
@@ -46,10 +51,11 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         }
         if(ret == PROCESS_ERROR) {
             res = backInfo::processError() ;
-        }   
+        }   */
     } 
     shared_ptr<Response>re(new Response(res)) ;
     rc->response(re, tmp->getConnFd()) ;
+    bf->clear() ;
     //获取到响应的结果
     return 1 ;
 }
@@ -66,3 +72,4 @@ int cmdProcess :: sendMsg(shared_ptr<aeEvent>tmp) {
     }
     return 1 ;
 }
+

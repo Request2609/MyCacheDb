@@ -46,14 +46,15 @@ int aeEventloop :: addServerEvent(string addr, string port) {
 int aeEventloop :: start() {
     while(!stop) {
         int ret = aep->wait(fireList) ;
-        
         if(ret < 0) {
             return -1 ;
         }
         //全拷贝过来
         vector<epoll_event>ls  = fireList ;
         int len = fireList.size() ;
+        cout <<"事件数量！" << len << endl ;
         for(int i=0; i<len; i++) {
+            cout << "触发事件！" << endl ;
             int fd = ls[i].data.fd ;
             //设置epoll_event
             eventData[fd]->setEvent(&ls[i]) ;
