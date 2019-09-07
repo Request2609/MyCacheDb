@@ -29,7 +29,6 @@ int main() {
 	
     //传入数据，数据长度，任意类型的指针
 	comprlen = lzf_compress(value.data(), len, out, outlen);  
-	
 	if (comprlen == 0) 
 	{
 		cout << "outlen == " << outlen << endl;
@@ -60,7 +59,7 @@ int main() {
 	cout << "解压后：val = " << val << endl;
 	cout << "解压后：len = " << len << endl;
 
-   	 free(out);
+   	free(out);
 	free(val);
    	return 0;
 

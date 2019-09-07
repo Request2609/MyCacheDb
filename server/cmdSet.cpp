@@ -1,5 +1,15 @@
 #include "cmdSet.h"
 #include "enum.h"
+#include "rdb.h"
+
+int cmdSet :: rdbSave() {
+    //遍历数据库进行保存
+    for(pair<int, shared_ptr<redisDb>>p : dbLs) {
+        if(!p.second.isEmpty()) {
+            rdb :: save(p.second) ;
+        }
+    }
+}
 
 int cmdSet:: findCmd(string cmd) {
     if(cmdList.find(cmd) == cmdList.end()) {
@@ -34,6 +44,7 @@ int cmdSet :: setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd, shared_p
     //没找到键值
     if(ret == 0) {
         shared_ptr<dbObject>se = factory::getObject("set");
+        se->setType(type::DB_STRING) ;
         se->setName("set") ;
         se->setNum(num) ;
         se->setKey(cmd->keys(0).key(0)) ;
@@ -81,6 +92,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         }
         return SUCESS ;
     }
+
     //下面是一系列命令
 }
 

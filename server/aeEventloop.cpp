@@ -33,11 +33,6 @@ int aeEventloop :: addServerEvent(string addr, string port) {
     if(ret < 0) {
         return -1 ;
     }
- /*   //接收套接字的回调函数
-    auto func = bind(&aeSocket::acceptClient, aeSock) ;
-    //设置服务端读回调函数
-    ae->setReadCallBack(func) ;*/
-    //将事件加入到map中
     eventData[servFd] = ae ;
     return 1 ;
 }   
@@ -52,9 +47,7 @@ int aeEventloop :: start() {
         //全拷贝过来
         vector<epoll_event>ls  = fireList ;
         int len = fireList.size() ;
-        cout <<"事件数量！" << len << endl ;
         for(int i=0; i<len; i++) {
-            cout << "触发事件！" << endl ;
             int fd = ls[i].data.fd ;
             //设置epoll_event
             eventData[fd]->setEvent(&ls[i]) ;

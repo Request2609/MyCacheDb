@@ -7,8 +7,14 @@
 #include <map>
 #include <set>
 #include "msg.pb.h"
+
 using namespace Messages ;
 using namespace std ;
+
+namespace type {
+    //该键值是string 使用get　set 方法获取
+    const int DB_STRING = 1 ;
+} 
 
 class redisDb ;
 class dbObject ;
@@ -17,13 +23,19 @@ class factory ;
 //数据库对象
 class redisDb {
 public :
-    redisDb() {  }
+    redisDb(int id) : num(id) {  }
     ~redisDb() {  } 
 private :
     //数据库编号
     int num ;
     vector<shared_ptr<dbObject>> db ;
 public :
+    //获取当前数据库id
+    int getId() ;
+    //判断数据库是否为空
+    int isEmpty() { return db.size() ; }
+    void setId(int id) { this->num = id ; }
+    shared_ptr<dbObject>getNextDb() ;
     string findGetRequest(string name) ;
     void queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
     void append(shared_ptr<dbObject>rdb) { db.push_back(rdb); }
@@ -41,11 +53,14 @@ public:
     virtual ~dbObject() {}
 public :
     //set操作
+    virtual void setEndTime(long long e) = 0 ;
+    virtual long long  getEndTime() = 0 ;
+    virtual void setType(int type) = 0;
+    virtual int getType() = 0 ;
     virtual void setNum(int num) = 0;
     virtual void setKey(string k) = 0;
     virtual void setValue(string v) = 0;
     virtual void setName(string name) = 0;
-
     virtual string getKey() = 0;
     virtual string getValue() = 0;
     //获取命令编号
@@ -63,19 +78,24 @@ public :
     setCommand() {}
     ~setCommand() {}
 public :
+    long long getEndTime() { return timeout ; }
+    void setEndTime(long long e) {this->timeout = e ;} 
+    int getType() { return type ; }
+    void setType(int type) { this->type = type ; }
     void setKey(string k) { this->key = k ; } 
     void setValue(string value)  { this->value = value ; }
     void setName(string name) { this->name = name ; }
     void setNum(int num) { this->num = num ; }
-
     string  getName() { return name ; }
     string getKey() { return key ; }
     int getNum() { return num ; }
     string getValue() { return value ; }
-    
+
 public :
+    int type ;
     //命令名称
     string name ;
+    long long timeout ;
     //当前设置的超时时间
     map<string, long long> expire ;
     //所在数据库编号

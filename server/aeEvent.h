@@ -10,6 +10,13 @@
 #include "aeSocket.h"
 using namespace std ;
 #define SIZE 4096
+
+//事件
+namespace event {
+    const int timeout = 1 ;
+    const int commonMsg = 2 ;
+}
+
 //创建连接事件信息
 class aeEvent :public enable_shared_from_this<aeEvent>{
     //创建文件描述符
@@ -28,7 +35,7 @@ private :
     int connFd ;
     //设置数据库的编号
     int num ;
-    //标志位,表示事件结构体是否在被使用
+    //标志位,是否为定时事件
     int mask ;
     //用户缓冲区
     buffer buf ;
@@ -40,6 +47,8 @@ private :
     epoll_event* ev ;
     int servFd ;
 public :
+    void setMask(int mask) { this->mask = mask ; }
+    int getMask() { return mask ; }
     int getNum() { return num ; }
     void setNum(int num) { this->num = num ; }
     int setNoBlock(int fd) { return sock.setNoBlocking(fd) ; }

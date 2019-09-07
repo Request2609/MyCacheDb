@@ -1,4 +1,5 @@
 #include "redisDb.h"
+using namespace type ;
 
 //判断当前操作键值存在不存在
 int redisDb :: isExist(shared_ptr<Command>&cmds) {
@@ -17,6 +18,16 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         }
         return 0 ;
     }
+}
+
+//遍历redis中的dbObject对象
+shared_ptr<dbObject> redisDb :: getNextDb() {
+    static int count = 0 ;
+    if(count == db.size() - 1) {
+        count = 0 ;
+        return nullptr ;
+    }
+    return db[count++] ;
 }
 
 //查询数据库,get命令等

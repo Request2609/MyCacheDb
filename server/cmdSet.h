@@ -6,7 +6,9 @@
 #include "redisDb.h"
 #include "aeEvent.h"
 #include "msg.pb.h"
+#include "rdb.h"
 
+class rdb ;
 using namespace std  ;
 using namespace Messages ;
 
@@ -19,6 +21,7 @@ enum {
 } ; 
 //暂时没用
 typedef int *redisGetKeysProc();
+class rdb ;
 class cmdSet ;
 class redisDb ;
 class dbObject ;
@@ -73,7 +76,7 @@ public:
         //申请16个数据库
         dbLs.reserve(16) ;
         for(int i=0; i<16; i++) {
-            dbLs.push_back({i ,shared_ptr<redisDb>(new redisDb)}) ;
+            dbLs.push_back({i ,shared_ptr<redisDb>(new redisDb(i))}) ;
         }
         //初始化set命令
         shared_ptr<redisCommand>tset(new redisCommand("set", -3, "wm",  1, 1, 1, 0, 0)) ;
@@ -95,10 +98,12 @@ public :
     int findCmd(string cmd) ;  
     shared_ptr<Response> getResponse() { return response ; }
 public :
+    int rdbSave() ;
     static int isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) ;
     static int setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res);
     static int getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
 private:
+    shared_ptr<rdb> save ;
     //回复，响应
     shared_ptr<Response> response ;
     //数据库,键值是数据库编号码,之后数据库对象

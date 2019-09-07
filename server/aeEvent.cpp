@@ -2,6 +2,7 @@
 #include "serializeParse.h"
 
 int aeEvent :: processRead() { 
+
     //读取数据
     char buff[SIZE] ;
     //读数据

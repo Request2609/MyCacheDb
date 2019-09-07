@@ -12,9 +12,10 @@ int cmdProcess :: findCmd(const shared_ptr<Command>tmp) {
 
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
-    
+    if(tmp->getMask())  {
+        
+    }
     buffer* bf = tmp->getBuf() ;
-    cout << "消息---->:" << bf->getBuf() << endl ;
     //获取到对端序列化的结果
     string* buff = bf->getBuf() ;
     //获取对端序列化到结果
