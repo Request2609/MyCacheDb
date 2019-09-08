@@ -3,6 +3,7 @@
 #include <memory>   
 #include <vector>
 #include <string>
+#include "timerHeap.h"
 #include "aeEvent.h"
 #include "buffer.h"
 #include "backInfo.h"
@@ -31,6 +32,7 @@ enum {
 //处理消息请求的函数
 class cmdProcess {
     typedef function<void(shared_ptr<Response>res, int fd)> request ;
+    typedef function<void(void)> task ;
 public :
     //创建
     //消息处理
@@ -40,18 +42,25 @@ public :
         rc = make_shared<rpc>() ;
     }
     ~cmdProcess() {}
-public : 
+public :
+    //时间事件回调
+    void timeCb() ;
+public :
+    int initRedis() ;
     void setRpc(shared_ptr<rpc>rc) { this->rc = rc ; }
     void setRpcMethod() ;
     int processMsg(shared_ptr<aeEvent>&tmp) ;
     int sendMsg(shared_ptr<aeEvent>tmp) ;
     void getAfterKeyPart() ;
     int findCmd(const shared_ptr<Command>tmp) ;
+    void setTimerCall(task& cb)  { timeCall = move(cb) ; } 
 private :
+    
     //命令集
     //键值以后的部分成员
     shared_ptr<cmdSet> cmdSet_ ;
     vector<string> lastKey ;   
+    task timeCall ;
     //rpc,主要进行序列化和反序列化
     shared_ptr<rpc> rc ;
 };

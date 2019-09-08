@@ -2,14 +2,21 @@
 #include "aeEvent.h"
 #include "cmdProcess.h"
 
+//保证朱创建一次
+static cmdProcess cmdPro ;
+static shared_ptr<rpc>rc = nullptr ;
+
 int readOnMessage(shared_ptr<aeEvent>tmp) { 
     //处理事件    
-    static cmdProcess cmdPro ;
     //设置rpc
-    static shared_ptr<rpc>rc = make_shared<rpc>() ;
+    //如果是空，就重新将文件中的数据读出
+    if(rc == nullptr) {
+        
+    }
+    rc = make_shared<rpc>() ;
     cmdPro.setRpc(rc) ;
     //处理消息
-    int ret = cmdPro.processMsg(tmp) ;    
+    int ret = cmdPro.processMsg(tmp) ;
     return ret ;
 }
 

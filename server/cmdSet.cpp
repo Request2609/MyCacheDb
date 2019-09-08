@@ -11,6 +11,11 @@ int cmdSet :: rdbSave() {
     }
 }
 
+//初始化数据库
+int cmdSet :: initRedis() {
+    
+}
+
 int cmdSet:: findCmd(string cmd) {
     if(cmdList.find(cmd) == cmdList.end()) {
         return NOTFOUND ;

@@ -4,6 +4,9 @@
 #include <map>
 #include <algorithm>
 #include <memory> 
+#include <sys/eventfd.h>
+
+#include "timerHeap.h" 
 #include "aeEpoll.h"
 #include "aeEvent.h"
 
@@ -22,6 +25,7 @@ public :
     //客户端的读写回调
     callBack  readCall ;
     callBack writeCall ;
+    callBack timerCall ;
     //监听事件的集合
     vector<int>listenFd ;
     //epoll事件
@@ -47,12 +51,20 @@ public :
     long dirty ;
     //现在距离上一次执行save命令的时间
     long lastSave ;
-
+    //定时事件
+    int timeFd ;
+    shared_ptr<TimerManager> tman ;
 public :
     aeEventloop() ; 
     ~aeEventloop() ;
 public :
-    void setReadCallBack(callBack readCb) { readCall = readCb ; }
+    static int notifyToSave(int fd) ;
+public :
+    int addTimerEvent() ;
+    //时间事件回调
+    void setReadCallBack(callBack readCb) { 
+        timerCall = readCall = readCb ; 
+    }
     int acceptNewConnect(int fd) ;
     void setCallBack(callBack readCb, callBack writeCb) ;
     int addServerEvent(string addr, string port) ;

@@ -3,6 +3,16 @@
 
 int aeEvent :: processRead() { 
 
+    if(mask == event::timeout) {
+        uint64_t ret = 0 ;
+        int res = read(connFd, &ret, sizeof(ret)) ;
+        if(ret < 0) {
+            cout << __FILE__ << "      " << __LINE__ << endl ;
+            return 1 ;
+        }
+        res = readFunc(shared_from_this()) ;
+        return ret ;
+    }
     //读取数据
     char buff[SIZE] ;
     //读数据
@@ -15,8 +25,7 @@ int aeEvent :: processRead() {
         //一个客户端断开连接
         cout << "one user disconnect!" << endl ;
         return 0 ;
-    }
-    
+    } 
     //根据返回值，将数据读到buf
     for(int i=0; i<ret; i++) {
         buf.append(buff[i]) ;
@@ -25,7 +34,6 @@ int aeEvent :: processRead() {
     //收到数据
 //    string* aa = buf.getBuf() ;
     //将数据返回给事件循环/*
-    //对端设置消息中的最后一个字节为'1',表示消息结束
     //调用相应的回调处理可读事件
     ret = readFunc(shared_from_this()) ;
     return ret ;

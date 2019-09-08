@@ -1,8 +1,7 @@
 #include "rdb.h"
 
 //保存到文件
-void rdb :: save(const shared_ptr<redisDb> db) {
-    
+void rdb :: save(const shared_ptr<redisDb> db) {  
     //以二进制写形式创建rdb文件
     ofstream out(".rdb/.redis_rdb", ios::out|ios::binary|ios::trunc) ;
     if(out.fail()) {
@@ -81,7 +80,8 @@ void rdb :: processString(const string key, ofstream& out, const string value) {
             out << key << ":" ;
             //压缩值
             void* ot = lzfCompress(value) ;
-            out << ot <<"\r\n\r\n" ;
+            const char* ch = (char*)ot ;
+            out << ch <<"\r\n\r\n" ;
             //销毁ot内存
             free(ot) ;
         }
@@ -147,4 +147,9 @@ bool rdb :: isNum(string str) {
     if (sin >> c)
         return false;
     return true;
+}
+
+//初始化数据库
+int rdb :: initRedis(shared_ptr<redisDb>& db) {
+    
 }

@@ -21,6 +21,7 @@ namespace event {
 class aeEvent :public enable_shared_from_this<aeEvent>{
     //创建文件描述符
     typedef function<int(shared_ptr<aeEvent>)> callBack ;
+    
 public :
     aeEvent() {
         //申请16个数据库
@@ -39,7 +40,7 @@ private :
     int mask ;
     //用户缓冲区
     buffer buf ;
-    //读回调函数
+    //读回调函数   
     callBack readFunc ;
     //写回调函数
     callBack writeFunc ;

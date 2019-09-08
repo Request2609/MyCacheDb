@@ -6,7 +6,7 @@
 #include <sstream>
 #include <fstream>
 #include <fcntl.h>
-#include <cctype>//判断字符类型需要的头文
+#include <cctype>//判断字符类型需要的头文件
 #include "lzf.h"
 #include "lzfP.h"
 #include "cmdSet.h"
@@ -54,6 +54,7 @@ public:
     static void processString(const string key, ofstream& out, const string value) ;
     static string makeHeader() ;
     static void save(const shared_ptr<redisDb> db) ;
+    static int initRedis(shared_ptr<redisDb>& db) ;
 private :
 };
 

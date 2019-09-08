@@ -39,6 +39,15 @@ int aeEventloop :: addServerEvent(string addr, string port) {
 
 //开始监听事件
 int aeEventloop :: start() {
+
+    //创建时间事件,并添加到epoll
+    addTimerEvent() ;
+    tman = make_shared<TimerManager>() ;
+    MyTimer time1(*tman) ;
+    //加入时间堆
+    time1.start(&aeEventloop::notifyToSave, 1000, MyTimer::TimerType::CIRCLE);
+    //将时间事件加入到epoll中
+    shared_ptr<aeEvent> ae = make_shared<aeEvent>() ;
     while(!stop) {
         int ret = aep->wait(fireList) ;
         if(ret < 0) {
@@ -51,10 +60,23 @@ int aeEventloop :: start() {
             int fd = ls[i].data.fd ;
             //设置epoll_event
             eventData[fd]->setEvent(&ls[i]) ;
+            //处理完成以后
             aeProcessEvent(fd) ;
+            //检测一次时间事件
+            tman->detect_timers() ;
         }
         //清除活跃事件表
         fireList.clear() ;     
+    }
+    return 1 ;
+}
+
+int aeEventloop :: notifyToSave(int fd) {
+    uint64_t ret = 1 ;
+    int res = write(fd, &ret, sizeof(ret)) ;
+    if(res < 0) {
+        cout << __FILE__ << "    " << __LINE__ << endl ;
+        return -1 ;
     }
     return 1 ;
 }
@@ -64,7 +86,6 @@ int aeEventloop :: aeProcessEvent(int fd) {
 
     epoll_event* ev = eventData[fd]->getEvent() ;
     if(ev->events&READ) {
-    
         //如果找a到fd就退出
         auto find = [&]()->int {
             int ret = 0 ;
@@ -86,6 +107,10 @@ int aeEventloop :: aeProcessEvent(int fd) {
         }
         //其他可读事件
         else {
+            //是定时事件,进行持久化
+            if(fd == timeFd) {
+                eventData[fd]->setMask(event::timeout) ;
+            }
             int ret = eventData[fd]->processRead() ; 
             //收到处理失败
             //读到０表示退出
@@ -99,7 +124,6 @@ int aeEventloop :: aeProcessEvent(int fd) {
             }
         }
     }
-
     else if(ev->events&WRITE) {
         int ret = eventData[fd]->processWrite()  ; 
         if(ret < 0) {
@@ -131,6 +155,19 @@ int aeEventloop :: acceptNewConnect(int fd) {
     tmp->setServFd(fd) ;
     //将事件加入到epoll中
     aep->add(newFd, READ) ;
+    return 1 ;
+}
+
+//添加时间事件
+int aeEventloop :: addTimerEvent() {
+    shared_ptr<aeEvent> aev = make_shared<aeEvent>() ;
+    int efd = eventfd(0, 0) ;
+    timeFd = efd ;
+    aev->setNoBlock(efd) ;
+    aev->setReadCallBack(timerCall) ;
+    aev->setConnFd(efd) ;
+    aep->add(efd, efd) ;
+    eventData[efd] = aev ;
     return 1 ;
 }
 

@@ -91,6 +91,7 @@ public:
 
     ~cmdSet() {}
 public :
+    int initRedis() ;
     int redisCommandProc(int num, shared_ptr<Command>& cmd) ;
     shared_ptr<redisDb> getDB(int num) ;
     //扩大数据库

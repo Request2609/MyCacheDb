@@ -10,11 +10,28 @@ int cmdProcess :: findCmd(const shared_ptr<Command>tmp) {
     return ret ;
 }
 
+int cmdProcess :: initRedis() {
+    //导入数据库中的数据
+    
+}
+//消息回调
+void cmdProcess :: timeCb() {
+    //保存当前数据中的所有数据
+    cmdSet_->rdbSave() ;
+}
+
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
-    if(tmp->getMask())  {
-        
+    if(tmp->getMask() == event::timeout) {
+        //进行一次持久化
+        cmdSet_->rdbSave() ;
+        return 1 ;
     }
+    //创建时间管理器
+   static TimerManager timer ;
+    MyTimer mt(timer) ;
+    mt.start(&cmdProcess::timeCb, 1000, MyTimer::TimerType::CIRCLE) ;
+
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果
     string* buff = bf->getBuf() ;

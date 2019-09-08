@@ -9,8 +9,8 @@ class TimerManager;
  
 class MyTimer {
 public:
+    //循环还是只执行一次
 	enum class TimerType{ONCE=0,CIRCLE=1};
- 
     MyTimer (TimerManager& manager);
     ~MyTimer ();
 	//启动一个定时器
@@ -25,7 +25,7 @@ private:
 	friend class TimerManager;
 	TimerManager& manager_;
 	//调用函数，包括仿函数
-	std::function<void(void)> m_timerfunc;
+	std::function<void(int)> m_timerfunc;
 	TimerType timerType_;
 	//间隔
 	unsigned int m_nInterval;
