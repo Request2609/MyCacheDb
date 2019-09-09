@@ -30,6 +30,8 @@ private :
     int num ;
     vector<shared_ptr<dbObject>> db ;
 public :
+    //往数据库中写数据
+    int initDb() ;
     //获取当前数据库id
     int getId() ;
     //判断数据库是否为空
@@ -90,8 +92,8 @@ public :
     string getKey() { return key ; }
     int getNum() { return num ; }
     string getValue() { return value ; }
-
 public :
+    //类型
     int type ;
     //命令名称
     string name ;

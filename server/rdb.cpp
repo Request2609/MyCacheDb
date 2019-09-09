@@ -1,9 +1,8 @@
 #include "rdb.h"
 
 //保存到文件
-void rdb :: save(const shared_ptr<redisDb> db) {  
+void rdb :: save(const shared_ptr<redisDb> db, ofstream& out) {  
     //以二进制写形式创建rdb文件
-    ofstream out(".rdb/.redis_rdb", ios::out|ios::binary|ios::trunc) ;
     if(out.fail()) {
         cout << __FILE__ << "    " << __LINE__ << endl ;
         return ;
@@ -27,12 +26,13 @@ void rdb :: save(const shared_ptr<redisDb> db) {
             out << "e:" ;
             //超时时间
             out << rd->getEndTime() << "\r\n" ;
+            //命令类型
+            out << "ctp:" << CMDTYPE::SET << "\r\n" ;
             //值要根据不同的情况进行编码
             processString(key, out, value) ;
         }
         rd = db->getNextDb() ;
     }
-    out.close() ;
 }
 
 void rdb :: processString(const string key, ofstream& out, const string value) {
@@ -150,6 +150,167 @@ bool rdb :: isNum(string str) {
 }
 
 //初始化数据库
-int rdb :: initRedis(shared_ptr<redisDb>& db) {
+int rdb :: initRedis(cmdSet* cmdset) {
+   // vector<pair<int, shared_ptr<redisDb>>>dbLs ;
+    char* buffer = getFileInfo() ;
+    if(buffer == NULL) {
+        return -1 ;
+    }
+    if(isRedis(buffer) == false) {
+        cout << __LINE__ << "    " << __FILE__ << endl ;
+        return -1 ;
+    }
+    string buf = buffer ;
+    free(buffer) ;
+    //获取buf中数据库所在位置
+//    int index = buf.find("id:") ; 
+    //获取数据库
+    while(1) {
+        int num = getNum(buf) ;
+        //之前存在数据库中的编号相比于当前的最大的编号还大,扩增数据库
+        if(num > cmdset->countRedis()) {
+            cmdset->expend(num) ;
+        }
+        //获取到数据库
+        shared_ptr<redisDb>db = cmdset->getDB(num) ;
+        //准备将数据保存保存到db中
+        long tim = getTime(buf) ;
+        //当前时间大于文件中的时间
+        if(tim < getCurTime()) {
+            //处理掉数据
+            continue ;           
+        }
+        int cmd = getCmd(buf) ;
+        
+    }   
+    //解析文件中的数据
+    //验证是否有redis标识
     
+}
+
+shared_ptr<dbObject> rdb :: cmdObject(string& buf, const int cmd) {
+    if(cmd == CMDTYPE :: SET) {
+        //是set　方法，找编码   
+        int ecode = getEncoding(buf) ;
+        if(ecode == STRING_ZIP::NO_CHANGE) {
+            getKey(buf) ;
+        }
+        else if(ecode == ENCODING_INT::INT8) {
+
+        }
+        else if(ecode == ENCODING_INT::INT16) {
+
+        }
+        else if(ecode == ENCODING_INT::INT32) {
+
+        }
+        else {
+            
+        }
+    }   
+    else if(cmd == CMDTYPE :: GET) {
+
+    }
+}
+
+//获取字符串键
+string rdb :: getKey(const string& buf) {
+    long index = buf.find("\r\n") ;
+    for(long i=index; buf[i] != ':'; i++) {
+        ////////////////////////////////////////////////////////
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+    }
+}
+
+int rdb :: getEncoding(string& buf) {
+    int index = buf.find("ec") ;
+    string code ;
+    for(int i=index+2; buf[i] != '\r'; i++) {
+        code +=  buf[i] ;
+    }
+    buf +=  index ;
+    return atoi(code.c_str()) ;
+}
+
+int rdb :: getCmd(string& buf) {
+    long index = buf.find("ctp:") ;
+    string cmd ;
+    for(int i=index+4; buf[i] != '\r'; i++) {
+        cmd += buf[i] ;
+    }
+    buf = buf.c_str()+index ;
+    return atoi(cmd.c_str()) ;
+}
+
+//获取当前的时间
+long rdb :: getCurTime() {
+    
+#ifdef _MSC_VER
+	_timeb timebuffer;
+	_ftime(&timebuffer);
+	unsigned long long ret = timebuffer.time;
+	ret = ret * 1000 + timebuffer.millitm;
+	return ret;
+#else
+	timeval tv;
+	::gettimeofday(&tv, 0);
+	unsigned long long ret = tv.tv_sec;
+	return ret * 1000 + tv.tv_usec / 1000;
+#endif
+}
+
+//获取过期时间
+long rdb :: getTime(string& buf) {
+    int index = buf.find("\r\ne:") ;
+    string end ;
+    for(int i=index; buf[i] != '\r'; i++) {
+        end+=buf[i] ;
+    }
+    buf = buf.c_str() + index+2 ;
+    return atoi(end.c_str()) ;
+}
+
+int rdb :: getNum(string& buf) {
+    int index = buf.find("id:") ;
+    string n ;
+    for(int i=index+3; buf[i] != '\r'; i++) {
+        n+=buf[i] ;
+    }
+    //将解析过的字符丢弃
+    buf = buf.c_str() + index ;
+    return atoi(n.c_str()) ;
+}
+
+bool rdb :: isRedis(const char* buffer) {
+    string name ;
+    for(int i=0; i<5; i++) {
+        name+=buffer[i] ;
+    }   
+    if(name == "redis") {
+        return true ;
+    }
+    return false ;
+}
+
+char* rdb :: getFileInfo() {
+    //读数据
+    ifstream in(".rdb/.redis_rdb", ios::in|ios::binary|ios::ate) ;
+    if(in.fail()) {
+        cout << __FILE__ <<"    " <<  __LINE__ << endl ;
+        return NULL ;
+    }
+    //计算文件长度
+    long l = in.tellg() ;
+    //文件长度
+    in.seekg(0, ios::beg) ;
+    char* buffer = new char[l-1] ;
+    in.read(buffer, l) ;
+    in.close() ;
+    return buffer ;
 }

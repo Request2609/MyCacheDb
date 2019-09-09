@@ -30,6 +30,11 @@ shared_ptr<dbObject> redisDb :: getNextDb() {
     return db[count++] ;
 }
 
+//将文件中的数据读到数据
+int redisDb :: initDb() {
+
+}
+
 //查询数据库,get命令等
 void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
 

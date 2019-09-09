@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <unistd.h>
+#include <sys/time.h>
 #include <stdlib.h>
 #include <sstream>
 #include <fstream>
@@ -12,6 +13,7 @@
 #include "cmdSet.h"
 #include "redisDb.h"
 
+class rdb ;
 const int version = 1 ;
 //selected 条目
 const char flag = 0 ;
@@ -27,6 +29,10 @@ namespace STRING {
     const int REDIS_ENCODING_RAW = 2 ;
 }
 
+namespace CMDTYPE {
+    const int SET = 1 ;
+    const int GET= 2 ;
+} 
 //不同位数的int类型
 namespace ENCODING_INT {
     const int INT8 = 1 ;
@@ -42,6 +48,11 @@ namespace STRING_ZIP {
     const int ENCODING_LZF = 2 ;
 }
 
+namespace cmdName {
+    const string set = "set" ;
+    const string get = "get" ;
+}
+
 class rdb {
 public:
     rdb() {}
@@ -53,8 +64,18 @@ public:
     static int getStringEncodingType(const string value) ;
     static void processString(const string key, ofstream& out, const string value) ;
     static string makeHeader() ;
-    static void save(const shared_ptr<redisDb> db) ;
-    static int initRedis(shared_ptr<redisDb>& db) ;
+    static void save(const shared_ptr<redisDb> db, ofstream& out) ;
+    static int  initRedis(cmdSet* cmdset) ;
+    static char*  getFileInfo() ;
+    static bool isRedis(const char* buffer) ;
+    static int getNum(string& buf) ;
+    static long getTime(string& buf) ;
+    static long getCurTime() ;
+    shared_ptr<dbObject> cmdObject(string& buf, const int cmd) ;
+    static int getCmd(string& buf) ;
+    static int getEncoding(string& buf) ;
+    static string getKey(const string& buf) ;
+    //static int getRedis(vector<pair<int, shared_ptr<redisDb>>>db) ;
 private :
 };
 

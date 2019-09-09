@@ -2,6 +2,7 @@
 #include <string>
 #include <functional>
 #include <map>
+#include <fstream>
 #include <vector>
 #include "redisDb.h"
 #include "aeEvent.h"
@@ -91,6 +92,8 @@ public:
 
     ~cmdSet() {}
 public :
+    int expend(int num) ;
+    int countRedis() ;
     int initRedis() ;
     int redisCommandProc(int num, shared_ptr<Command>& cmd) ;
     shared_ptr<redisDb> getDB(int num) ;

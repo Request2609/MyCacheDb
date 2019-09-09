@@ -3,17 +3,20 @@
 #include "rdb.h"
 
 int cmdSet :: rdbSave() {
+
+    ofstream out(".rdb/.redis_rdb", ios::out|ios::binary|ios::trunc) ;
     //遍历数据库进行保存
     for(pair<int, shared_ptr<redisDb>>p : dbLs) {
         if(!p.second.isEmpty()) {
-            rdb :: save(p.second) ;
+            rdb :: save(p.second, out) ;
         }
     }
+    out.close() ;
 }
 
 //初始化数据库
 int cmdSet :: initRedis() {
-    
+    rdb :: initRedis(this) ;
 }
 
 int cmdSet:: findCmd(string cmd) {
@@ -23,6 +26,14 @@ int cmdSet:: findCmd(string cmd) {
     else {
         return FOUND ;
     }
+}
+
+int cmdSet :: expend(int num) {
+    dbLs.reverse(num+1) ;   
+}
+
+int cmdSet :: countRedis() {
+    return dbLs.size() ;
 }
 
 shared_ptr<redisDb> cmdSet :: getDB(int num) {
