@@ -33,10 +33,10 @@ public :
     //往数据库中写数据
     int initDb() ;
     //获取当前数据库id
-    int getId() ;
     //判断数据库是否为空
     int isEmpty() { return db.size() ; }
     void setId(int id) { this->num = id ; }
+    int getId() { return num ; }
     shared_ptr<dbObject>getNextDb() ;
     string findGetRequest(string name) ;
     void queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
@@ -55,23 +55,22 @@ public:
     virtual ~dbObject() {}
 public :
     //set操作
-    virtual void setEndTime(long long e) = 0 ;
     virtual long long  getEndTime() = 0 ;
-    virtual void setType(int type) = 0;
+    virtual void setEndTime(long long e) = 0 ;
     virtual int getType() = 0 ;
-    virtual void setNum(int num) = 0;
+    virtual void setType(int type) = 0;
     virtual void setKey(string k) = 0;
     virtual void setValue(string v) = 0;
     virtual void setName(string name) = 0;
+    virtual void setNum(int num) = 0;
+    virtual string  getName() = 0;
     virtual string getKey() = 0;
+    virtual int getNum() = 0 ;
     virtual string getValue() = 0;
     //获取命令编号
-    virtual int getNum() = 0 ;
-    virtual string  getName() = 0;
 private :
     //保存所有键的过期时间
     //redis对象管理dict对象
-    //shared_ptr<dict>dic ;
 };
 
 //set对象
@@ -106,7 +105,7 @@ public :
     string key ;
     string value ;
 } ;
-
+/*
 class getCommand : public dbObject {
     
 } ;
@@ -115,8 +114,7 @@ class hsetCmd : public dbObject {
 public :
     int num ;
     map<string, map<string, string>>hset ;
-} ;
-/*
+    };
 //字典
 class dict {
 private:

@@ -22,15 +22,14 @@ void cmdProcess :: timeCb() {
 
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
+    
     if(tmp->getMask() == event::timeout) {
+        cout << "定时事件" << endl ;
         //进行一次持久化
         cmdSet_->rdbSave() ;
+        cout <<"保存完成！" << endl ;
         return 1 ;
     }
-    //创建时间管理器
-   static TimerManager timer ;
-    MyTimer mt(timer) ;
-    mt.start(&cmdProcess::timeCb, 1000, MyTimer::TimerType::CIRCLE) ;
 
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果

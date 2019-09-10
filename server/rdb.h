@@ -10,9 +10,11 @@
 #include <cctype>//判断字符类型需要的头文件
 #include "lzf.h"
 #include "lzfP.h"
-#include "cmdSet.h"
 #include "redisDb.h"
+#include "cmdSet.h"
 
+class cmdSet ;
+using namespace type ;
 class rdb ;
 const int version = 1 ;
 //selected 条目
@@ -71,10 +73,13 @@ public:
     static int getNum(string& buf) ;
     static long getTime(string& buf) ;
     static long getCurTime() ;
-    shared_ptr<dbObject> cmdObject(string& buf, const int cmd) ;
+    static shared_ptr<dbObject> cmdObject(string& buf, const int cmd, int num) ;
     static int getCmd(string& buf) ;
     static int getEncoding(string& buf) ;
-    static string getKey(const string& buf) ;
+    static string getKey(string& buf) ;
+    static string getValue(string& buf) ;
+    static long getYc(string& buf) ;
+    static string getLzpValue(string& buf) ;
     //static int getRedis(vector<pair<int, shared_ptr<redisDb>>>db) ;
 private :
 };

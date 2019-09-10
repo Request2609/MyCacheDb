@@ -25,6 +25,14 @@ void MyTimer::stop() {
 	}
 }
  
+void  MyTimer::start(Func fun, unsigned int interval, TimerType timetpe) {
+	m_nInterval = interval;
+	m_timerfunc = fun;
+	m_nExpires = interval + TimerManager::get_current_millisecs();
+	manager_.add_timer(this);
+	timerType_= timetpe;
+}
+ 
 void MyTimer::on_timer(unsigned long long now) {
 	if (timerType_ == TimerType::CIRCLE) {
 		m_nExpires = m_nInterval + now;
@@ -33,7 +41,8 @@ void MyTimer::on_timer(unsigned long long now) {
 	else {
 		m_nHeapIndex = -1;
 	}
-	m_timerfunc();
+    cout << "时间到！" << endl ;
+	m_timerfunc(fd);
 }
  
 // TimerManager
@@ -69,7 +78,7 @@ void TimerManager::remove_timer(MyTimer* timer) {
  
 void TimerManager::detect_timers() {
 	unsigned long long now = get_current_millisecs();
- 
+    
 	while (!heap_.empty() && heap_[0].time <= now) {
 		MyTimer* timer = heap_[0].timer;
 		remove_timer(timer);

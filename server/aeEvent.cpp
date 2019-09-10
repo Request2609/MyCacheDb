@@ -2,8 +2,9 @@
 #include "serializeParse.h"
 
 int aeEvent :: processRead() { 
-
+    
     if(mask == event::timeout) {
+        cout <<"触发定时事件" << endl ;
         uint64_t ret = 0 ;
         int res = read(connFd, &ret, sizeof(ret)) ;
         if(ret < 0) {

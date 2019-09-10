@@ -3,19 +3,23 @@
 #include <iostream>
 #include <functional>
 #include <vector>
+#include "cmdProcess.h"
 using namespace std;
- 
+
+class cmdProcess ; 
 class TimerManager;
  
 class MyTimer {
+	typedef std::function<int(int)>Func;
 public:
     //循环还是只执行一次
 	enum class TimerType{ONCE=0,CIRCLE=1};
     MyTimer (TimerManager& manager);
     ~MyTimer ();
 	//启动一个定时器
-	template<typename Func>
     void   start (Func func, unsigned int ms, TimerType type);
+    void setFd(int fd) { this->fd = fd ; }
+    int getFd() { return fd ; }
     //终止一个定时器
 	void   stop ();
 private:
@@ -23,16 +27,16 @@ private:
 	void on_timer(unsigned long long now);
 private:
 	friend class TimerManager;
+    int fd ;
+    Func m_timerfunc ;
 	TimerManager& manager_;
 	//调用函数，包括仿函数
-	std::function<void(int)> m_timerfunc;
 	TimerType timerType_;
 	//间隔
 	unsigned int m_nInterval;
 	//过期
 	unsigned long long  m_nExpires;
 	int  m_nHeapIndex;
- 
 };
  
 class TimerManager {
@@ -58,18 +62,8 @@ private:
 	struct HeapEntry {
 		unsigned long long time;
 		MyTimer* timer;
-	};
+        };
 	std::vector<HeapEntry> heap_;
 };
- 
-template <typename Func>
-inline void  MyTimer::start(Func fun, unsigned int interval, TimerType timetpe)
-{
-	m_nInterval = interval;
-	m_timerfunc = fun;
-	m_nExpires = interval + TimerManager::get_current_millisecs();
-	manager_.add_timer(this);
-	timerType_= timetpe;
-}
  
 #endif

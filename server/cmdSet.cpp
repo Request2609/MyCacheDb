@@ -2,12 +2,13 @@
 #include "enum.h"
 #include "rdb.h"
 
-int cmdSet :: rdbSave() {
 
+int cmdSet :: rdbSave() {
+    cout << "开始------>" << endl ;
     ofstream out(".rdb/.redis_rdb", ios::out|ios::binary|ios::trunc) ;
     //遍历数据库进行保存
     for(pair<int, shared_ptr<redisDb>>p : dbLs) {
-        if(!p.second.isEmpty()) {
+        if(!p.second->isEmpty()) {
             rdb :: save(p.second, out) ;
         }
     }
@@ -29,7 +30,7 @@ int cmdSet:: findCmd(string cmd) {
 }
 
 int cmdSet :: expend(int num) {
-    dbLs.reverse(num+1) ;   
+    dbLs.reserve(num+1) ;   
 }
 
 int cmdSet :: countRedis() {

@@ -7,6 +7,7 @@ static cmdProcess cmdPro ;
 static shared_ptr<rpc>rc = nullptr ;
 
 int readOnMessage(shared_ptr<aeEvent>tmp) { 
+
     //处理事件    
     //设置rpc
     //如果是空，就重新将文件中的数据读出

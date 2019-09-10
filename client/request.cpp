@@ -114,6 +114,7 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
         cout << "errno connect" << endl ;
         return -1;
     }
+    cout << "发送成功!" << cmd.cmd() << endl ;
     cmd.clear_cmd() ;
 }
 

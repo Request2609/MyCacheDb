@@ -71,14 +71,18 @@ void rdb :: processString(const string key, ofstream& out, const string value) {
         //值
         int size = value.size() ;
         if(size <= 20) {
-            out << STRING_ZIP :: NO_CHANGE<<"\t\n" ;
+            out << STRING_ZIP :: NO_CHANGE<<"\r\n" ;
             out << key <<":" << value;                 
         }
         else {
-            //标志是否压缩过
-            out << STRING_ZIP :: ENCODING_LZF <<"\t\n" ;
             out << key << ":" ;
+            long len = 0 ;
+            len = value.size() ;
+            out << "yc:" << len << "\r\n" ;
+            //标志是否压缩过
+            out << STRING_ZIP :: ENCODING_LZF <<"\r\n" ;
             //压缩值
+            //将字符串原长保存到文件
             void* ot = lzfCompress(value) ;
             const char* ch = (char*)ot ;
             out << ch <<"\r\n\r\n" ;
@@ -166,6 +170,8 @@ int rdb :: initRedis(cmdSet* cmdset) {
 //    int index = buf.find("id:") ; 
     //获取数据库
     while(1) {
+
+        //获取数据库编号
         int num = getNum(buf) ;
         //之前存在数据库中的编号相比于当前的最大的编号还大,扩增数据库
         if(num > cmdset->countRedis()) {
@@ -181,67 +187,130 @@ int rdb :: initRedis(cmdSet* cmdset) {
             continue ;           
         }
         int cmd = getCmd(buf) ;
-        
+        shared_ptr<dbObject> ob = cmdObject(buf, cmd, num)  ;  
+        ob->setEndTime(tim) ;
+        //将从文件中获取到的对象加入到db中
+        db->append(ob) ;
+        //解析到最后退出
+        if(buf.find("\r\n\r\n") == 0) {
+            break ;
+        }
     }   
     //解析文件中的数据
-    //验证是否有redis标识
-    
+    //验证是否有redis标识   
 }
 
-shared_ptr<dbObject> rdb :: cmdObject(string& buf, const int cmd) {
+string rdb :: getValue(string& buf) {
+    long index = buf.find(":") ;
+    string value ;
+    for(long i=0; buf[i] != '\r'; i++) {
+        value += buf[i] ;
+    }
+    index = buf.find("\r\n") ;
+    buf = buf.c_str() + index + 2 ;
+    return buf ;
+}
+
+shared_ptr<dbObject> rdb :: cmdObject(string& buf, const int cmd, int num) {
+
+    shared_ptr<dbObject> ob = factory::getObject("set")  ;  
     if(cmd == CMDTYPE :: SET) {
         //是set　方法，找编码   
         int ecode = getEncoding(buf) ;
+        string key = getKey(buf) ;
+        ob->setName("set") ;
+        ob->setKey(key) ;       
+        ob->setType(type::DB_STRING) ;
+        ob->setNum(num) ;
         if(ecode == STRING_ZIP::NO_CHANGE) {
-            getKey(buf) ;
+            string value = getValue(buf) ;
+            ob->setValue(value) ;
         }
         else if(ecode == ENCODING_INT::INT8) {
-
+            string value = getValue(buf) ;
+            ob->setValue(value) ;
         }
         else if(ecode == ENCODING_INT::INT16) {
-
+            string value = getValue(buf) ;
+            ob->setValue(value) ;
         }
         else if(ecode == ENCODING_INT::INT32) {
-
+            string value = getValue(buf) ;
+            ob->setValue(value) ;
         }
+
         else {
-            
+            //先获取原长
+            int yc = getYc(buf) ;
+            string value = getLzpValue(buf) ;
+            //解码 
+            char* val = NULL ;
+            //还需要压缩前的长度
+            if((val=(char*)malloc(yc)) == NULL) {
+                cout <<__LINE__ << "    " << __FILE__ << endl ;
+            }
+            else {
+                int ret = lzf_decompress(value.c_str(),(int)value.size(), val, yc) ;
+                if(ret == 0) {
+                    cout << __FILE__ << "   " << __LINE__ << endl ;
+                }
+                ob->setValue(val) ;
+                //释放掉val
+                free(val) ;
+            }
         }
-    }   
-    else if(cmd == CMDTYPE :: GET) {
-
     }
+    //其他一些命令
+    else {
+    }
+    return ob ;
+}
+
+long rdb :: getYc(string&  buf) {
+    long index = buf.find("yc:") ; 
+    string yc ;
+    for(long i=index+3; buf[i] != '\r'; i++) {
+        yc += buf[i] ;
+    }
+    buf = buf.c_str() + 3 ;
+    return atoi(yc.c_str()) ;
+}
+
+string rdb :: getLzpValue(string& buf) {
+    long index = buf.find("\r\n") ;
+    string value ;
+    for(int i=index+2; buf[i] != '\r'; i++) {
+        value += buf[i] ;
+    }
+    buf = buf.c_str() + index + 2 ;
+    return buf ;
 }
 
 //获取字符串键
-string rdb :: getKey(const string& buf) {
+string rdb :: getKey(string& buf) {
     long index = buf.find("\r\n") ;
-    for(long i=index; buf[i] != ':'; i++) {
-        ////////////////////////////////////////////////////////
-        //
-        //
-        //
-        //
-        //
-        //
-        //
+    string key ;
+    for(long i=index+2; buf[i] != ':'; i++) {
+        key += buf[i] ;
     }
+    buf = buf.c_str() + index + 2;
+    return key ;
 }
 
 int rdb :: getEncoding(string& buf) {
-    int index = buf.find("ec") ;
+    long index = buf.find("ec") ;
     string code ;
-    for(int i=index+2; buf[i] != '\r'; i++) {
+    for(long i=index+2; buf[i] != '\r'; i++) {
         code +=  buf[i] ;
     }
-    buf +=  index ;
+    buf = buf.c_str() + index ;
     return atoi(code.c_str()) ;
 }
 
 int rdb :: getCmd(string& buf) {
     long index = buf.find("ctp:") ;
     string cmd ;
-    for(int i=index+4; buf[i] != '\r'; i++) {
+    for(long i=index+4; buf[i] != '\r'; i++) {
         cmd += buf[i] ;
     }
     buf = buf.c_str()+index ;
@@ -269,7 +338,7 @@ long rdb :: getCurTime() {
 long rdb :: getTime(string& buf) {
     int index = buf.find("\r\ne:") ;
     string end ;
-    for(int i=index; buf[i] != '\r'; i++) {
+    for(long i=index; buf[i] != '\r'; i++) {
         end+=buf[i] ;
     }
     buf = buf.c_str() + index+2 ;
@@ -277,9 +346,9 @@ long rdb :: getTime(string& buf) {
 }
 
 int rdb :: getNum(string& buf) {
-    int index = buf.find("id:") ;
+    long index = buf.find("id:") ;
     string n ;
-    for(int i=index+3; buf[i] != '\r'; i++) {
+    for(long i=index+3; buf[i] != '\r'; i++) {
         n+=buf[i] ;
     }
     //将解析过的字符丢弃
@@ -289,7 +358,7 @@ int rdb :: getNum(string& buf) {
 
 bool rdb :: isRedis(const char* buffer) {
     string name ;
-    for(int i=0; i<5; i++) {
+    for(long i=0; i<5; i++) {
         name+=buffer[i] ;
     }   
     if(name == "redis") {

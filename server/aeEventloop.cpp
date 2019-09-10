@@ -41,10 +41,11 @@ int aeEventloop :: addServerEvent(string addr, string port) {
 int aeEventloop :: start() {
 
     //创建时间事件,并添加到epoll
-    addTimerEvent() ;
+    int fd = addTimerEvent() ;
     tman = make_shared<TimerManager>() ;
     MyTimer time1(*tman) ;
-    //加入时间堆
+    time1.setFd(fd) ;
+    //加入时间堆 
     time1.start(&aeEventloop::notifyToSave, 1000, MyTimer::TimerType::CIRCLE);
     //将时间事件加入到epoll中
     shared_ptr<aeEvent> ae = make_shared<aeEvent>() ;
@@ -73,11 +74,14 @@ int aeEventloop :: start() {
 
 int aeEventloop :: notifyToSave(int fd) {
     uint64_t ret = 1 ;
+    cout << "写入一字节！" << endl ;
     int res = write(fd, &ret, sizeof(ret)) ;
     if(res < 0) {
         cout << __FILE__ << "    " << __LINE__ << endl ;
         return -1 ;
     }
+    cout << "写消息结束！" << endl ;
+    getchar() ;
     return 1 ;
 }
 
@@ -111,6 +115,7 @@ int aeEventloop :: aeProcessEvent(int fd) {
             if(fd == timeFd) {
                 eventData[fd]->setMask(event::timeout) ;
             }
+            cout << "可读事件" << endl ;
             int ret = eventData[fd]->processRead() ; 
             //收到处理失败
             //读到０表示退出
@@ -166,9 +171,9 @@ int aeEventloop :: addTimerEvent() {
     aev->setNoBlock(efd) ;
     aev->setReadCallBack(timerCall) ;
     aev->setConnFd(efd) ;
-    aep->add(efd, efd) ;
+    aep->add(efd, EPOLLIN) ;
     eventData[efd] = aev ;
-    return 1 ;
+    return efd ;
 }
 
 //在服务器启动的时候执行,设置回调函数
