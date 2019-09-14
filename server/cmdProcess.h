@@ -37,7 +37,7 @@ public :
     //创建
     //消息处理
     cmdProcess() {
-        cmdSet_ = make_shared<cmdSet>() ;
+        cmdSet_ = shared_ptr<cmdSet>(new cmdSet) ;
         //获取命令表
         rc = make_shared<rpc>() ;
     }

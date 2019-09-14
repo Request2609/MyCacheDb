@@ -3,17 +3,21 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <string.h>
 #include <memory>
 #include <map>
 #include <set>
+#include "timer.h"
 #include "msg.pb.h"
+#include "timer.h"
 
 using namespace Messages ;
 using namespace std ;
 
+
 namespace type {
     //该键值是string 使用get　set 方法获取
-    const int DB_STRING = 1 ;
+    const int DB_STRING = 3 ;
 } 
 
 class redisDb ;
@@ -28,20 +32,23 @@ public :
 private :
     //数据库编号
     int num ;
-    vector<shared_ptr<dbObject>> db ;
+    //string的存储方式,第一个元素是数据库编号，第二个是命令类别，第三个是具体的数据对象，三元组确定对象
+    map<pair<pair<int, int>, string>, shared_ptr<dbObject>> db ;
 public :
     //往数据库中写数据
     int initDb() ;
     //获取当前数据库id
     //判断数据库是否为空
     int isEmpty() { return db.size() ; }
+    void print() ;
     void setId(int id) { this->num = id ; }
     int getId() { return num ; }
     shared_ptr<dbObject>getNextDb() ;
-    string findGetRequest(string name) ;
+    string findGetRequest(string name, int num) ;
     void queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
-    void append(shared_ptr<dbObject>rdb) { db.push_back(rdb); }
-    //命令键
+    void append(shared_ptr<dbObject>rdb) ;
+    int getSize() { return db.size(); }
+        //命令键
     int isExist(shared_ptr<Command>&cmds) ;
     //获取key
     //删除当前数据库中的一个对象
@@ -54,6 +61,7 @@ public:
     dbObject() {}
     virtual ~dbObject() {}
 public :
+    virtual void print() = 0;
     //set操作
     virtual long long  getEndTime() = 0 ;
     virtual void setEndTime(long long e) = 0 ;
@@ -76,9 +84,12 @@ private :
 //set对象
 class setCommand : public dbObject {
 public :
-    setCommand() {}
+    setCommand() {
+        timeout = -1 ;
+    }
     ~setCommand() {}
 public :
+    void print() ;
     long long getEndTime() { return timeout ; }
     void setEndTime(long long e) {this->timeout = e ;} 
     int getType() { return type ; }
@@ -105,6 +116,7 @@ public :
     string key ;
     string value ;
 } ;
+
 /*
 class getCommand : public dbObject {
     
@@ -127,7 +139,7 @@ private:
 class factory {
 public :
     static shared_ptr<dbObject> getObject(string cmd) {
-        if(cmd == "set") {
+        if(!strcasecmp(cmd.c_str(), "set")) {
             shared_ptr<setCommand> tmp(new setCommand) ;
             return tmp ;
         }   

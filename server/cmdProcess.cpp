@@ -7,30 +7,23 @@ int cmdProcess :: findCmd(const shared_ptr<Command>tmp) {
     string cc = tmp->cmd() ;
     //查找消息
     ret = cmdSet_->findCmd(cc) ;
+    cout << "查找结果！"<< endl ;
     return ret ;
 }
 
+//向数据库中导入数据
 int cmdProcess :: initRedis() {
     //导入数据库中的数据
-    
+    cmdSet_->initRedis() ;
 }
 //消息回调
 void cmdProcess :: timeCb() {
     //保存当前数据中的所有数据
-    cmdSet_->rdbSave() ;
 }
 
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     
-    if(tmp->getMask() == event::timeout) {
-        cout << "定时事件" << endl ;
-        //进行一次持久化
-        cmdSet_->rdbSave() ;
-        cout <<"保存完成！" << endl ;
-        return 1 ;
-    }
-
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果
     string* buff = bf->getBuf() ;
@@ -57,18 +50,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         shared_ptr<Response>r = cmdSet_->getResponse() ;
         res.set_reply(r->reply()) ;
         //销毁响应的智能指针
-        r = nullptr ;/*
-        //传入的键值不合法
-        if(ret == NOT_FOUND) {
-        } 
-        if(ret == KEY_INVALID) {
-        }
-        if(ret == SUCESS_) {
-            res = backInfo :: okReply() ;
-        }
-        if(ret == PROCESS_ERROR) {
-            res = backInfo::processError() ;
-        }   */
+        r = nullptr ;
     } 
     shared_ptr<Response>re(new Response(res)) ;
     rc->response(re, tmp->getConnFd()) ;

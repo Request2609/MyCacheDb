@@ -49,6 +49,7 @@ int rpc :: Connect() {
 int rpc :: sendRequest(vector<string>&argStl, int num) { 
     int count = 0 ;
     this->num = num ;
+    cout<< "hhhhhhhhhhhhh" << endl ;
     int ret = request(conFd, argStl, num) ; 
     //断开连接
     if(ret == 5) {

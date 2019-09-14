@@ -17,6 +17,7 @@ class rpc {
     typedef function<shared_ptr<Command>(string*)> parse ;
 public:
     rpc() {
+        cout << "rpc........." << endl ;
         cmd = make_shared<Command>() ;
         parseMethod = requestMethod ;
     }

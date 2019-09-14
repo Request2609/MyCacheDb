@@ -23,6 +23,7 @@ int rpc :: response(shared_ptr<Response>res, int fd) {
         cout << __FILE__ << "      " << __LINE__ << endl ;
         return -1 ;
     }
+    cout << "发送回复成功！" << endl ;
     return ret ;
 }
 

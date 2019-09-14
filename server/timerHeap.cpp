@@ -41,7 +41,6 @@ void MyTimer::on_timer(unsigned long long now) {
 	else {
 		m_nHeapIndex = -1;
 	}
-    cout << "时间到！" << endl ;
 	m_timerfunc(fd);
 }
  

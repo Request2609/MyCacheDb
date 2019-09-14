@@ -26,6 +26,9 @@ public :
 
 class request {
 public :
+    static void setSet(vector<string>&res, Command& com) ;
+    static void setGet(vector<string>&res, Command& com) ;
+    static void setBgSave(vector<string>&res,Command& com) ;
     static int isConnect(int fd) ;
     static int sendAfterSerial(int fd, Command& cmd) ;
     static int sendReq(int fd, vector<string>&res, int num) ;

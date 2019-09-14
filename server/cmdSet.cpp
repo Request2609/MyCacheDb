@@ -2,22 +2,36 @@
 #include "enum.h"
 #include "rdb.h"
 
-
-int cmdSet :: rdbSave() {
-    cout << "开始------>" << endl ;
-    ofstream out(".rdb/.redis_rdb", ios::out|ios::binary|ios::trunc) ;
+int cmdSet :: rdbSave(vector<pair<int, shared_ptr<redisDb>>>& dls) {
+    //存储各个数据库文件的文件
+    ofstream out(".rdb/.redis_fileName", ios::out|ios::binary|ios::trunc) ;
     //遍历数据库进行保存
-    for(pair<int, shared_ptr<redisDb>>p : dbLs) {
-        if(!p.second->isEmpty()) {
-            rdb :: save(p.second, out) ;
+    //先创建存储数据库文件名的文件
+    char fileName[100] ;
+    bzero(fileName, sizeof(fileName)) ;
+    int ret  = 1 ;
+    for(auto p : dls) {
+        if(!p.second->getSize()) {
+            continue ;
+        }
+        //根据编号构造文件名
+        sprintf(fileName, ".rdb/.db_%d", p.first) ;
+        //将数据库文件名存在文件中
+        out << fileName << endl ;
+        //将数据库和文件名传进rdb持久化程序进行处理
+        ret = rdb :: save(p.second, fileName) ;
+        if(ret < 0) {
+            return -1 ;
         }
     }
     out.close() ;
+    return ret ;
 }
 
 //初始化数据库
 int cmdSet :: initRedis() {
-    rdb :: initRedis(this) ;
+
+   rdb :: initRedis(this) ;
 }
 
 int cmdSet:: findCmd(string cmd) {
@@ -35,6 +49,17 @@ int cmdSet :: expend(int num) {
 
 int cmdSet :: countRedis() {
     return dbLs.size() ;
+}
+
+void cmdSet :: addObjectToDb(int num, shared_ptr<dbObject>ob) {
+    ob->setNum(num) ;
+    for(auto s : dbLs) {
+        if(s.first == num) {
+            s.second->append(ob) ;
+            break ;
+        }
+    }
+    return ;
 }
 
 shared_ptr<redisDb> cmdSet :: getDB(int num) {
@@ -67,10 +92,16 @@ int cmdSet :: setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd, shared_p
         se->setKey(cmd->keys(0).key(0)) ;
         se->setValue(cmd->vals(0).val(0)) ;
         //将数据存在相应的数据库中
-        wcmd->append(se) ;
+        wcmd->append(se) ;      
     }
     res->set_reply("OK") ;
     return SUCESS ;
+}
+
+int cmdSet :: append(shared_ptr<redisDb> db) {
+    int num = db->getId() ;
+    dbLs.push_back({num, db}) ;
+    return 1 ;
 }
 
 //get命令处理函数
@@ -85,32 +116,40 @@ int cmdSet :: isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) {
        return ret ;
 }
 
+
+
 int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
     shared_ptr<redisDb> wrdb = getDB(num) ;
     string cd = cmd->cmd() ;
-    //不区分大小写
+    //不区分大小写a
+    int a ;
     if(!strcasecmp(cd.c_str(), "set")) {
         //调用命令对应的函数
-        int ret = cmdList[cd]->cb(wrdb, cmd, response) ;
+        a = cmdList[cd]->cb(wrdb, cmd, response) ;
         //处理失败
-        if(ret < 0) {
-            return PROCESSERROR ;
-        }
-        return SUCESS ;
     }
     //get 命令
     if(!strcasecmp(cd.c_str(), "get")) {
-        int a = cmdList[cd]->cb(wrdb, cmd, response) ;
-        if(a < 0) {
-            return PROCESSERROR ;
-        }
-        return SUCESS ;
+        a = cmdList[cd]->cb(wrdb, cmd, response) ;
     }
-
+    if(!strcasecmp(cd.c_str(), "bgsave")) {
+        //将数据库遍历一遍
+        a = cmdList[cd]->saveCb(dbLs) ;
+        if(a < 0) {
+            response->set_reply("SAVE FAIL!") ;
+        }
+        else {
+            response->set_reply("OK") ;
+        }
+    }
     //下面是一系列命令
+    if(a < 0) {
+        return PROCESSERROR ;
+    }
+    return SUCESS ;
 }
 
 int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 

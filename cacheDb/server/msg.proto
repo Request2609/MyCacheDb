@@ -1,0 +1,38 @@
+syntax = "proto2" ; 
+
+package Messages ;
+
+//命令的值
+message Value {
+    repeated string val = 1;
+}
+
+message Key {
+    repeated string key = 1 ;
+}
+
+message Time {
+    optional double time = 1;
+}
+
+message Command {
+    //标识发送是失败还是成功
+    optional int32 status = 1;
+    //命令
+    required string cmd = 2;
+    //命令长度
+    optional int32 len = 3 ;   
+    //命令的键
+    repeated Key keys = 4;
+    //值    
+    repeated  Value vals  = 5;
+    //命令类型
+    optional bool type = 6 ;
+    //正在操作的数据库编号
+    optional int32 num = 7 ;
+    optional Time time = 8;
+}   
+
+message Response {
+    required string reply = 1 ;
+}

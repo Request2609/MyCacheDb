@@ -4,15 +4,6 @@
 
 void clientLoop :: start(string ip, string port) {
 
-    /*    int connFd = client->anetCreateSock() ;
-    if(connFd < 0) {
-        stop =true ;
-    }
-    servFd = client->clientConnect(ip, port) ;
-    if(connFd < 0) {
-        stop = true ;
-    }
-  */  //给rpc设置端口
     rc->setAddress(ip, port) ;
     //连接服务器
     int ret = rc->Connect() ;
@@ -31,6 +22,7 @@ void clientLoop :: start(string ip, string port) {
         //解析命令
         cmdStl = split(cmd, " ") ;
         //退出
+        cout << "解析完成！" << endl ;
         if(cmd == "quit" || cmd == "q") {
             rc->disConnect() ; 
             cout << "bye bye!" << endl ; 

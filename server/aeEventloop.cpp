@@ -41,15 +41,16 @@ int aeEventloop :: addServerEvent(string addr, string port) {
 int aeEventloop :: start() {
 
     //创建时间事件,并添加到epoll
-    int fd = addTimerEvent() ;
+ /*   int fd = addTimerEvent() ;
     tman = make_shared<TimerManager>() ;
     MyTimer time1(*tman) ;
     time1.setFd(fd) ;
     //加入时间堆 
     time1.start(&aeEventloop::notifyToSave, 1000, MyTimer::TimerType::CIRCLE);
     //将时间事件加入到epoll中
-    shared_ptr<aeEvent> ae = make_shared<aeEvent>() ;
+    shared_ptr<aeEvent> ae = make_shared<aeEvent>() ;*/
     while(!stop) {
+        cout <<"开始检测"<< endl ;
         int ret = aep->wait(fireList) ;
         if(ret < 0) {
             return -1 ;
@@ -64,7 +65,7 @@ int aeEventloop :: start() {
             //处理完成以后
             aeProcessEvent(fd) ;
             //检测一次时间事件
-            tman->detect_timers() ;
+    //        tman->detect_timers() ;
         }
         //清除活跃事件表
         fireList.clear() ;     
@@ -74,14 +75,11 @@ int aeEventloop :: start() {
 
 int aeEventloop :: notifyToSave(int fd) {
     uint64_t ret = 1 ;
-    cout << "写入一字节！" << endl ;
     int res = write(fd, &ret, sizeof(ret)) ;
     if(res < 0) {
         cout << __FILE__ << "    " << __LINE__ << endl ;
         return -1 ;
     }
-    cout << "写消息结束！" << endl ;
-    getchar() ;
     return 1 ;
 }
 
@@ -115,7 +113,6 @@ int aeEventloop :: aeProcessEvent(int fd) {
             if(fd == timeFd) {
                 eventData[fd]->setMask(event::timeout) ;
             }
-            cout << "可读事件" << endl ;
             int ret = eventData[fd]->processRead() ; 
             //收到处理失败
             //读到０表示退出
@@ -145,7 +142,7 @@ int aeEventloop :: acceptNewConnect(int fd) {
         cout << __FILE__ <<  "       " << __LINE__ << " " << strerror(errno)<< endl ;
         return -1 ;
     }
-    //创建相应的aeEvent事件
+    //创建.相应的aeEvent事件
     //设置度写回调函
     shared_ptr<aeEvent>tmp = make_shared<aeEvent>() ;
     //设置数据库号码，刚开始是０号数据库

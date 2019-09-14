@@ -36,10 +36,9 @@ int main() {
         		free(out);
         		return 0;
 	}
-
-	cout << "压缩后：val = " << out << endl;
+    string a = (char*)out ;
+	cout << "压缩后：val = " << a << endl;
 	cout << "压缩后：len = " << comprlen << endl << endl;
-	
 	// -------------------解压缩---------------------------------
 	char  *val = NULL;
 
@@ -51,7 +50,7 @@ int main() {
 	}
     
    	 // 解压，得出字符串
-   	 if (lzf_decompress(out, comprlen, val, len) == 0) 
+   	 if (lzf_decompress(a.data(), comprlen, val, len) == 0) 
 	{
 		cout << "lzf_decompress" << endl;
 		return 0;

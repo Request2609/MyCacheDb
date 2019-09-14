@@ -7,12 +7,14 @@ static cmdProcess cmdPro ;
 static shared_ptr<rpc>rc = nullptr ;
 
 int readOnMessage(shared_ptr<aeEvent>tmp) { 
-
     //处理事件    
     //设置rpc
     //如果是空，就重新将文件中的数据读出
+    cout << "hahhahhahhahhah" << endl; 
     if(rc == nullptr) {
         
+        cout << "初始化数据库！～" << endl ;
+        cmdPro.initRedis() ; 
     }
     rc = make_shared<rpc>() ;
     cmdPro.setRpc(rc) ;

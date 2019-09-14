@@ -32,6 +32,7 @@ class redisCommand ;
 class redisCommand {
     //该命令的的处理函数
     typedef function<int(shared_ptr<redisDb>&, shared_ptr<Command>&, shared_ptr<Response>&)>call ;
+    typedef function<int(vector<pair<int, shared_ptr<redisDb>>>&db)> saveCall;
 public :
     redisCommand(string name, int arity, string flag,  
                  int fir, int last, int keyStep, long long msecond, long long calls) {
@@ -47,10 +48,13 @@ public :
     } 
     ~redisCommand() {}
 public :
+    int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
     int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
+    void setCallBack(saveCall save) { this->save = save ;}
     void setCallBack(call cb) { this->callBack = cb ; }
     //函数指针，指向命令的具体实现
 private :
+    saveCall save;
     call callBack ;
 private :
     string stringRes ;
@@ -88,21 +92,29 @@ public:
         shared_ptr<redisCommand>tget(new redisCommand("get", -3, "wm",  1, 1, 1, 0, 0)) ;
         tget->setCallBack(getCmd) ;
         cmdList.insert(make_pair("get", tget)) ;
+        //设置数据库命令
+        shared_ptr<redisCommand>bgsave(new redisCommand("bgsave", -3, "r", 1, 1, 1, 0, 0)) ;
+        bgsave->setCallBack(rdbSave) ;
+        cmdList.insert({"bgsave", bgsave}) ;
     } 
 
     ~cmdSet() {}
 public :
+    int getSize() { return dbLs.size() ; }
     int expend(int num) ;
     int countRedis() ;
     int initRedis() ;
     int redisCommandProc(int num, shared_ptr<Command>& cmd) ;
+    void addObjectToDb(int num, shared_ptr<dbObject>ob) ;
     shared_ptr<redisDb> getDB(int num) ;
     //扩大数据库
     //返回命令集合
     int findCmd(string cmd) ;  
     shared_ptr<Response> getResponse() { return response ; }
+    int bgSaveCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
+    int append(shared_ptr<redisDb> db) ;
 public :
-    int rdbSave() ;
+    static int rdbSave(vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
     static int isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) ;
     static int setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res);
     static int getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
