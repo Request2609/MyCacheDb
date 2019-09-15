@@ -4,7 +4,6 @@
 shared_ptr<Command> rpc :: getParseString(string* buff) {
     //在消息处理处，反序列化
     auto res = parseMethod(buff) ;
-    cout << "反序列化！" << res->cmd() << endl ;
     return res ;
 }
 
@@ -23,7 +22,6 @@ int rpc :: response(shared_ptr<Response>res, int fd) {
         cout << __FILE__ << "      " << __LINE__ << endl ;
         return -1 ;
     }
-    cout << "发送回复成功！" << endl ;
     return ret ;
 }
 

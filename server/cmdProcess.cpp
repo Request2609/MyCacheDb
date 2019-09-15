@@ -7,7 +7,6 @@ int cmdProcess :: findCmd(const shared_ptr<Command>tmp) {
     string cc = tmp->cmd() ;
     //查找消息
     ret = cmdSet_->findCmd(cc) ;
-    cout << "查找结果！"<< endl ;
     return ret ;
 }
 

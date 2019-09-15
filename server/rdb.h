@@ -70,7 +70,7 @@ public:
     rdb() {}
     ~rdb() {}
     //判断字符串是否是数字
-    static void * lzfCompress(const string& value, int& len) ;
+    static string lzfCompress(const string value, int& len) ;
     static bool isNum(const char* num) ;
     //获取字符串的编码类型
     static int getStringEncodingType(const string value) ;

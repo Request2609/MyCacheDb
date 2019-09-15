@@ -1,3 +1,4 @@
+#include <iostream>
 /*
  * Copyright (c) 2000-2010 Marc Alexander Lehmann <schmorp@schmorp.de>
  *

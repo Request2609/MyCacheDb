@@ -87,38 +87,51 @@ void rdb :: processString(const string key, ofstream& out, const string value) {
             //压缩值
             //将字符串原长保存到文件
             int ll = 0 ;
-            void* ot = lzfCompress(value, ll) ;
-            if(ot == NULL) {
-                cout << "无效数据"<< endl ;
+            
+            string a = lzfCompress(value, ll) ;
+            if(a.empty()) {
+                cout << "无效数据" << endl ;
+                cout << "存储失败！" << endl ;
+                return  ;
             }
-            string a = (char*)ot ;
             out << "xc:" << ll << "\r\n" ;
             out << key << ":" ;
-            cout << "压缩的数据。。。。。"<< a << endl ;
             out << a <<"\r$\n" ;
             //销毁ot内存
-            free(ot) ;
         }
     }
 }
 
-//压缩
-void* rdb :: lzfCompress(const string& value, int& ll) {
-    size_t len = value.size() ;
-    size_t outlen = len-4 ;
-    void* out ;
-    if((out = malloc(outlen+1)) == NULL) {
-        cout << __FILE__ << "     " << __LINE__ << endl ;
-        return NULL ;
+string rdb :: lzfCompress(string value, int& ll) {
+    size_t len = value.size();  // 字符串未压缩前的长度
+    size_t comprlen;  // 压缩后的长度
+    size_t outlen;    // 输出缓存的最大长度
+    void *out;
+    //当字节至少四字节长以上时才能压缩
+    if (len <= 4) {
+        cout << "len <= 4" << endl;
+        return "";
     }
-    size_t l = lzf_compress(value.data(), len, out, outlen) ;
-    if(l == 0) {
-        free(out) ;
-        return NULL ;
+    
+    outlen = len-4;
+    
+    if ((out = malloc(outlen+3)) == NULL) 
+    {
+        cout << "out = malloc(outlen+1)" << endl;
+        return "";
     }
-    ll = l ;
-    return out ;
-}   
+    //传入数据，数据长度，任意类型的指针
+    comprlen = lzf_compress(value.data(), len, out, outlen);  
+    if (comprlen == 0) 
+    {
+                free(out);
+                return "";
+    }
+    ll = comprlen ;
+    string a = (char*)out ;
+    free(out) ;
+    return a ;
+}
 
 int rdb :: getStringEncodingType(const string value) {
 

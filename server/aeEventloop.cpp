@@ -1,5 +1,4 @@
 #include "aeEventloop.h"
-#include <stdlib.h>
 //初始化事件
 //创建epoll句柄等工作
 aeEventloop :: aeEventloop() {
@@ -50,7 +49,6 @@ int aeEventloop :: start() {
     //将时间事件加入到epoll中
     shared_ptr<aeEvent> ae = make_shared<aeEvent>() ;*/
     while(!stop) {
-        cout <<"开始检测"<< endl ;
         int ret = aep->wait(fireList) ;
         if(ret < 0) {
             return -1 ;
@@ -65,7 +63,6 @@ int aeEventloop :: start() {
             //处理完成以后
             aeProcessEvent(fd) ;
             //检测一次时间事件
-    //        tman->detect_timers() ;
         }
         //清除活跃事件表
         fireList.clear() ;     

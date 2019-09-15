@@ -58,23 +58,17 @@ void recoverDb :: stringGet(string& s, shared_ptr<dbObject>&ob) {
     }
     else if(ecode == STRING_ ::REDIS_ENCODING_RAW){
         long ss = getYC(s) ;
+        int dn = 0 ;
+        ///原长大于20字节,获取压缩后的长度
         if(ss > 20) {
-            int n = getXC(s) ;
-            cout << "现长:"<<n << endl ;
+            dn = getXC(s) ;
         }
         key = getKey(s) ;
         value = getValue(s);
-        //获取到原长
-        if(ss <= 20){
-            cout << "key:" <<key << endl ;
-            cout << "value :" << value << endl ;
-        }
-
         //解码
-        else {   
+        if(ss > 20){   
             char* val = (char*)malloc(ss) ;
-            cout <<"压缩数据："<< value <<"     "<< "数据长度："<< ss<< endl ;
-            int ret = lzf_decompress(value.data(), (int)value.size(), val, ss) ;
+            int ret = lzf_decompress(value.data(), dn, val, ss) ;
             if(ret == 0) {
                 free(val) ;
                 cout << __FILE__ << "   "<<__LINE__ << endl ;
@@ -128,9 +122,6 @@ string recoverDb :: getKey(string& buf, string& value) {
 }
 
 string recoverDb :: getValue(string& s) {
-    cout << "-----------------------当前剩余数据----------------------" << endl ;
-    cout << s << endl ;
-    cout << "---------------------------------------------------------" << endl ;
     long index = s.find(":") ;
     string value ;
     long i = 0 ;

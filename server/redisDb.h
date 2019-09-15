@@ -13,7 +13,7 @@
 
 using namespace Messages ;
 using namespace std ;
-
+using namespace google ;
 
 namespace type {
     //该键值是string 使用get　set 方法获取

@@ -97,8 +97,8 @@ public:
         bgsave->setCallBack(rdbSave) ;
         cmdList.insert({"bgsave", bgsave}) ;
     } 
-
     ~cmdSet() {}
+
 public :
     int getSize() { return dbLs.size() ; }
     int expend(int num) ;

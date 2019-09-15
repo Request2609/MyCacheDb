@@ -52,9 +52,7 @@ int aeEpoll :: wait(vector<epoll_event>&ls) {
         return -1 ;
     }
     else {
-        cout << "触发事件！"<< endl ;
         for(int i=0; i < eventNum; i++) {
-            cout << eventFds[i].data.fd << endl ;
             ls.push_back(eventFds[i]) ;
         }
     }
