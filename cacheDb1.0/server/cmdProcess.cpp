@@ -53,6 +53,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         //销毁响应的智能指针
         r = nullptr ;
     } 
+    cout << "结果：－－－》" << res.reply() << endl ;
     shared_ptr<Response>re(new Response(res)) ;
     rc->response(re, tmp->getConnFd()) ;
     bf->clear() ;

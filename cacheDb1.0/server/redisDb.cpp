@@ -9,9 +9,24 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         int num = cmds->num() ;
         string key = cmds->keys(0).key(0) ;
         auto res = db.find({{num, type::DB_STRING}, key}) ;
+        res->second->setNum(cmds->num()) ;
+        res->second->setValue(cmds->vals(0).val(0)) ;
         if(res != db.end()) {
             return 1 ;
         }
+    }
+    if(cmd == "hset") {
+        int num = cmds->num() ;
+        string key = cmds->keys(0).key(0) ;
+        string kk = cmds->keys(1).key(0) ;
+        string vv = cmds->vals(0).val(0) ;
+        auto  res = db.find({{num, type::DB_HASH}, key}) ;
+        if(res == db.end()) {
+            cout << "没找到" << endl ;
+            return 1 ;
+        }
+        res->second->setValue(kk, vv.c_str()) ;
+        res->second->setNum(cmds->num()) ;
     }
     return 0 ;
 }
@@ -74,6 +89,10 @@ void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
 
 string redisDb :: findHgetRequest(const string key, 
                                   const string feild) {
+    cout << "当前数据库中的数据：" << endl ;
+    print() ;
+    cout << "--------------------" << endl ;
+    cout << num <<"       " <<  DB_HASH <<  "       " << key << endl ;
     auto res = db.find({{num, DB_HASH}, key}) ;
     if(res == db.end()) {
         return "no the object!" ;

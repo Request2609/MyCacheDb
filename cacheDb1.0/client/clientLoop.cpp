@@ -5,7 +5,6 @@ vector<string> clientLoop :: split(const string &s, const string &seperator){
     vector<string> result;
     typedef string::size_type string_size;
     string_size i = 0;
-
     while(i != s.size()){
         //找到字符串中首个不等于分隔符的字母；
         int flag = 0;
@@ -56,6 +55,9 @@ void clientLoop :: start(string ip, string port) {
         //加入历史列表
         add_history(p) ;
         cmd = p ;
+        if(cmd.size() == 0) {
+            continue ;
+        }
         if(!strcasecmp(cmd.c_str(), "clear") || !strcasecmp(cmd.c_str(), "cls")) {
             system("clear") ;
             continue ;
@@ -72,8 +74,9 @@ void clientLoop :: start(string ip, string port) {
         int ret = rc->sendRequest(cmdStl, num) ;
         if(ret == 5) {
             cout << "无法连接到服务器！～"<< endl ;
+            continue ;
         }
-        if(ret < 0) {
+        if(ret == -5||ret < 0) {
             continue ;
         }
         //返回结果并打印
@@ -84,7 +87,6 @@ void clientLoop :: start(string ip, string port) {
 }
 
 int clientLoop :: setEndSig() {
-      
 }
 
 //向服务器发送请求
@@ -103,26 +105,6 @@ int clientLoop :: sendRequest(string& res) {
             return  -1 ;
         }
     }
-    /*
-    //要是消息长度大于65535
-    else {
-        //设置最后一个元素为０，表示没发完
-        char buff[65535] ;  
-        int pos = 0 ;
-        while(len <= 0) {
-            if(len < 65535) {
-
-            }
-            strcpy(buff, res.substr(pos, pos+65535).c_str()) ;
-            ret = writen(connFd, buff, sizeof(buff)) ;
-            if(ret < 0) {
-                cout << __FILE__ <<"       "<< __LINE__ << endl ;
-                return -1 ;
-            }
-            pos+=65535 ;
-            len-=ret ;
-        } 
-    }*/
     return ret ;
 }
 

@@ -50,8 +50,8 @@ int rpc :: sendRequest(vector<string>&argStl, int num) {
     int count = 0 ;
     this->num = num ;
     int ret = request(conFd, argStl, num) ; 
-    if(ret < 0) {
-        return -1 ;
+    if(ret == -5) {
+        return ret ;
     }
     //断开连接
     if(ret == 5) {
@@ -70,5 +70,8 @@ int rpc :: sendRequest(vector<string>&argStl, int num) {
         return 1 ;
     }
     ret = request(conFd, argStl, num) ;
+    if(ret < 0) {
+        return -1 ;
+    }
     return 1 ;
 }

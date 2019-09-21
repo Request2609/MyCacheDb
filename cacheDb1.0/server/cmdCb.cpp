@@ -3,6 +3,12 @@
 int cmdCb :: setHash(shared_ptr<redisDb>&wcmd, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {               
+    //判断是否存在
+   int ret =  wcmd->isExist(tmp) ;
+   if(ret == 0) {
+       res->set_reply("OK") ;
+        return 1;
+   }
     shared_ptr<dbObject>se = factory::getObject("hset");
     if(se == nullptr) {
         return -1 ;
@@ -27,6 +33,7 @@ int cmdCb :: setHash(shared_ptr<redisDb>&wcmd,
     se->setType(type::DB_HASH) ;
     wcmd->append(se) ;
     res->set_reply("OK") ;
+    return 1 ;
 }
 
 int cmdCb :: setHget(shared_ptr<redisDb>&db, 
@@ -38,6 +45,7 @@ int cmdCb :: setHget(shared_ptr<redisDb>&db,
 
 int cmdCb :: isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) {
        int ret = wcmd->isExist(cmd) ;
+       cout << ret << endl ;
        return ret ;
 }
 

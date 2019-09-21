@@ -83,13 +83,14 @@ int request :: sendReq(int fd, vector<string>&res, int num) {
     //没找到命令
     if(ret == cd.cmdList.end()) {
         cout << "command not found!"<< endl ;  
-        return -1;
+        return -5;
     }
     else {
         //从第一个数据
         int r = processCmd(res, cmd) ;
+    
         if(r < 0) {
-            return -1;
+            return -5;
         }
         //序列化,并发送给服务器
     }
