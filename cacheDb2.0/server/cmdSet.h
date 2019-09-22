@@ -53,7 +53,6 @@ public :
     int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
     void setCallBack(saveCall save) { this->save = save ;}
     void setCallBack(call cb) { 
-        cout << "设置灰调函数！" << endl ;
         this->callBack = cb ; 
     }
     string getName() { return name ; }

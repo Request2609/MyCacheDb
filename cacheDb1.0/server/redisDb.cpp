@@ -20,12 +20,24 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         string key = cmds->keys(0).key(0) ;
         string kk = cmds->keys(1).key(0) ;
         string vv = cmds->vals(0).val(0) ;
-        auto  res = db.find({{num, type::DB_HASH}, key}) ;
+        auto res = db.find({{num, type::DB_HASH}, key}) ;
         if(res == db.end()) {
             cout << "没找到" << endl ;
             return 1 ;
         }
-        res->second->setValue(kk, vv.c_str()) ;
+        int k_len = cmds->keys_size() ;
+        for(int i=1; i<k_len; i++) {
+            int lk = cmds->keys(i).key_size() ;
+            int lv = cmds->vals(i-1).val_size() ;
+            if(lk != lv) {
+                return -1 ;
+            }
+            for(int j=0; j<lk; j++) {
+                string kk = cmds->keys(i).key(j) ;
+                string vv = cmds->vals(i-1).val(j) ;
+                res->second->setValue(kk, vv.c_str()) ;
+            }
+        }
         res->second->setNum(cmds->num()) ;
     }
     return 0 ;

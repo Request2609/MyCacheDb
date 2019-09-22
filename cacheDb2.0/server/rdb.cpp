@@ -1,8 +1,8 @@
 #include "rdb.h"
 
 //保存到文件
-int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {  
-    
+int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
+    cout << "数据库中的对象数量！" << db->getSize() << endl ;
     ofstream out(fileName, ios::out|ios::binary|ios::trunc) ;
     //以二进制写形式创建rdb文件
     if(out.fail()) {
@@ -24,6 +24,7 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
         //字符串类别是string
         out << "e:" ;
         if(type == DB_STRING) {
+            cout << "string lei xing !" << endl ;
             string value = rd->getValue() ;
             string key = rd->getKey() ;
             out << rd->getEndTime() << "\r\n" ;
@@ -45,7 +46,6 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
 }
 
 void rdb :: processHash(ofstream& out, const shared_ptr<dbObject>rd) {
-    cout << "处理hash事件！" << endl ;
     string key = rd->getKey() ;
     string value="" ;
     int len = 0 ;
@@ -87,7 +87,6 @@ void rdb :: processString(const string key, ofstream& out, const string value) {
         int16_t a = atoi(v) ;
         //将键值写入到文件中
         out << key <<":" << a << "\r$\n" ;
-
     }   
     else if(type == ENCODING_INT::INT32) {
         out << "ec:" << ENCODING_INT::INT8 << "\r\n" ;
@@ -111,10 +110,11 @@ void rdb :: processString(const string key, ofstream& out, const string value) {
             //压缩值
             //将字符串原长保存到文件
             int ll = 0 ; 
-
-            string a = lzfCompress(value, ll) ;
+            
+            string a = lzfCompress(value, ll);
             if(a.empty()) {
-                return  ;
+                ll = value.size() ;
+                a = value ;
             }
             out << "xc:" << ll << "\r\n" ;
             out << key << ":" ;
@@ -130,7 +130,6 @@ string rdb :: lzfCompress(string value, int& ll) {
     void *out;
     //当字节至少四字节长以上时才能压缩
     if (len <= 4) {
-        cout << "len <= 4" << endl;
         return "";
     }
     
@@ -145,8 +144,9 @@ string rdb :: lzfCompress(string value, int& ll) {
     comprlen = lzf_compress(value.data(), len, out, outlen);  
     if (comprlen == 0) 
     {
-                free(out);
-                return "";
+        cout << "压缩失败！"<< endl ;
+        free(out);
+        return "";
     }
     ll = comprlen ;
     string a = (char*)out ;

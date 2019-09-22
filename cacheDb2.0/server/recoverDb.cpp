@@ -1,6 +1,7 @@
 #include "recoverDb.h"
 
 shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
+    cout <<"正在恢复数据库！" << endl ;
     if(!isRedis(s)) {
         return nullptr ;
     }
@@ -32,11 +33,13 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             cmdset->addObjectToDb(num, ob) ;
         }
         if(type == CMDTYPE_::DB_HASH) {
+            cout << "检测到hash " << endl ;
             shared_ptr<dbObject> ob = factory :: getObject("hset") ;
             ob->setType(DB_HASH) ;
             ob->setNum(num) ;
             ob->setEndTime(times) ;
-            int ret = hashGet(s, ob) ;  
+            int ret = hashGet(s, ob) ; 
+            
             if(ret < 0) {
                 return nullptr ;
             }
@@ -59,6 +62,7 @@ int recoverDb :: hashGet(string& s, shared_ptr<dbObject>&ob) {
         }
         ob->setValue(pp.first, pp.second.c_str()) ;
     }
+    return 1 ;
 }
 
 bool recoverDb :: isOk(long index) {
@@ -70,8 +74,12 @@ bool recoverDb :: isOk(long index) {
 
 pair<string, string> recoverDb :: getAttrKV(string& s) {
     long index = s.find(":") ;
+    int end = s.find("\r$\n") ;
+    if(end == 0) {
+        return {"", ""} ;
+    }
     if(!isOk(index)) {
-            return {"", ""} ;
+        return {"", ""} ;
     }
     string key = s.substr(0, index) ;
     s = s.c_str() + index + 1 ;
@@ -80,20 +88,20 @@ pair<string, string> recoverDb :: getAttrKV(string& s) {
         return {"", ""} ;
     }
     string value = s.substr(0, index) ;
-    s = s.c_str() + index + 2 +index ; 
+    s = s.c_str() + index + 2 ; 
     pair<string, string> pp = make_pair(key, value) ;
     return pp ;
 }
 
 //获取key对象
 string recoverDb :: getHashKey(string& s) {
-    int index = s.find("\r\n") ;
+    long index = s.find("\r\n") ;
     string key ;
     long i = 0 ;
     for(i=index+2; s[i] != '\r'; i++) {
         key += s[i] ;
     }
-    s = s.c_str()+2 ;
+    s = s.c_str()+2+i ;
     return key ;
 }
 
@@ -125,15 +133,20 @@ void recoverDb :: stringGet(string& s, shared_ptr<dbObject>&ob) {
         value = getValue(s);
         //解码
         if(ss > 20){   
-            char* val = (char*)malloc(ss) ;
-            int ret = lzf_decompress(value.data(), dn, val, ss) ;
-            if(ret == 0) {
-                free(val) ;
-                cout << __FILE__ << "   "<<__LINE__ << endl ;
-                return ;
+            //原长不等于从文件中读出的现长，压缩过
+            //否则在压缩的时候失败了，不用解压缩
+            if(dn != ss) {
+                char* val = (char*)malloc(ss) ;
+                int ret = lzf_decompress(value.data(), dn, val, ss) ;
+                if(ret == 0) {
+                    cout << "解压失败！" << endl ;
+                    free(val) ;
+                }
+                else {
+                    value = val ;
+                    free(val) ;
+                }
             }
-            value = val ;
-            free(val) ;
         }
     }
     ob->setType(DB_STRING) ; 

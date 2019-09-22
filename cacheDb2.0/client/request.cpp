@@ -5,10 +5,11 @@ void cmds :: build() {
     cmdList.insert(make_pair("set", 3)) ;
     cmdList.insert(make_pair("get", 2)) ;
     //验证命令
-    cmdList.insert({"bgsave", 1}) ;
+    cmdList.insert({"save", 1}) ;
     //-1代表不定参数
     cmdList.insert({"hset", -1}) ;
     cmdList.insert({"hget", 3}) ;
+    cmdList.insert({"bgsave", 1}) ;
 }
 
 cmds :: cmds() {
@@ -42,7 +43,7 @@ int request :: processCmd(vector<string>&res, Command&com) {
         }   
         cmdProcess :: setGet(res, com) ;
     }
-    else if(!strcasecmp(res[0].c_str(), "bgsave")) {
+    else if(!strcasecmp(res[0].c_str(), "save")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {
             cout << "error command!" << endl ;
@@ -70,6 +71,7 @@ int request :: processCmd(vector<string>&res, Command&com) {
         cout << "command not found" << endl ;
         return -1 ;
     }
+    return 1 ;
 }
 
 
@@ -93,6 +95,7 @@ int request :: sendReq(int fd, vector<string>&res, int num) {
         }
     }
     int s = sendAfterSerial(fd, cmd) ;
+    //cout << "fasongwancheng!" << endl ;
     return s ;
 }
 
@@ -132,6 +135,7 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
         cout << "errno connect" << endl ;
         return -1;
     }
+    //cout << "发送完成！hahah" << endl ;
     cmd.clear_cmd() ;
     return 1 ;
 }

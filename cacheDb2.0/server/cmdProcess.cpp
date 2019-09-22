@@ -31,7 +31,6 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     //获取对端序列化到结果
     //反序列化,弱引用
     shared_ptr<Command>wcmd = rc->getParseString(buff) ;
-    //cout << wcmd->keys(0).key(0) << "    " << wcmd->keys(0).key(1) << endl ;
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
     Response res ;

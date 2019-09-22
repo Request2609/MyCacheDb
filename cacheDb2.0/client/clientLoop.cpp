@@ -76,7 +76,6 @@ void clientLoop :: start(string ip, string port) {
         if(ret == -5 || ret == -1) {
             continue ;
         }
-        cout <<"发送完成！" << endl ;
         //返回结果并打印
         string a = rc->getResponse() ;
         cout << a << endl ;

@@ -1,7 +1,7 @@
 #include "redisDb.h"
 using namespace type ;
 
-//判断当前操作键值存在不存在
+//判断当前操作键值存在不存在,找到并修改
 int redisDb :: isExist(shared_ptr<Command>&cmds) {
     string cmd = cmds->cmd() ;
     //如果是set 命令
@@ -9,9 +9,11 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         int num = cmds->num() ;
         string key = cmds->keys(0).key(0) ;
         auto res = db.find({{num, type::DB_STRING}, key}) ;
-        if(res != db.end()) {
-            return 1 ;
+        if(res == db.end()) {
+            return 0 ;
         }
+        res->second->setNum(cmds->num()) ;
+        res->second->setValue(cmds->vals(0).val(0)) ;
     }
     if(cmd == "hset") {
         int num = cmds->num() ;
@@ -21,13 +23,24 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         auto  res = db.find({{num, type::DB_HASH}, key}) ;
         if(res == db.end()) {
             cout << "没找到" << endl ;
-            return 1 ;
+            return 0 ;
         }
-        res->second->setValue(kk, vv.c_str()) ;
+        int k_len = cmds->keys_size() ;
+        for(int i=1; i<k_len; i++) {
+            int lk = cmds->keys(i).key_size() ;
+            int lv = cmds->vals(i-1).val_size() ;
+            if(lk != lv) {
+                return -1 ;
+            }
+            for(int j=0; j<lk; j++) {
+                string kk = cmds->keys(i).key(j) ;
+                string vv = cmds->vals(i-1).val(j) ;
+                res->second->setValue(kk, vv.c_str()) ;
+            }
+        }
         res->second->setNum(cmds->num()) ;
     }
-
-    return 0 ;
+    return 1 ;
 }
 
 //遍历redis中的dbObject对象
@@ -88,9 +101,6 @@ void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
 
 string redisDb :: findHgetRequest(const string key, 
                                   const string feild) {
-    cout << "--------------------------------" << endl ;
-    print() ;
-    cout << "现在对象数量！"<< db.size()  << endl ;
     auto res = db.find({{num, DB_HASH}, key}) ;
     if(res == db.end()) {
         return "no the object!" ;
@@ -107,7 +117,7 @@ string redisDb :: findHgetRequest(const string key,
 
 void hashSet :: print() {
     for(auto s : values) {
-        cout << num <<  s.first << s.second <<"    " <<  type<< endl ;
+        cout << num <<"==============>  " <<  s.first <<"  -------  "<< s.second <<"    " <<  type<< endl ;
     }
 }
 
@@ -135,6 +145,7 @@ void redisDb :: print() {
 //找相应的get请求键的值
 string redisDb :: findGetRequest(const string key, const int num) {
     //查找
+    cout << "查找命令！"<< endl ;
     auto res= db.find({{num, DB_STRING}, key}) ;
     if(res == db.end()) {
         return "" ;
@@ -150,10 +161,16 @@ string redisDb :: findGetRequest(const string key, const int num) {
 
 
 string hashSet :: getValue() {
+    static int flag = 0 ;
     static auto iter = values.begin() ;
+    if(flag == 0) {
+        iter = values.begin() ;
+    }
     if(iter == values.end()) {
+        flag = 0 ;
         return "" ;
     }
+    flag = 1 ;
     string vv = iter->first + "\r\n" + iter->second ;
     iter++ ;
     return vv ;
@@ -161,13 +178,12 @@ string hashSet :: getValue() {
 
 //字符串的形式传进来
 void hashSet :: setValue(string value, ...) {
-    cout <<"初始化："<< endl ;
-    cout << "设置键值:" << value << endl ;
     string key = value ;
     va_list va ;
     va_start(va, value) ;
     char* val = va_arg(va, char*) ;
     values[key] = val ;
+    
     cout << "键：" << val << endl ;
     va_end(va) ;
 }

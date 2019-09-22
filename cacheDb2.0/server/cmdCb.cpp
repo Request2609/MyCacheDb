@@ -3,8 +3,9 @@
 int cmdCb :: setHash(shared_ptr<redisDb>&wcmd, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {               
-    int ret = wcmd->isExist(tmp) ;
-    if(ret == 0) {
+
+    int ret = isKeyExist(wcmd, tmp) ;
+    if(ret == 1) {
         res->set_reply("OK") ;
         return 1 ;
     }
@@ -14,7 +15,6 @@ int cmdCb :: setHash(shared_ptr<redisDb>&wcmd,
     }
     se->setKey(tmp->keys(0).key(0)) ;
     int k_len = tmp->keys_size() ;
-    int v_len = tmp->vals_size() ;
     for(int i=1; i<k_len; i++) {
         int lk = tmp->keys(i).key_size() ;
         int lv = tmp->vals(i-1).val_size() ;
@@ -76,15 +76,13 @@ int cmdCb :: rdbSave(vector<pair<int, shared_ptr<redisDb>>>& dls) {
 int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd, 
                     shared_ptr<Command>&cmd, 
                     shared_ptr<Response>& res) {
+    cout << "set命令！" << endl ;
     int len = cmd->keys(0).key_size() ;
     //键的数量不是1,错误的
-    if(len != 1) {
-        return 3 ;
-    }
     int num = cmd->num() ;
     //键存不存在,存在的话,就地修改,返回1, 不存在返回0
     int ret = isKeyExist(wcmd, cmd) ;
-    //没找到键值
+    //没找到键
     if(ret == 0) {
         shared_ptr<dbObject>se = factory::getObject("set");
         se->setType(type::DB_STRING) ;
@@ -93,10 +91,16 @@ int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd,
         se->setKey(cmd->keys(0).key(0)) ;
         se->setValue(cmd->vals(0).val(0)) ;
         //将数据存在相应的数据库中
-        wcmd->append(se) ;      
+        cout << "值：" << se->getValue() << endl ;
+        cout << "键：" << se->getKey() << endl ;
+        wcmd->append(se) ;     
+        cout << "添加成功！" << endl ;
     }
     res->set_reply("OK") ;
-    return 4 ;
+    if(ret < 0) {
+        res->set_reply("FAIL") ;
+    }
+    return 1 ;
 }
 
 //get命令处理函数

@@ -22,9 +22,9 @@ int cmdSet :: initCmdCb() {
     tget->setCallBack(cmdCb :: getCmd) ;
     cmdList.insert(make_pair("get", tget)) ;
     //设置数据库命令
-    shared_ptr<redisCommand>bgsave(new redisCommand("bgsave", -3, "r", 1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>bgsave(new redisCommand("save", -3, "r", 1, 1, 1, 0, 0)) ;
     bgsave->setCallBack(cmdCb :: rdbSave) ;
-    cmdList.insert({"bgsave", bgsave}) ;
+    cmdList.insert({"save", bgsave}) ;
     //设置hash命令的回调以及相关的信息
     shared_ptr<redisCommand>hashLs(new redisCommand("hset", -3, "wm",  1, 1, 1, 0, 0)) ;
     hashLs->setCallBack(cmdCb :: setHash) ;
@@ -87,6 +87,7 @@ int cmdSet :: append(shared_ptr<redisDb> db) {
 }
 
 int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
+
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
@@ -103,8 +104,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "get")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
     }
-    if(!strcasecmp(cd.c_str(), "bgsave")) {
-        cout << "bgsave 命令！" << endl ;
+    if(!strcasecmp(cd.c_str(), "save")) {
         //将数据库遍历一遍
         a = cmdList[cd]->saveCb(dbLs) ;
         if(a < 0) {
