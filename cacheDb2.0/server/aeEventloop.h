@@ -20,6 +20,7 @@ enum {
 class aeEventloop {
     typedef function<int(shared_ptr<aeEvent>)> callBack ;
 public :
+    int readFd, writeFd ;
     //数据库数组
     //vector<shared_ptr<redisDb>>db ;
     //客户端的读写回调
@@ -45,7 +46,7 @@ public :
     //触发的事件列表
     vector<epoll_event>fireList ;
     //db服务器的保存的条件
-    //像定时条件等
+    //像定时条件
     map<string, long>param ;
     //记录距离上一次save，服务器修改了多少次数据库状态
     long dirty ;

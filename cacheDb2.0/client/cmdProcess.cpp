@@ -19,10 +19,14 @@ void cmdProcess :: setGet(vector<string>& res, Command& cmd) {
     *k = res[1] ;
 }
 
-void cmdProcess :: setBgSave(vector<string>&res,Command& com) {
+void cmdProcess :: setSave(vector<string>&res,Command& com) {
     com.set_cmd(res[0]) ;
 }
 
+
+void cmdProcess :: setBgSave(vector<string>&res,Command& com) {
+    com.set_cmd(res[0]) ;
+}
 //设置Hget方法
 void cmdProcess :: setHget(vector<string>&res,Command& com) {
 

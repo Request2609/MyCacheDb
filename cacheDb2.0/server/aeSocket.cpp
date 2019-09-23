@@ -62,3 +62,10 @@ int aeSocket :: acceptClient() {
     return fd ;    
 }
 
+int aeSocket :: createSocketPair() {
+    if(socketpair(AF_UNIX, SOCK_STREAM, 0, fdPair) < 0) {
+        cout << __FILE__ << "       " << __LINE__ << endl ;
+        return -1 ;
+    }
+    return 1 ;
+}

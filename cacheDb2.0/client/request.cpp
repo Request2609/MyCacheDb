@@ -49,7 +49,7 @@ int request :: processCmd(vector<string>&res, Command&com) {
             cout << "error command!" << endl ;
             return -1 ;
         }
-        cmdProcess :: setBgSave(res, com) ;
+        cmdProcess :: setSave(res, com) ;
     }
     else if(!strcasecmp(res[0].c_str(), "hset")) {
         //不定参数,哈希表的总参数个数是偶数
@@ -66,6 +66,14 @@ int request :: processCmd(vector<string>&res, Command&com) {
             return -1 ;
         }
         cmdProcess :: setHget(res, com) ;
+    }
+    else if(!strcasecmp(res[0].c_str(), "bgsave")) {
+        int ret = cd.cmdList[res[0]] ; 
+        if(ret != len) {
+            cout << "command error!" << endl ;
+            return -1 ;
+        }
+        cmdProcess :: setSave(res, com) ;
     }
     else {
         cout << "command not found" << endl ;

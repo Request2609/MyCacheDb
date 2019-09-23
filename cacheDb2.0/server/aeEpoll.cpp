@@ -48,7 +48,7 @@ int aeEpoll :: wait(vector<epoll_event>&ls) {
     int ret = 0 ;   
     int eventNum = epoll_wait(epFd, &eventFds[0], eventFds.capacity(), -1) ;
     if(eventNum < 0) {
-        cout <<__FILE__ << "         " << __LINE__ <<  endl ;
+        cout <<strerror(errno) << "      " << __FILE__ << "         " << __LINE__ <<  endl ;
         return -1 ;
     }
     else {

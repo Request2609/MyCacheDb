@@ -39,21 +39,11 @@ int aeEventloop :: addServerEvent(string addr, string port) {
 //开始监听事件
 int aeEventloop :: start() {
 
-    //创建时间事件,并添加到epoll
- /*   int fd = addTimerEvent() ;
-    tman = make_shared<TimerManager>() ;
-    MyTimer time1(*tman) ;
-    time1.setFd(fd) ;
-    //加入时间堆 
-    time1.start(&aeEventloop::notifyToSave, 1000, MyTimer::TimerType::CIRCLE);
-    //将时间事件加入到epoll中
-    shared_ptr<aeEvent> ae = make_shared<aeEvent>() ;*/
     while(!stop) {
         int ret = aep->wait(fireList) ;
         if(ret < 0) {
             return -1 ;
         }
-        //全拷贝过来
         vector<epoll_event>ls  = fireList ;
         int len = fireList.size() ;
         for(int i=0; i<len; i++) {
@@ -62,7 +52,6 @@ int aeEventloop :: start() {
             eventData[fd]->setEvent(&ls[i]) ;
             //处理完成以后
             aeProcessEvent(fd) ;
-            //检测一次时间事件
         }
         //清除活跃事件表
         fireList.clear() ;     
@@ -178,5 +167,5 @@ void aeEventloop :: setCallBack(callBack readCb, callBack writeCb) {
 }
 
 aeEventloop :: ~aeEventloop() {
-      
+        
 }

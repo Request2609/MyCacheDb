@@ -1,5 +1,37 @@
 #include "cmdCb.h"
-//hash函数
+
+
+char cmdCb :: getFlag() {
+    char c = '-' ;
+    int fd = open(FLAG_FILE, O_RDWR|O_CREAT) ;   
+    if(fd < 0) {
+        cout << __FILE__ << "     " << __LINE__ << endl ;
+        return c ;
+    }
+    struct stat st ;
+    int ret = fstat(fd, &st) ;
+    if(ret < 0) {
+        cout << __LINE__ << "    " << __FILE__ << endl ;
+        return c ;
+    }
+    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd , 0) ;
+    close(fd) ;
+    c = flag[0] ;
+    munmap((void*)flag, st.st_size) ;
+    return c ;
+}
+
+int cmdCb :: setFlag(char c) {
+    int fd = open(FLAG_FILE, O_RDWR|O_CREAT) ;  
+    if(fd < 0) {
+        cout << __FILE__ << "     " << __LINE__ << endl ;
+        return -1 ;
+    }
+    struct 
+    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, PROT_WRITE, MAP_SHARED, fd, 0) ;
+    
+}
+
 int cmdCb :: setHash(shared_ptr<redisDb>&wcmd, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {               
@@ -46,7 +78,7 @@ int cmdCb :: isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) {
        return ret ;
 }
 
-int cmdCb :: rdbSave(vector<pair<int, shared_ptr<redisDb>>>& dls) {
+int cmdCb :: save(vector<pair<int, shared_ptr<redisDb>>>& dls) {
     //存储各个数据库文件的文件
     ofstream out(".rdb/.redis_fileName", ios::out|ios::binary|ios::trunc) ;
     //遍历数据库进行保存
@@ -69,14 +101,13 @@ int cmdCb :: rdbSave(vector<pair<int, shared_ptr<redisDb>>>& dls) {
         }
     }
     out.close() ;
-    return ret ;
+    return 1 ;
 }
 
 //设置set命令的处理
 int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd, 
                     shared_ptr<Command>&cmd, 
                     shared_ptr<Response>& res) {
-    cout << "set命令！" << endl ;
     int len = cmd->keys(0).key_size() ;
     //键的数量不是1,错误的
     int num = cmd->num() ;
@@ -91,10 +122,7 @@ int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd,
         se->setKey(cmd->keys(0).key(0)) ;
         se->setValue(cmd->vals(0).val(0)) ;
         //将数据存在相应的数据库中
-        cout << "值：" << se->getValue() << endl ;
-        cout << "键：" << se->getKey() << endl ;
         wcmd->append(se) ;     
-        cout << "添加成功！" << endl ;
     }
     res->set_reply("OK") ;
     if(ret < 0) {

@@ -26,6 +26,7 @@ message Command {
     repeated Key keys = 4;
     //值    
     repeated  Value vals  = 5;
+
     //命令类型
     optional bool type = 6 ;
     //正在操作的数据库编号

@@ -36,7 +36,7 @@ private :
     int connFd ;
     //设置数据库的编号
     int num ;
-    //标志位,是否为定时事件
+    //标志位
     int mask ;
     //用户缓冲区
     buffer buf ;
@@ -47,7 +47,11 @@ private :
     //epoll事件
     epoll_event* ev ;
     int servFd ;
+
+    int writeFd ;
 public :
+    int getWriteFd() { return writeFd ;}
+    void setWriteFd(int fd) { this->writeFd = fd ;}
     void setMask(int mask) { this->mask = mask ; }
     int getMask() { return mask ; }
     int getNum() { return num ; }
