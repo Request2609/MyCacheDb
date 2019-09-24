@@ -58,7 +58,6 @@ public :
     int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
     int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
     void setCallBack(saveCall save) { 
-        cout << "设置saveCall" << endl ;
         this->save = save ;}
     void setCallBack(call cb) { 
         this->callBack = cb ; 
@@ -105,8 +104,6 @@ public :
     int findCmd(string cmd) ;  
     shared_ptr<Response> getResponse() { return response ; }
     int append(shared_ptr<redisDb> db) ;
-public :
-    static int flag ;
 private:
     shared_ptr<rdb> save ;
     //回复，响应

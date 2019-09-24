@@ -7,8 +7,9 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
     //如果是set 命令
     if(cmd == "set") {
         int num = cmds->num() ;
-        string key = cmds->keys(0).key(0) ;
-        auto res = db.find({{num, type::DB_STRING}, key}) ;
+        string k = cmds->keys(0).key(0) ;
+        key ke(num, type::DB_STRING, k) ;
+        auto res = db.find(ke) ;
         if(res == db.end()) {
             return 0 ;
         }
@@ -17,10 +18,11 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
     }
     if(cmd == "hset") {
         int num = cmds->num() ;
-        string key = cmds->keys(0).key(0) ;
+        string k = cmds->keys(0).key(0) ;
         string kk = cmds->keys(1).key(0) ;
         string vv = cmds->vals(0).val(0) ;
-        auto  res = db.find({{num, type::DB_HASH}, key}) ;
+        key ke(num, type::DB_HASH, k) ;
+        auto res = db.find(ke) ;
         if(res == db.end()) {
             return 0 ;
         }
@@ -44,13 +46,19 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
 
 //遍历redis中的dbObject对象
 shared_ptr<dbObject> redisDb :: getNextDb() {
+    cout << "开始获取！"<< endl ;
     static auto res = db.begin();
-    auto re = res ++ ;
-    if(re == db.end() || !db.size()) { 
+    cout << "获取下一个数据库！" << endl ;
+    if(res == db.end() || !db.size()) { 
+        res = db.begin() ;
+        cout << "获取结束！"<< endl ;
         return nullptr ;
     }
-    int flag = 0 ;
+    auto re = res ;
     shared_ptr<dbObject>dob = re->second ;
+    res ++ ;
+    cout << "获取成功！"  << endl ;
+    int flag = 0 ;
     //判断当前超时
     long time = timer :: getCurTime() ;
     int end = dob->getEndTime() ;
@@ -64,7 +72,11 @@ shared_ptr<dbObject> redisDb :: getNextDb() {
 
 void redisDb :: append(shared_ptr<dbObject>rdb) {   
     //三元组确定对象
-    db.insert({{{rdb->getNum(), rdb->getType()}, rdb->getKey()}, rdb}); 
+    key k  ;
+    k.num = rdb->getNum() ;
+    k.type = rdb->getType() ;
+    k.cmd = rdb->getKey() ;
+    db.insert({k, rdb}); 
 }
 
 //查询数据库,get命令等
@@ -98,9 +110,13 @@ void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     }
 }
 
-string redisDb :: findHgetRequest(const string key, 
+string redisDb :: findHgetRequest(const string k, 
                                   const string feild) {
-    auto res = db.find({{num, DB_HASH}, key}) ;
+    key ke ;
+    ke.num = num ;
+    ke.type = DB_HASH ;
+    ke.cmd = k ;
+    auto res = db.find(ke) ;
     if(res == db.end()) {
         return "no the object!" ;
     }
@@ -142,10 +158,10 @@ void redisDb :: print() {
     }
 }
 //找相应的get请求键的值
-string redisDb :: findGetRequest(const string key, const int num) {
+string redisDb :: findGetRequest(const string k, const int num) {
     //查找
-    cout << "查找命令！"<< endl ;
-    auto res= db.find({{num, DB_STRING}, key}) ;
+    key ke(num, DB_STRING, k) ;
+    auto res= db.find(ke) ;
     if(res == db.end()) {
         return "" ;
     }
@@ -166,6 +182,7 @@ string hashSet :: getValue() {
         iter = values.begin() ;
     }
     if(iter == values.end()) {
+        iter = values.begin() ;
         flag = 0 ;
         return "" ;
     }
@@ -182,7 +199,5 @@ void hashSet :: setValue(string value, ...) {
     va_start(va, value) ;
     char* val = va_arg(va, char*) ;
     values[key] = val ;
-    
-    cout << "键：" << val << endl ;
     va_end(va) ;
 }

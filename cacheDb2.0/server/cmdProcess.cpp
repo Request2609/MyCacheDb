@@ -25,6 +25,7 @@ void cmdProcess :: initCmdCb() {
 }
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
+
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果
     string* buff = bf->getBuf() ;

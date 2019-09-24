@@ -2,8 +2,6 @@
 #include "enum.h"
 #include "rdb.h"
 
-int cmdSet :: flag = 0 ;
-
 //初始化命令集
 cmdSet :: cmdSet() {
     //申请16个数据库
@@ -35,8 +33,6 @@ int cmdSet :: initCmdCb() {
     shared_ptr<redisCommand>hgetLs(new redisCommand("hget", -3, "wm",  1, 1, 1, 0, 0)) ;
     hgetLs->setCallBack(cmdCb :: setHget) ;
     cmdList.insert({"hget", hgetLs}) ;   
-    
-    cout << "设置save callback" << endl ;
     shared_ptr<redisCommand>bgSave(new redisCommand("bgsave", -3, "wm",  1, 1, 1, 0, 0)) ;
     //和save一样调用相同的函数，操作文件
     bgSave->setCallBack(cmdCb :: save) ;
@@ -97,7 +93,6 @@ int cmdSet :: append(shared_ptr<redisDb> db) {
 int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     
     char flag = cmdCb :: getFlag() ;
-    int ff = cmdSet :: flag ;
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
@@ -136,15 +131,12 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     }
     if(!strcasecmp(cd.c_str(), "hget")) {
         int  a = cmdList[cd]->cb(wrdb, cmd, response) ;
-        cout << cmdList[cd]->getName() << endl ;
-
         if(a < 0) {
             response->set_reply("FAIL") ;
         }
     }
     //fork进程
     if(!strcasecmp(cd.c_str(), "bgsave")&&flag != '1') {
-        cmdSet :: flag = 1 ; 
         string aa = "bgsave" ;
         int ret = fork() ;
         if(ret == 0) {
@@ -170,6 +162,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         response->set_reply("OK") ;
     }
     if(a < 0) {
+        response->set_reply("FAIL") ;
         return PROCESSERROR ;
     }
     return SUCESS ;
