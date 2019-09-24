@@ -216,27 +216,26 @@ int rdb :: getAllFileName(vector<string>&nameLs) {
 }
 
 string rdb :: getFileInfo(const string s) {
-    long l = 0 ;
     int fd = open(s.c_str(), O_RDWR|O_CREAT) ;
     if(fd < 0) {
         cout << __LINE__ << "     " << __FILE__ << endl ;
         return "" ;
     }
-    string b ;
-    char buf[SIZE_::size] ;
-    int n= 0;
-    while(1) {
-        n=read(fd, buf, sizeof(buf)) ;
-        if(n < 0) {
-            cout << __FILE__ << "   "  << __LINE__ << endl ;
+    struct stat st ;
+    int ret = fstat(fd, &st) ;
+    if(ret < 0) {
+        cout << __FILE__ << "       " << __LINE__ << endl ;
+        return "" ;
+    }
+    //内存映射
+    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0) ;
+    if(flag == NULL) {
+            cout << __FILE__ << "    " << __LINE__ << endl ;
             return "" ;
-        }
-        if(n == 0) {
-            break ;
-        }
-        b+=buf ;
     }
     close(fd) ;
+    string b = flag ;
+    munmap(flag, st.st_size) ;
     return b ;
 }
 

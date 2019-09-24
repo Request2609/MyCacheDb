@@ -1,7 +1,6 @@
 #include "recoverDb.h"
 
 shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
-    cout <<"正在恢复数据库！" << endl ;
     if(!isRedis(s)) {
         return nullptr ;
     }

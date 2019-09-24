@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <sys/epoll.h> 
+#include <string.h>
 #include <unistd.h>
 using namespace std ;
 

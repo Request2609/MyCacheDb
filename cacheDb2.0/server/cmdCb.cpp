@@ -27,9 +27,17 @@ int cmdCb :: setFlag(char c) {
         cout << __FILE__ << "     " << __LINE__ << endl ;
         return -1 ;
     }
-    struct 
-    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, PROT_WRITE, MAP_SHARED, fd, 0) ;
-    
+    struct stat st ;
+    int ret = fstat(fd, &st) ;
+    if(ret < 0) {
+        cout << __LINE__ << "     " << __FILE__ << endl ;
+        return -1 ;
+    }
+    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0) ;
+    close(fd) ;
+    flag[0] = c ;
+    munmap((void*)flag, st.st_size) ;
+    return 1 ;
 }
 
 int cmdCb :: setHash(shared_ptr<redisDb>&wcmd, 

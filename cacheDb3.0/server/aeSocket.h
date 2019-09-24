@@ -25,8 +25,11 @@ public :
     int setNoBlocking(int fd) ;
     int tcpServer(string port, string addr, int backLog) ;
     int acceptClient() ;
-
+    int createSocketPair() ;
+    int getReadFd() { return fdPair[0]; }
+    int getWriteFd() { return fdPair[1]; }
 private:
+    int fdPair[2] ;
     struct sockaddr_in serv ;
     int sockFd ; 
 };

@@ -7,10 +7,6 @@ static cmdProcess cmdPro ;
 static shared_ptr<rpc>rc = nullptr ;
 
 int readOnMessage(shared_ptr<aeEvent>tmp) { 
-    cout << "来消息"<< endl ;
-    //处理事件    
-    //设置rpc
-    //如果是空，就重新将文件中的数据读出
     if(rc == nullptr) {
         cmdPro.initRedis() ; 
         cmdPro.initCmdCb() ;

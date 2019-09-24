@@ -2,7 +2,7 @@
 #include "serializeParse.h"
 
 int aeEvent :: processRead() { 
-    
+
     if(mask == event::timeout) {
         uint64_t ret = 0 ;
         int res = read(connFd, &ret, sizeof(ret)) ;
@@ -30,7 +30,6 @@ int aeEvent :: processRead() {
     for(int i=0; i<ret; i++) {
         buf.append(buff[i]) ;
     }
-
     //收到数据
 //    string* aa = buf.getBuf() ;
     //将数据返回给事件循环/*

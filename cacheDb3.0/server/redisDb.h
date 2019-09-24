@@ -5,8 +5,10 @@
 #include <vector>
 #include <string.h>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <cstdarg>
+#include <map>
+
 
 #include "timer.h"
 #include "msg.pb.h"
@@ -15,6 +17,7 @@
 using namespace Messages ;
 using namespace std ;
 using namespace google ;
+
 
 namespace type {
     //该键值是string 使用get　set 方法获取
@@ -27,7 +30,6 @@ class dbObject ;
 class strings;
 class hashSet ;
 class factory ;
-
 //数据库对象
 class redisDb {
 public :
@@ -36,8 +38,8 @@ public :
 private :
     //数据库编号
     int num ;
-    //string的存储方式,第一个元素是数据库编号，第二个是命令类别，第三个是具体的数据对象，三元组确定对象
-    map<pair<pair<int, int>, string>, shared_ptr<dbObject>> db ;
+    //string的存储方式,第一个元素是数据库编号，第二个是命令，第三个是具体的数据对象，三元组确定对象
+    map<pair<pair<int, int>,string>, shared_ptr<dbObject>> db ;
 public :
     //往数据库中写数据
     int initDb() ;
@@ -82,9 +84,6 @@ public :
     virtual string getValue() = 0;
     virtual vector<string> getValues(const string s) = 0;
     //获取命令编号
-private :
-    //保存所有键的过期时间
-    //redis对象管理dict对象
 };
 
 //set对象

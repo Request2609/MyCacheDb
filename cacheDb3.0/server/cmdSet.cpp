@@ -2,6 +2,8 @@
 #include "enum.h"
 #include "rdb.h"
 
+int cmdSet :: flag = 0 ;
+
 //初始化命令集
 cmdSet :: cmdSet() {
     //申请16个数据库
@@ -22,9 +24,9 @@ int cmdSet :: initCmdCb() {
     tget->setCallBack(cmdCb :: getCmd) ;
     cmdList.insert(make_pair("get", tget)) ;
     //设置数据库命令
-    shared_ptr<redisCommand>bgsave(new redisCommand("save", -3, "r", 1, 1, 1, 0, 0)) ;
-    bgsave->setCallBack(cmdCb :: rdbSave) ;
-    cmdList.insert({"save", bgsave}) ;
+    shared_ptr<redisCommand>save(new redisCommand("save", -3, "r", 1, 1, 1, 0, 0)) ;
+    save->setCallBack(cmdCb :: save) ;
+    cmdList.insert({"save", save}) ;
     //设置hash命令的回调以及相关的信息
     shared_ptr<redisCommand>hashLs(new redisCommand("hset", -3, "wm",  1, 1, 1, 0, 0)) ;
     hashLs->setCallBack(cmdCb :: setHash) ;
@@ -33,6 +35,12 @@ int cmdSet :: initCmdCb() {
     shared_ptr<redisCommand>hgetLs(new redisCommand("hget", -3, "wm",  1, 1, 1, 0, 0)) ;
     hgetLs->setCallBack(cmdCb :: setHget) ;
     cmdList.insert({"hget", hgetLs}) ;   
+    
+    cout << "设置save callback" << endl ;
+    shared_ptr<redisCommand>bgSave(new redisCommand("bgsave", -3, "wm",  1, 1, 1, 0, 0)) ;
+    //和save一样调用相同的函数，操作文件
+    bgSave->setCallBack(cmdCb :: save) ;
+    cmdList.insert({"bgsave", bgSave}) ;   
 }
 
 //初始化数据库
@@ -87,7 +95,9 @@ int cmdSet :: append(shared_ptr<redisDb> db) {
 }
 
 int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
-
+    
+    char flag = cmdCb :: getFlag() ;
+    int ff = cmdSet :: flag ;
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
@@ -104,7 +114,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "get")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
     }
-    if(!strcasecmp(cd.c_str(), "save")) {
+    if(!strcasecmp(cd.c_str(), "save")&&flag != '1') {
         //将数据库遍历一遍
         a = cmdList[cd]->saveCb(dbLs) ;
         if(a < 0) {
@@ -132,7 +142,33 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
             response->set_reply("FAIL") ;
         }
     }
-    //下面是一系列命令
+    //fork进程
+    if(!strcasecmp(cd.c_str(), "bgsave")&&flag != '1') {
+        cmdSet :: flag = 1 ; 
+        string aa = "bgsave" ;
+        int ret = fork() ;
+        if(ret == 0) {
+            char c = '1' ;
+            cmdCb :: setFlag(c) ;
+            a = cmdList[aa]->saveCb(dbLs) ;
+            if(a < 0) {
+                cout << __FILE__ << "      " << __LINE__ << endl ;
+                c = '-' ;
+                //设置共享内存段的数据
+                cmdCb :: setFlag(c) ;
+            }
+            else {
+                c = '0'  ;
+                cmdCb :: setFlag(c) ;
+            }   
+        }
+        else if(ret < 0) {
+            cout << __LINE__ << "     " << __FILE__ << endl ;
+            return 1 ;
+        }
+        wait(NULL) ;
+        response->set_reply("OK") ;
+    }
     if(a < 0) {
         return PROCESSERROR ;
     }

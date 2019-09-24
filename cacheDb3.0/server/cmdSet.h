@@ -3,12 +3,18 @@
 #include <functional>
 #include <map>
 #include <fstream>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <signal.h>
 #include <vector>
+#include <sys/mman.h>
 #include "redisDb.h"
 #include "aeEvent.h"
 #include "msg.pb.h"
 #include "rdb.h"
 #include "cmdCb.h"
+
+
 class rdb ;
 using namespace std  ;
 using namespace Messages ;
@@ -29,6 +35,7 @@ class dbObject ;
 class factory ;
 class redisCommand ;
 class cmdCb ;
+class Flag ;
 
 class redisCommand {
     //该命令的的处理函数
@@ -40,7 +47,6 @@ public :
             this->name = name ;
             this->arity = arity ;
             this->flags = flag ;
- ///           this->callBack = move(callBack) ;
             this->firstKey = fir ;
             this->lastKey = last ;
             this->keyStep = keyStep ;
@@ -51,7 +57,9 @@ public :
 public :
     int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
     int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
-    void setCallBack(saveCall save) { this->save = save ;}
+    void setCallBack(saveCall save) { 
+        cout << "设置saveCall" << endl ;
+        this->save = save ;}
     void setCallBack(call cb) { 
         this->callBack = cb ; 
     }
@@ -68,7 +76,6 @@ private :
     //命令的权限位，只读的r，不确定的输出R，在redis加载数据的时候使用l
     string flags ;
     //只有在你要用复杂的逻辑去告诉Redis哪个参数才是真正的key的时候才需要。
-///:    redisGetKeysProc*getKeys ;
     //命令的度量项，有数据库设置，初始化为０
     int firstKey ;
     int lastKey ;
@@ -76,6 +83,7 @@ private :
     //微妙,时间
     long long microSecond, calls ;
 } ;
+
 
 //命令集合
 class cmdSet {
@@ -96,8 +104,9 @@ public :
     //返回命令集合
     int findCmd(string cmd) ;  
     shared_ptr<Response> getResponse() { return response ; }
-    int bgSaveCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
     int append(shared_ptr<redisDb> db) ;
+public :
+    static int flag ;
 private:
     shared_ptr<rdb> save ;
     //回复，响应

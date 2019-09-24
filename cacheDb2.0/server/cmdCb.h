@@ -10,13 +10,15 @@
 #include "redisDb.h"
 #include "rdb.h"
 
-const char* FLAG_FILE = "FLAG_FILE" ;
+#define FLAG_FILE "FLAG_FILE" 
+
 using namespace Messages ;
 using namespace std ;
 
 class dbObject ;
 class factory ;
 class redisDb ;
+
 
 class cmdCb {
 public:

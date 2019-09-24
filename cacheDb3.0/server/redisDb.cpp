@@ -22,7 +22,6 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         string vv = cmds->vals(0).val(0) ;
         auto  res = db.find({{num, type::DB_HASH}, key}) ;
         if(res == db.end()) {
-            cout << "没找到" << endl ;
             return 0 ;
         }
         int k_len = cmds->keys_size() ;
@@ -80,7 +79,7 @@ void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         key = cmd->keys(0).key(0) ;
         string r = findGetRequest(key, num) ;
         if(!r.size()) {
-            res->set_reply("command is not find!") ;
+            res->set_reply("object is not find!") ;
         }
         else {
             res->set_reply("\""+r+"\"") ;

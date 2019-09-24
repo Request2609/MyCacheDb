@@ -35,10 +35,11 @@ int cmdSet :: initCmdCb() {
     shared_ptr<redisCommand>hgetLs(new redisCommand("hget", -3, "wm",  1, 1, 1, 0, 0)) ;
     hgetLs->setCallBack(cmdCb :: setHget) ;
     cmdList.insert({"hget", hgetLs}) ;   
-
+    
+    cout << "设置save callback" << endl ;
     shared_ptr<redisCommand>bgSave(new redisCommand("bgsave", -3, "wm",  1, 1, 1, 0, 0)) ;
     //和save一样调用相同的函数，操作文件
-    hgetLs->setCallBack(cmdCb :: save) ;
+    bgSave->setCallBack(cmdCb :: save) ;
     cmdList.insert({"bgsave", bgSave}) ;   
 }
 
@@ -94,6 +95,8 @@ int cmdSet :: append(shared_ptr<redisDb> db) {
 }
 
 int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
+    
+    char flag = cmdCb :: getFlag() ;
     int ff = cmdSet :: flag ;
     //创建一个响应
     response = make_shared<Response>() ;
@@ -111,7 +114,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "get")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
     }
-    if(!strcasecmp(cd.c_str(), "save")&&!ff) {
+    if(!strcasecmp(cd.c_str(), "save")&&flag != '1') {
         //将数据库遍历一遍
         a = cmdList[cd]->saveCb(dbLs) ;
         if(a < 0) {
@@ -140,18 +143,31 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         }
     }
     //fork进程
-    if(!strcasecmp(cd.c_str(), "bgsave")&&!ff) {
+    if(!strcasecmp(cd.c_str(), "bgsave")&&flag != '1') {
         cmdSet :: flag = 1 ; 
+        string aa = "bgsave" ;
         int ret = fork() ;
         if(ret == 0) {
-            a = cmdList[cd]->saveCb(dbLs) ;
-            if()
+            char c = '1' ;
+            cmdCb :: setFlag(c) ;
+            a = cmdList[aa]->saveCb(dbLs) ;
+            if(a < 0) {
+                cout << __FILE__ << "      " << __LINE__ << endl ;
+                c = '-' ;
+                //设置共享内存段的数据
+                cmdCb :: setFlag(c) ;
+            }
+            else {
+                c = '0'  ;
+                cmdCb :: setFlag(c) ;
+            }   
         }
         else if(ret < 0) {
             cout << __LINE__ << "     " << __FILE__ << endl ;
             return 1 ;
         }
         wait(NULL) ;
+        response->set_reply("OK") ;
     }
     if(a < 0) {
         return PROCESSERROR ;
