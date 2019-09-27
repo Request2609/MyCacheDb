@@ -39,6 +39,11 @@ int aeSocket :: setNoBlocking(int fd) {
     return 1 ;
 }
 
+int aeSocket :: createEventFd() {
+    int efd = eventfd(0, EFD_NONBLOCK|EFD_CLOEXEC) ;
+    return efd ;
+}
+
 int aeSocket :: tcpServer(string port, string addr, int backLog) {
     
     serv.sin_family = AF_INET ;

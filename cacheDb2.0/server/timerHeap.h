@@ -4,24 +4,31 @@
 #include <functional>
 #include <vector>
 #include "cmdProcess.h"
+#include  "aeEpoll.h" 
+#include "aeEventloop.h" 
+
 using namespace std;
 
 class cmdProcess ; 
 class TimerManager;
- 
+class aeEpoll ; 
+
 class MyTimer {
-	typedef std::function<int(int)>Func;
+    typedef std::function<vector<int>(int fd)>Func;
 public:
     //循环还是只执行一次
 	enum class TimerType{ONCE=0,CIRCLE=1};
     MyTimer (TimerManager& manager);
     ~MyTimer ();
 	//启动一个定时器
-    void   start (Func func, unsigned int ms, TimerType type);
+    void start (Func func, unsigned int ms, TimerType type);
     void setFd(int fd) { this->fd = fd ; }
     int getFd() { return fd ; }
     //终止一个定时器
-	void   stop ();
+	void stop ();
+    void setTimeSlot(int timer) {
+        m_nInterval = timer ;
+    }
 private:
 	//执行
 	void on_timer(unsigned long long now);
@@ -45,7 +52,6 @@ public:
 	static unsigned long long get_current_millisecs();
 	//探测执行
 	void detect_timers();
- 
 private:
 	friend class MyTimer;
 	//添加一个定时器
@@ -57,13 +63,13 @@ private:
 	//定时下沉
 	void down_heap(size_t index);
 	//交换两个timer索引
-	void swap_heap(size_t index1, size_t index2);
+    void swap_heap(size_t index1, size_t index2);
 private:
-	struct HeapEntry {
-		unsigned long long time;
-		MyTimer* timer;
-        };
-	std::vector<HeapEntry> heap_;
+    struct HeapEntry {
+        unsigned long long time;
+        MyTimer* timer;
+    };
+    std::vector<HeapEntry> heap_;
 };
  
 #endif

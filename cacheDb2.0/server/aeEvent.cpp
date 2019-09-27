@@ -31,7 +31,6 @@ int aeEvent :: processRead() {
         buf.append(buff[i]) ;
     }
     //收到数据
-//    string* aa = buf.getBuf() ;
     //将数据返回给事件循环/*
     //调用相应的回调处理可读事件
     ret = readFunc(shared_from_this()) ;
@@ -43,6 +42,5 @@ int aeEvent :: processRead() {
 
 int aeEvent :: processWrite() {
     int ret = 0 ; 
- //   int ret =  writeFunc() ; 
     return ret ;
 }

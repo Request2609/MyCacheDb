@@ -77,11 +77,11 @@ void TimerManager::remove_timer(MyTimer* timer) {
  
 void TimerManager::detect_timers() {
 	unsigned long long now = get_current_millisecs();
-    
+    vector<int> ls ;
 	while (!heap_.empty() && heap_[0].time <= now) {
 		MyTimer* timer = heap_[0].timer;
 		remove_timer(timer);
-		timer->on_timer(now);
+		ls = timer->on_timer(now);
 	}
 }
  

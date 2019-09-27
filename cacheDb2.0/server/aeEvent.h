@@ -8,6 +8,7 @@
 #include "aeSocket.h"
 #include "buffer.h"
 #include "aeSocket.h"
+
 using namespace std ;
 #define SIZE 4096
 
@@ -24,6 +25,7 @@ class aeEvent :public enable_shared_from_this<aeEvent>{
     
 public :
     aeEvent() {
+        //创建时间管理对象
         //申请16个数据库
         //默认为０号数据库
         mask = 0 ;
@@ -47,8 +49,9 @@ private :
     //epoll事件
     epoll_event* ev ;
     int servFd ;
-
     int writeFd ;
+public :
+    static long times ;
 public :
     int getWriteFd() { return writeFd ;}
     void setWriteFd(int fd) { this->writeFd = fd ;}

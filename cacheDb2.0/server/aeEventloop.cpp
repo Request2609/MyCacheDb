@@ -1,10 +1,13 @@
 #include "aeEventloop.h"
+
+int aeEventloop :: efd ;
 //初始化事件
 //创建epoll句柄等工作
 aeEventloop :: aeEventloop() {
     maxFd = -1 ;
     setSize = -1 ;
     stop = false ;
+    tman = make_shared<TimerManager>() ;
     //刚开始创建16个数据库
    // db.reserve(16) ;
     //创建一个epoll对象
@@ -39,6 +42,14 @@ int aeEventloop :: addServerEvent(string addr, string port) {
 //开始监听事件
 int aeEventloop :: start() {
 
+    //创建eventFd，内部已经设置了非阻塞
+    aeEventloop :: efd = aeSocket :: createEventFd() ;
+    aep->add(efd, READ) ;
+    //设置信号
+    signalSet :: addSig(SIGALRM) ;
+    //设置时钟信号
+    signalSet :: setAlarm() ;
+
     while(!stop) {
         int ret = aep->wait(fireList) ;
         if(ret < 0) {
@@ -71,7 +82,6 @@ int aeEventloop :: notifyToSave(int fd) {
 
 //处理事件
 int aeEventloop :: aeProcessEvent(int fd) {
-
     epoll_event* ev = eventData[fd]->getEvent() ;
     if(ev->events&READ) {
         //如果找a到fd就退出
@@ -95,10 +105,20 @@ int aeEventloop :: aeProcessEvent(int fd) {
         }
         //其他可读事件
         else {
-            //是定时事件,进行持久化
-            if(fd == timeFd) {
-                eventData[fd]->setMask(event::timeout) ;
+            //先检测是否为定时事件
+            if(efd == fd) {
+                eventfd_t count ;
+                int ret = read(fd, &count, sizeof(count)) ;
+                if(ret < 0) {
+                    cout << __LINE__ << "       " << __FILE__ << endl ;
+                    return -1 ;
+                }
+                //检测一下时间
+                tman->detect_timers() ;
+                //检测完成后退出函数
+                return 1 ;
             }
+
             int ret = eventData[fd]->processRead() ; 
             //收到处理失败
             //读到０表示退出
@@ -112,6 +132,7 @@ int aeEventloop :: aeProcessEvent(int fd) {
             }
         }
     }
+    //可写事件
     else if(ev->events&WRITE) {
         int ret = eventData[fd]->processWrite()  ; 
         if(ret < 0) {
@@ -134,7 +155,7 @@ int aeEventloop :: acceptNewConnect(int fd) {
     //设置数据库号码，刚开始是０号数据库
     tmp->setNum(0) ;
     //设置事件非阻塞
-    tmp->setNoBlock(newFd) ;
+    aeSocket :: setNoBlocking(newFd) ;
     //加入到事件列表
     eventData[newFd] = tmp ;
     tmp->setReadCallBack(readCall) ;
@@ -143,6 +164,30 @@ int aeEventloop :: acceptNewConnect(int fd) {
     tmp->setServFd(fd) ;
     //将事件加入到epoll中
     aep->add(newFd, READ) ;
+
+    //为每个描述符设置超时时间
+    MyTimer timer(*tman) ;
+    //设置超时时间
+    timer.setFd(newFd) ;
+    timer.setTimeSlot(signalSet :: timeSlot) ;
+    //事件没到就循环在累加上一定的事件继续等待
+    timer.start(&aeEventloop :: kickClient, signalSet :: timeSlot, MyTimer :: TimerType :: CIRCLE) ;
+    return 1 ;
+}
+
+//断连接的函数
+int aeEventloop :: kickClient(map<int, shared_ptr<aeEvent>>&eventData, 
+                              int kickFd, 
+                              shared_ptr<aeEpoll>&aep) {
+    auto res = eventData.find(kickFd) ;
+    if(res == eventData.end()) {
+        cout << __FILE__ << "          " << __LINE__ << endl ;
+        return -1 ;
+    }
+    eventData.erase(res) ;
+    //epoll中移除该描述符
+    aep->del(kickFd) ;
+    close(kickFd) ;
     return 1 ;
 }
 
