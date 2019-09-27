@@ -14,8 +14,7 @@
 using namespace std ;
 //封装redis ae socket
 
-class aeSocket
-{
+class aeSocket {
     typedef function<void()>callBack ;
 public:
     aeSocket() {sockFd = -1 ;}

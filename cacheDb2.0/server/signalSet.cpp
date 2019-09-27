@@ -1,6 +1,7 @@
 #include "signalSet.h"
 
 int signalSet :: timeSlot = 1000 ;
+int signalSet :: efd ;
 //等待被触发的时钟信号
 void signalSet :: addSig(int sig) {
     struct sigaction sa ;
@@ -28,15 +29,4 @@ void signalSet :: sigHandle(int sig) {
     eventfd_t  data = 1;
     write(efd, &data, sizeof(data)) ;
 }
-
-int signalSet :: createPipePair() {
-    int ret = aeSocket::createSocketPair() ;
-    if(ret < 0) {
-        return -1 ;
-    }
-    pipeFd[0] = aeSocket :: getReadFd() ;
-    pipeFd[1] = aeSocket :: getWriteFd() ;
-    return 1 ;
-}
-
 

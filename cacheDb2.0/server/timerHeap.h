@@ -14,7 +14,11 @@ class TimerManager;
 class aeEpoll ; 
 
 class MyTimer {
-    typedef std::function<vector<int>(int fd)>Func;
+    typedef std::function<int(map<int, shared_ptr<aeEvent>>&eventData, int, shared_ptr<aeEpoll>&aep)>Func;
+public :
+    //访问aeEventloop中的对象
+    static map<int, shared_ptr<aeEvent>>* data ;
+    static shared_ptr<aeEpoll>aep ;
 public:
     //循环还是只执行一次
 	enum class TimerType{ONCE=0,CIRCLE=1};
@@ -32,9 +36,9 @@ public:
 private:
 	//执行
 	void on_timer(unsigned long long now);
+    void add_time(unsigned long long now) ;
 private:
 	friend class TimerManager;
-    int fd ;
     Func m_timerfunc ;
 	TimerManager& manager_;
 	//调用函数，包括仿函数
@@ -44,6 +48,7 @@ private:
 	//过期
 	unsigned long long  m_nExpires;
 	int  m_nHeapIndex;
+    int fd ;
 };
  
 class TimerManager {
@@ -69,6 +74,7 @@ private:
         unsigned long long time;
         MyTimer* timer;
     };
+
     std::vector<HeapEntry> heap_;
 };
  

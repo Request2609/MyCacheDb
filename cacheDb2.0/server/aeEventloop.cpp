@@ -113,13 +113,13 @@ int aeEventloop :: aeProcessEvent(int fd) {
                     cout << __LINE__ << "       " << __FILE__ << endl ;
                     return -1 ;
                 }
-                //检测一下时间
                 tman->detect_timers() ;
                 //检测完成后退出函数
                 return 1 ;
             }
 
             int ret = eventData[fd]->processRead() ; 
+            //tman->detect_timers() ;
             //收到处理失败
             //读到０表示退出
             if(ret == 0) {
@@ -171,7 +171,7 @@ int aeEventloop :: acceptNewConnect(int fd) {
     timer.setFd(newFd) ;
     timer.setTimeSlot(signalSet :: timeSlot) ;
     //事件没到就循环在累加上一定的事件继续等待
-    timer.start(&aeEventloop :: kickClient, signalSet :: timeSlot, MyTimer :: TimerType :: CIRCLE) ;
+    timer.start(&aeEventloop :: kickClient, signalSet :: timeSlot, MyTimer :: TimerType ::CIRCLE) ;
     return 1 ;
 }
 

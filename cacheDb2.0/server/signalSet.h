@@ -21,7 +21,6 @@ public :
     static int pipeFd[2] ;
     static int efd ;
 public :
-    static int createPipePair() ;
     static void addSig(int sig) ;
     static void sigHandle(int sig) ;
     static int addToEpoll(shared_ptr<aeEpoll>ep) ;

@@ -7,6 +7,9 @@
 # include <sys/time.h>
 #endif
  
+
+map<int, shared_ptr<aeEvent>>* MyTimer :: data ;
+shared_ptr<aeEpoll> MyTimer :: aep ;
 // Timer
 MyTimer::MyTimer(TimerManager& manager)
 	: manager_(manager)
@@ -25,7 +28,7 @@ void MyTimer::stop() {
 	}
 }
  
-void  MyTimer::start(Func fun, unsigned int interval, TimerType timetpe) {
+void  MyTimer :: start(Func fun, unsigned int interval, TimerType timetpe) {
 	m_nInterval = interval;
 	m_timerfunc = fun;
 	m_nExpires = interval + TimerManager::get_current_millisecs();
@@ -33,17 +36,16 @@ void  MyTimer::start(Func fun, unsigned int interval, TimerType timetpe) {
 	timerType_= timetpe;
 }
  
-void MyTimer::on_timer(unsigned long long now) {
-	if (timerType_ == TimerType::CIRCLE) {
-		m_nExpires = m_nInterval + now;
-		manager_.add_timer(this);
-	}
-	else {
-		m_nHeapIndex = -1;
-	}
-	m_timerfunc(fd);
+void MyTimer :: on_timer(unsigned long long now) {
+    //执行回调函数
+    m_timerfunc(*MyTimer :: data, fd, MyTimer :: aep);
 }
- 
+
+void MyTimer :: add_time(unsigned long long now) {
+    m_nExpires = m_nInterval + now ;
+    manager_.add_timer(this) ;
+}
+
 // TimerManager
 void TimerManager::add_timer(MyTimer* timer) {
 	//插到数组最后一个位置上，上浮
@@ -76,15 +78,22 @@ void TimerManager::remove_timer(MyTimer* timer) {
 }
  
 void TimerManager::detect_timers() {
-	unsigned long long now = get_current_millisecs();
+    unsigned long long now = get_current_millisecs();
     vector<int> ls ;
-	while (!heap_.empty() && heap_[0].time <= now) {
-		MyTimer* timer = heap_[0].timer;
-		remove_timer(timer);
-		ls = timer->on_timer(now);
-	}
+    //时间到
+    while (!heap_.empty()) {
+        //超时的话就调用相应的函数，并将对象一处堆
+        MyTimer* timer = heap_[0].timer;
+        if(heap_[0].time <= now) {
+            remove_timer(timer);
+            timer->on_timer(now);
+        }
+        else {
+            timer->add_time(now) ;   
+        }
+    }
 }
- 
+
 void TimerManager::up_heap(size_t index)
 {
 	//下至上，和父节点比较。如果小于父节点上浮

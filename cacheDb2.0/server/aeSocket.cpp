@@ -1,5 +1,5 @@
 #include "aeSocket.h"
-
+int aeSocket::fdPair[2] ;
 //创建套接字
 int aeSocket :: anetCreateSocket() {
     sockFd = socket(AF_INET, SOCK_STREAM, 0) ;
