@@ -24,7 +24,8 @@ public :
     static void addSig(int sig) ;
     static void sigHandle(int sig) ;
     static int addToEpoll(shared_ptr<aeEpoll>ep) ;
+    static int createPipeFd() ;
     static int createEventFd() ;
-    static int setAlarm() ;
+    static int setAlarm(int slot) ;
 };
 

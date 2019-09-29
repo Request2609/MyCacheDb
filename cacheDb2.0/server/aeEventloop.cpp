@@ -7,6 +7,7 @@ aeEventloop :: aeEventloop() {
     maxFd = -1 ;
     setSize = -1 ;
     stop = false ;
+    //创建时间管理
     tman = make_shared<TimerManager>() ;
     //刚开始创建16个数据库
    // db.reserve(16) ;
@@ -39,26 +40,46 @@ int aeEventloop :: addServerEvent(string addr, string port) {
     return 1 ;
 }   
 
+void aeEventloop :: initDataInfo() {
+    MyTimer ::data = &eventData ;
+    MyTimer :: aep = aep ;
+}
+
 //开始监听事件
 int aeEventloop :: start() {
-
-    //创建eventFd，内部已经设置了非阻塞
-    aeEventloop :: efd = aeSocket :: createEventFd() ;
+    //初始化数据信息
+    initDataInfo() ;
+    signalSet :: efd = signalSet  :: createEventFd() ;
+    efd = signalSet :: efd ;
     aep->add(efd, READ) ;
+    //创建eventFd，内部已经设置了非阻塞
     //设置信号
     signalSet :: addSig(SIGALRM) ;
     //设置时钟信号
-    signalSet :: setAlarm() ;
+    signalSet :: setAlarm(signalSet :: timeSlot) ;
 
     while(!stop) {
         int ret = aep->wait(fireList) ;
-        if(ret < 0) {
+        if(ret < 0 && errno != EINTR) {
             return -1 ;
         }
         vector<epoll_event>ls  = fireList ;
         int len = fireList.size() ;
         for(int i=0; i<len; i++) {
             int fd = ls[i].data.fd ;
+            if(efd == fd) {
+                eventfd_t count ;
+                int ret = read(efd, &count, sizeof(count)) ;
+                if(ret < 0) {
+                    cout << __LINE__ << "       " << __FILE__ << endl ;
+                    return -1 ;
+                }
+                cout << "收到数据：" << count << endl ;
+                tman->detect_timers() ;
+                //继续添加超时时间
+                signalSet :: setAlarm(signalSet :: timeSlot) ;
+                continue ;
+            }
             //设置epoll_event
             eventData[fd]->setEvent(&ls[i]) ;
             //处理完成以后
@@ -106,18 +127,6 @@ int aeEventloop :: aeProcessEvent(int fd) {
         //其他可读事件
         else {
             //先检测是否为定时事件
-            if(efd == fd) {
-                eventfd_t count ;
-                int ret = read(fd, &count, sizeof(count)) ;
-                if(ret < 0) {
-                    cout << __LINE__ << "       " << __FILE__ << endl ;
-                    return -1 ;
-                }
-                tman->detect_timers() ;
-                //检测完成后退出函数
-                return 1 ;
-            }
-
             int ret = eventData[fd]->processRead() ; 
             //tman->detect_timers() ;
             //收到处理失败
@@ -130,6 +139,8 @@ int aeEventloop :: aeProcessEvent(int fd) {
                 ///删除相应的数据               
                 eventData.erase(ls) ;
             }
+            //修改客户端超时时间
+            tman->detect_timers(fd) ;
         }
     }
     //可写事件
@@ -164,9 +175,9 @@ int aeEventloop :: acceptNewConnect(int fd) {
     tmp->setServFd(fd) ;
     //将事件加入到epoll中
     aep->add(newFd, READ) ;
-
+    cout << "新增描述符：" << newFd << endl ;
     //为每个描述符设置超时时间
-    MyTimer timer(*tman) ;
+    MyTimer timer(tman) ;
     //设置超时时间
     timer.setFd(newFd) ;
     timer.setTimeSlot(signalSet :: timeSlot) ;
@@ -179,6 +190,12 @@ int aeEventloop :: acceptNewConnect(int fd) {
 int aeEventloop :: kickClient(map<int, shared_ptr<aeEvent>>&eventData, 
                               int kickFd, 
                               shared_ptr<aeEpoll>&aep) {
+    cout << "是否为空：" << eventData.empty() << endl ;
+    if(eventData.empty())
+        cout << "找不到了！"<< endl ;
+    else {
+        cout << eventData.size() << endl ;
+    }
     auto res = eventData.find(kickFd) ;
     if(res == eventData.end()) {
         cout << __FILE__ << "          " << __LINE__ << endl ;

@@ -40,7 +40,8 @@ int aeSocket :: setNoBlocking(int fd) {
 }
 
 int aeSocket :: createEventFd() {
-    int efd = eventfd(0, EFD_NONBLOCK|EFD_CLOEXEC) ;
+    int efd = eventfd(0, EFD_CLOEXEC) ;
+  //  setNoBlocking(efd) ;
     return efd ;
 }
 

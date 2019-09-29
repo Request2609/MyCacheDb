@@ -1,7 +1,9 @@
 #include "signalSet.h"
 
-int signalSet :: timeSlot = 1000 ;
+int signalSet :: timeSlot = 300 ;
+int signalSet :: pipeFd[2] ;
 int signalSet :: efd ;
+//int signalSet :: efd ;
 //等待被触发的时钟信号
 void signalSet :: addSig(int sig) {
     struct sigaction sa ;
@@ -14,19 +16,30 @@ void signalSet :: addSig(int sig) {
 
 
 int signalSet :: createEventFd() {
-    efd = aeSocket::createEventFd() ;
+    efd = aeSocket :: createEventFd() ;
     return efd ;
 }
 
-int signalSet :: setAlarm() {
+int signalSet :: createPipeFd() {
+    
+    int ret = aeSocket::createSocketPair() ;  
+    pipeFd[0] = aeSocket :: getReadFd() ;
+    pipeFd[1] = aeSocket :: getWriteFd() ;
+    return ret ;
+}
+
+int signalSet :: setAlarm(int slot) {
     //设置时钟信号
-    alarm(timeSlot) ;      
+    alarm(slot) ;      
     return 1 ;
 }
 
 //向eventfd写数据，触发定时器任务
 void signalSet :: sigHandle(int sig) {
-    eventfd_t  data = 1;
+    int save_errno = errno ;
+    eventfd_t  data = 10 ;
+    cout << "触发信号！" << efd << endl ;
     write(efd, &data, sizeof(data)) ;
+    errno = save_errno ;
 }
 

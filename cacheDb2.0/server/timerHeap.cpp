@@ -11,63 +11,64 @@
 map<int, shared_ptr<aeEvent>>* MyTimer :: data ;
 shared_ptr<aeEpoll> MyTimer :: aep ;
 // Timer
-MyTimer::MyTimer(TimerManager& manager)
+MyTimer::MyTimer(shared_ptr<TimerManager>& manager)
 	: manager_(manager)
 	, m_nHeapIndex(-1) {
- 
 }
  
 MyTimer::~MyTimer() {
-	stop();
 }
- 
-void MyTimer::stop() {
-	if (m_nHeapIndex != -1) {
-		manager_.remove_timer(this);
-		m_nHeapIndex = -1;
-	}
+
+int TimerManager :: getSize() {
+    return heap_.size() ;
 }
- 
+
 void  MyTimer :: start(Func fun, unsigned int interval, TimerType timetpe) {
 	m_nInterval = interval;
 	m_timerfunc = fun;
 	m_nExpires = interval + TimerManager::get_current_millisecs();
-	manager_.add_timer(this);
+	manager_->add_timer(*this);
 	timerType_= timetpe;
 }
  
 void MyTimer :: on_timer(unsigned long long now) {
     //执行回调函数
-    m_timerfunc(*MyTimer :: data, fd, MyTimer :: aep);
+    m_timerfunc(*MyTimer :: data, fd, MyTimer :: aep) ;
 }
 
+//客户端时间没到，执行此操作
 void MyTimer :: add_time(unsigned long long now) {
+    //先删除当前的节点
+    manager_->remove_timer(m_nHeapIndex) ;
+    //给当前节点延长时间
     m_nExpires = m_nInterval + now ;
-    manager_.add_timer(this) ;
+    //添加到堆中
+    manager_->add_timer(*this) ;
 }
 
 // TimerManager
-void TimerManager::add_timer(MyTimer* timer) {
+void TimerManager::add_timer(MyTimer timer) {
 	//插到数组最后一个位置上，上浮
-	timer->m_nHeapIndex = heap_.size();
-	HeapEntry entry = { timer->m_nExpires, timer};
+	timer.m_nHeapIndex = heap_.size();
+	HeapEntry entry = { timer.m_nExpires, shared_ptr<MyTimer>(new MyTimer(timer))};
 	heap_.push_back(entry);
+    //调整队列的元素位置,保持二叉搜索树的特性
 	up_heap(heap_.size() - 1);
 }
  
-void TimerManager::remove_timer(MyTimer* timer) {
+void TimerManager:: removeAll() {
+    heap_.clear() ;
+}
+
+void TimerManager::remove_timer(int index) {
 	//头元素用数组未元素替换，然后下沉
-	size_t index = timer->m_nHeapIndex;
 	if (!heap_.empty() && index < heap_.size()) {
-		if (index == heap_.size() - 1) //only one timer
-        {
+		if (index == heap_.size() - 1) {
 			heap_.pop_back();
 		}
-		else  //more than one
-		{
+		else {
 			swap_heap(index, heap_.size() - 1);
 			heap_.pop_back();
- 
 			size_t parent = (index - 1) / 2;
 			if (index > 0 && heap_[index].time < heap_[parent].time)
 				up_heap(index);
@@ -77,15 +78,36 @@ void TimerManager::remove_timer(MyTimer* timer) {
 	}
 }
  
+void TimerManager :: detect_timers(int fd) {
+    for(auto res : heap_) {
+        unsigned long long now = get_current_millisecs();
+        if(res.timer->getFd() == fd) {
+            if((res.time-now) < 300) {
+                res.timer->add_time(now) ;
+            }
+            break ;
+        }
+    }
+}
+    
+void TimerManager :: printTime(long now) {
+    cout << "-------------------------------------" << endl ;
+    for(auto res : heap_) {
+        cout <<"客户端超时时间"<< res.time <<"       现在时间：" << now << endl ; 
+    } 
+    cout << "-------------------------------------" << endl ;
+}
+
+//侦测时间超时是timermanager管理
 void TimerManager::detect_timers() {
     unsigned long long now = get_current_millisecs();
     vector<int> ls ;
     //时间到
     while (!heap_.empty()) {
         //超时的话就调用相应的函数，并将对象一处堆
-        MyTimer* timer = heap_[0].timer;
+        shared_ptr<MyTimer> timer = heap_[0].timer ;
         if(heap_[0].time <= now) {
-            remove_timer(timer);
+            remove_timer(timer->m_nHeapIndex);
             timer->on_timer(now);
         }
         else {
@@ -94,8 +116,8 @@ void TimerManager::detect_timers() {
     }
 }
 
-void TimerManager::up_heap(size_t index)
-{
+
+void TimerManager::up_heap(size_t index) {
 	//下至上，和父节点比较。如果小于父节点上浮
 	size_t parent = (index - 1) / 2;
 	while (index > 0 && heap_[index].time < heap_[parent].time) {

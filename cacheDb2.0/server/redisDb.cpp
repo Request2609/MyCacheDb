@@ -84,6 +84,8 @@ void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     //get查询
     string md = cmd->cmd() ;
     int num = cmd->num() ;
+    cout << "数据库中的数据信息------>" << endl ;
+    print() ;
     if(!strcasecmp(md.c_str(), "get")) {
         //在本数据库中找set对象并且查询的值
         string key ;

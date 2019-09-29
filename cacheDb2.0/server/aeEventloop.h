@@ -60,6 +60,7 @@ public :
     int timeFd ;
     shared_ptr<TimerManager> tman ;
     int evfd ;
+    int signalFd ;
 public :
     static int efd ;
     static int kickClient(map<int, shared_ptr<aeEvent>>&eventData, int kickFd, shared_ptr<aeEpoll>&aep) ;
@@ -69,6 +70,7 @@ public :
 public :
     static int notifyToSave(int fd) ;
 public :
+    void initDataInfo() ;
     int addTimerEvent() ;
     //时间事件回调
     void setReadCallBack(callBack readCb) { 
