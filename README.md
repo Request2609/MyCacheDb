@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></strong>键值数据库的设计实现总结(SDS)</strong></p>
+  <p align=center></strong>键值数据库的设计实现总结(SDS)</strong></p>
   <link rel="stylesheet" href="https://stackedit.io/style.css" />
 </head>
 
