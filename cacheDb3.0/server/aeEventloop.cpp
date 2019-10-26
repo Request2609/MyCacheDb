@@ -1,12 +1,15 @@
 #include "aeEventloop.h"
+
+int aeEventloop :: efd ;
 //初始化事件
 //创建epoll句柄等工作
 aeEventloop :: aeEventloop() {
     maxFd = -1 ;
     setSize = -1 ;
     stop = false ;
+    //创建时间管理
+    tman = make_shared<TimerManager>() ;
     //刚开始创建16个数据库
-   // db.reserve(16) ;
     //创建一个epoll对象
     aep = make_shared<aeEpoll>() ;
     aep->epCreate(SIZE) ;
@@ -36,18 +39,44 @@ int aeEventloop :: addServerEvent(string addr, string port) {
     return 1 ;
 }   
 
+void aeEventloop :: initDataInfo() {
+    MyTimer ::data = &eventData ;
+    MyTimer :: aep = aep ;
+}
+
 //开始监听事件
 int aeEventloop :: start() {
-
+    //初始化数据信息
+    initDataInfo() ;
+    signalSet :: efd = signalSet  :: createEventFd() ;
+    efd = signalSet :: efd ;
+    aep->add(efd, READ) ;
+    //创建eventFd，内部已经设置了非阻塞
+    //设置信号
+    signalSet :: addSig(SIGALRM) ;
+    //设置时钟信号
+    signalSet :: setAlarm(signalSet :: timeSlot) ;
     while(!stop) {
         int ret = aep->wait(fireList) ;
-        if(ret < 0) {
+        if(ret < 0 && errno != EINTR) {
             return -1 ;
         }
         vector<epoll_event>ls  = fireList ;
         int len = fireList.size() ;
         for(int i=0; i<len; i++) {
             int fd = ls[i].data.fd ;
+            if(efd == fd) {
+                eventfd_t count ;
+                int ret = read(efd, &count, sizeof(count)) ;
+                if(ret < 0) {
+                    cout << __LINE__ << "       " << __FILE__ << endl ;
+                    return -1 ;
+                }
+                tman->detect_timers() ;
+                //继续添加超时时间
+                signalSet :: setAlarm(signalSet :: timeSlot) ;
+                continue ;
+            }
             //设置epoll_event
             eventData[fd]->setEvent(&ls[i]) ;
             //处理完成以后
@@ -71,7 +100,6 @@ int aeEventloop :: notifyToSave(int fd) {
 
 //处理事件
 int aeEventloop :: aeProcessEvent(int fd) {
-
     epoll_event* ev = eventData[fd]->getEvent() ;
     if(ev->events&READ) {
         //如果找a到fd就退出
@@ -95,11 +123,9 @@ int aeEventloop :: aeProcessEvent(int fd) {
         }
         //其他可读事件
         else {
-            //是定时事件,进行持久化
-            if(fd == timeFd) {
-                eventData[fd]->setMask(event::timeout) ;
-            }
+            //先检测是否为定时事件
             int ret = eventData[fd]->processRead() ; 
+            //tman->detect_timers() ;
             //收到处理失败
             //读到０表示退出
             if(ret == 0) {
@@ -110,8 +136,12 @@ int aeEventloop :: aeProcessEvent(int fd) {
                 ///删除相应的数据               
                 eventData.erase(ls) ;
             }
+        
+            //修改客户端超时时间
+            tman->detect_timers(fd) ;
         }
     }
+    //可写事件
     else if(ev->events&WRITE) {
         int ret = eventData[fd]->processWrite()  ; 
         if(ret < 0) {
@@ -134,7 +164,7 @@ int aeEventloop :: acceptNewConnect(int fd) {
     //设置数据库号码，刚开始是０号数据库
     tmp->setNum(0) ;
     //设置事件非阻塞
-    tmp->setNoBlock(newFd) ;
+    aeSocket :: setNoBlocking(newFd) ;
     //加入到事件列表
     eventData[newFd] = tmp ;
     tmp->setReadCallBack(readCall) ;
@@ -143,6 +173,35 @@ int aeEventloop :: acceptNewConnect(int fd) {
     tmp->setServFd(fd) ;
     //将事件加入到epoll中
     aep->add(newFd, READ) ;
+    //为每个描述符设置超时时间
+    MyTimer timer(tman) ;
+    //设置超时时间
+    timer.setFd(newFd) ;
+    timer.setTimeSlot(signalSet :: timeSlot) ;
+    //事件没到就循环在累加上一定的事件继续等待
+    timer.start(&aeEventloop :: kickClient, signalSet :: timeSlot, MyTimer :: TimerType ::CIRCLE) ;
+    return 1 ;
+}
+
+//断连接的函数
+int aeEventloop :: kickClient(map<int, shared_ptr<aeEvent>>&eventData, 
+                              int kickFd, 
+                              shared_ptr<aeEpoll>&aep) {
+    cout << "是否为空：" << eventData.empty() << endl ;
+    if(eventData.empty())
+        cout << "找不到了！"<< endl ;
+    else {
+        cout << eventData.size() << endl ;
+    }
+    auto res = eventData.find(kickFd) ;
+    if(res == eventData.end()) {
+        cout << __FILE__ << "          " << __LINE__ << endl ;
+        return -1 ;
+    }
+    eventData.erase(res) ;
+    //epoll中移除该描述符
+    aep->del(kickFd) ;
+    close(kickFd) ;
     return 1 ;
 }
 

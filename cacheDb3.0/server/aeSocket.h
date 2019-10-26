@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/eventfd.h>
 #include <arpa/inet.h>
 #include <sys/fcntl.h>
 #include <errno.h>
@@ -13,8 +14,7 @@
 using namespace std ;
 //封装redis ae socket
 
-class aeSocket
-{
+class aeSocket {
     typedef function<void()>callBack ;
 public:
     aeSocket() {sockFd = -1 ;}
@@ -22,14 +22,17 @@ public:
 public :
     int anetCreateSocket() ;
     int setReuseAddr() ;
-    int setNoBlocking(int fd) ;
     int tcpServer(string port, string addr, int backLog) ;
     int acceptClient() ;
-    int createSocketPair() ;
-    int getReadFd() { return fdPair[0]; }
-    int getWriteFd() { return fdPair[1]; }
+public :
+    static int setNoBlocking(int fd) ;
+    static int getReadFd() { return fdPair[0]; }
+    static int getWriteFd() { return fdPair[1]; }
+    static int createSocketPair() ;
+    static int createEventFd() ;
 private:
-    int fdPair[2] ;
+    static int eventFd ;
+    static int fdPair[2] ;
     struct sockaddr_in serv ;
     int sockFd ; 
 };

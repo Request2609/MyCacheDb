@@ -1,9 +1,16 @@
 #include "rdb.h"
 
+string rdb :: tmpFileName(const char* fileName) {
+    string tmp = fileName ;
+    tmp += ".tmp" ;
+    return tmp ;
+}
+
 //保存到文件
 int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
-
-    ofstream out(fileName, ios::out|ios::binary|ios::trunc) ;
+    string ss = tmpFileName(fileName) ;  
+    
+    ofstream out(ss, ios::out|ios::binary|ios::trunc) ;
     if(out.fail()) {
        cout << __FILE__ << "    " << __LINE__ << endl ;
         return -1;
@@ -40,6 +47,9 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
     }
     out << "\r\n" ;  
     out.close() ;
+    cout << ss << "     " << fileName << endl ;
+    remove(fileName) ;
+    rename(ss.data(), fileName) ;
     return 1 ;
 }
 

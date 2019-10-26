@@ -23,9 +23,9 @@ void cmdProcess :: timeCb() {
 void cmdProcess :: initCmdCb() {
     cmdSet_->initCmdCb() ;
 }
+
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
-
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果
     string* buff = bf->getBuf() ;
@@ -40,7 +40,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         //给客户端发送处理结果
         //序列化，并向客户端发送消息，暂时不做处理
         res = backInfo :: notFind() ;
-    }   
+    } 
     else {
         //处理命令
         string cc = wcmd->cmd() ;

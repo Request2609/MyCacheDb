@@ -1,5 +1,5 @@
 #include "aeSocket.h"
-
+int aeSocket::fdPair[2] ;
 //创建套接字
 int aeSocket :: anetCreateSocket() {
     sockFd = socket(AF_INET, SOCK_STREAM, 0) ;
@@ -37,6 +37,12 @@ int aeSocket :: setNoBlocking(int fd) {
         return -1 ;
     }
     return 1 ;
+}
+
+int aeSocket :: createEventFd() {
+    int efd = eventfd(0, EFD_CLOEXEC) ;
+  //  setNoBlocking(efd) ;
+    return efd ;
 }
 
 int aeSocket :: tcpServer(string port, string addr, int backLog) {

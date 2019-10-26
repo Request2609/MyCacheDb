@@ -79,23 +79,21 @@ void TimerManager::remove_timer(int index) {
 }
  
 void TimerManager :: detect_timers(int fd) {
+    cout << "当前监听事件的个数:" << heap_.size() << endl ;
     for(auto res : heap_) {
         unsigned long long now = get_current_millisecs();
         if(res.timer->getFd() == fd) {
             if((res.time-now) < 300) {
                 res.timer->add_time(now) ;
             }
-            break ;
         }
     }
 }
     
 void TimerManager :: printTime(long now) {
-    cout << "-------------------------------------" << endl ;
     for(auto res : heap_) {
         cout <<"客户端超时时间"<< res.time <<"       现在时间：" << now << endl ; 
     } 
-    cout << "-------------------------------------" << endl ;
 }
 
 //侦测时间超时是timermanager管理

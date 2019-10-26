@@ -6,15 +6,19 @@
 #include <memory> 
 #include <sys/eventfd.h>
 
+#include "signalSet.h"
 #include "timerHeap.h" 
 #include "aeEpoll.h"
 #include "aeEvent.h"
 
 using namespace std ;
+
 enum {
     READ= EPOLLIN, 
     WRITE= EPOLLOUT,
 } ;
+
+class TimerManager ;
 
 //创建事件循环
 class aeEventloop {
@@ -55,12 +59,18 @@ public :
     //定时事件
     int timeFd ;
     shared_ptr<TimerManager> tman ;
+    int evfd ;
+    int signalFd ;
+public :
+    static int efd ;
+    static int kickClient(map<int, shared_ptr<aeEvent>>&eventData, int kickFd, shared_ptr<aeEpoll>&aep) ;
 public :
     aeEventloop() ; 
     ~aeEventloop() ;
 public :
     static int notifyToSave(int fd) ;
 public :
+    void initDataInfo() ;
     int addTimerEvent() ;
     //时间事件回调
     void setReadCallBack(callBack readCb) { 

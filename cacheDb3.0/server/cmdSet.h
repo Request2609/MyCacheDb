@@ -4,6 +4,7 @@
 #include <map>
 #include <fstream>
 #include <unistd.h>
+#include <future>
 #include <sys/wait.h>
 #include <signal.h>
 #include <vector>
@@ -12,7 +13,9 @@
 #include "aeEvent.h"
 #include "msg.pb.h"
 #include "rdb.h"
+#include "aofOperation.h"
 #include "cmdCb.h"
+#include "threadPool.h"
 
 
 class rdb ;
@@ -36,6 +39,9 @@ class factory ;
 class redisCommand ;
 class cmdCb ;
 class Flag ;
+class threadpool ;
+class aofKey ;
+class aofOperation ;
 
 class redisCommand {
     //该命令的的处理函数
@@ -55,10 +61,9 @@ public :
     } 
     ~redisCommand() {}
 public :
-    int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
+ //   static int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
     int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
     void setCallBack(saveCall save) { 
-        cout << "设置saveCall" << endl ;
         this->save = save ;}
     void setCallBack(call cb) { 
         this->callBack = cb ; 
@@ -83,8 +88,6 @@ private :
     //微妙,时间
     long long microSecond, calls ;
 } ;
-
-
 //命令集合
 class cmdSet {
 public:
@@ -92,11 +95,13 @@ public:
     cmdSet() ;
     ~cmdSet() {}
 public :
+    static shared_ptr<threadpool>pool ; 
     int initCmdCb() ;
     int getSize() { return dbLs.size() ; }
     int expend(int num) ;
     int countRedis() ;
     int initRedis() ;
+    //执行命令
     int redisCommandProc(int num, shared_ptr<Command>& cmd) ;
     void addObjectToDb(int num, shared_ptr<dbObject>ob) ;
     shared_ptr<redisDb> getDB(int num) ;
@@ -105,9 +110,9 @@ public :
     int findCmd(string cmd) ;  
     shared_ptr<Response> getResponse() { return response ; }
     int append(shared_ptr<redisDb> db) ;
-public :
-    static int flag ;
 private:
+    //线程池执行任务
+    
     shared_ptr<rdb> save ;
     //回复，响应
     shared_ptr<Response> response ;

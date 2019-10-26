@@ -81,6 +81,7 @@ public:
     static string  getFileInfo(const string s) ;
     static int getAllFileName(vector<string>& nameLs) ;
     static bool isRedis(const char* buffer) ;
+    static string tmpFileName(const char* fileName) ;
 public :
     static void processString(const string key, ofstream& aa, const string value) ;
     static void processHash(ofstream& aa, const shared_ptr<dbObject>rd) ;

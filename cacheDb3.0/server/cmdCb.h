@@ -25,7 +25,7 @@ public:
     cmdCb() {}
     ~cmdCb() {}
     static int setHash(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
-    static int save(vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
+    static int save(const vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
     static int isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) ;
     static int setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res);
     static int getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;

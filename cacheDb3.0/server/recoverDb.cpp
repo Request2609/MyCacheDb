@@ -32,7 +32,6 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             cmdset->addObjectToDb(num, ob) ;
         }
         if(type == CMDTYPE_::DB_HASH) {
-            cout << "检测到hash " << endl ;
             shared_ptr<dbObject> ob = factory :: getObject("hset") ;
             ob->setType(DB_HASH) ;
             ob->setNum(num) ;
@@ -239,7 +238,6 @@ bool recoverDb :: isRedis(string& buffer) {
 //获取过期时间
 long recoverDb :: getTime(string& buf) {
     long  index = buf.find("e:") ;
-    cout << index << endl ;
     //没找到
     if(index == (long)string :: npos) {
         return 0 ;

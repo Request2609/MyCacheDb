@@ -86,7 +86,7 @@ int cmdCb :: isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) {
        return ret ;
 }
 
-int cmdCb :: save(vector<pair<int, shared_ptr<redisDb>>>& dls) {
+int cmdCb :: save(const vector<pair<int, shared_ptr<redisDb>>>& dls) {
     //存储各个数据库文件的文件
     ofstream out(".rdb/.redis_fileName", ios::out|ios::binary|ios::trunc) ;
     //遍历数据库进行保存

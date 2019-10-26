@@ -10,7 +10,6 @@ aeEventloop :: aeEventloop() {
     //创建时间管理
     tman = make_shared<TimerManager>() ;
     //刚开始创建16个数据库
-   // db.reserve(16) ;
     //创建一个epoll对象
     aep = make_shared<aeEpoll>() ;
     aep->epCreate(SIZE) ;
@@ -57,7 +56,6 @@ int aeEventloop :: start() {
     signalSet :: addSig(SIGALRM) ;
     //设置时钟信号
     signalSet :: setAlarm(signalSet :: timeSlot) ;
-
     while(!stop) {
         int ret = aep->wait(fireList) ;
         if(ret < 0 && errno != EINTR) {
@@ -74,7 +72,6 @@ int aeEventloop :: start() {
                     cout << __LINE__ << "       " << __FILE__ << endl ;
                     return -1 ;
                 }
-                cout << "收到数据：" << count << endl ;
                 tman->detect_timers() ;
                 //继续添加超时时间
                 signalSet :: setAlarm(signalSet :: timeSlot) ;
@@ -160,6 +157,7 @@ int aeEventloop :: acceptNewConnect(int fd) {
         cout << __FILE__ <<  "       " << __LINE__ << " " << strerror(errno)<< endl ;
         return -1 ;
     }
+    cout << "接收的新事件-->" << newFd << endl ;
     //创建.相应的aeEvent事件
     //设置度写回调函
     shared_ptr<aeEvent>tmp = make_shared<aeEvent>() ;
@@ -175,7 +173,6 @@ int aeEventloop :: acceptNewConnect(int fd) {
     tmp->setServFd(fd) ;
     //将事件加入到epoll中
     aep->add(newFd, READ) ;
-    cout << "新增描述符：" << newFd << endl ;
     //为每个描述符设置超时时间
     MyTimer timer(tman) ;
     //设置超时时间

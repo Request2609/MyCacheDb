@@ -140,7 +140,7 @@ void processPool<T> :: runParent() {
     setupSigPipe() ;
     tool :: addFd(epollFd, listenFd)  ; 
     epoll_event ev[maxEventNum] ;
-    int count = -1 ;
+    int count = 0 ;
     char newConn = 'c' ;
     while(!stop) {
         int number = epoll_wait(epollFd, ev, maxEventNum, -1) ;
@@ -153,18 +153,21 @@ void processPool<T> :: runParent() {
             if(sockFd == listenFd) {
                 int index = count ;
                 do{
+                    if(proDescInfo[index]->pid != -1) break ;
                     index = (index+1)%curProcessNum ;
-                }while(index != curProcessNum) ;
-    
-                    if(proDescInfo[index]->pid == -1) {
-                        stop = true ;
-                        break ;
-                    }
-                    int ret = send(proDescInfo[index]->getWriteFd(), &newConn, sizeof(newConn), 0) ;
-                    if(ret < 0) {
-                        cout << __LINE__ << "         " << __FILE__ << endl ;
-                        return ;
-                    }
+                }while(index != count) ;
+
+                if(proDescInfo[index]->pid == -1) { //没有子进程
+                    stop = true ;
+                    break ;
+                }
+                count = (index+1)%curProcessNum ;
+                int ret = send(proDescInfo[index]->getWriteFd(), &newConn, sizeof(newConn), 0) ;
+                if(ret < 0) {
+                    cout << __LINE__ << "         " << __FILE__ << endl ;
+                    return ;
+                }
+                cout << "给进程" << index << "发送消息"<< endl ;
             }
         }   
     }
@@ -174,6 +177,7 @@ void processPool<T> :: runParent() {
 //子进程的执行函数
 template<typename T>
 void processPool<T> :: runChild() {
+
     cout << "在子进程中" << "     " << "序号:" << index << endl ;
     setupSigPipe() ;
     int pipeFd = proDescInfo[index]->getReadFd() ;
@@ -191,12 +195,14 @@ void processPool<T> :: runChild() {
         for(int i=0; i<num; i++) {
             int fd =ev[i].data.fd ;
             if(fd == pipeFd&&(ev[i].events&EPOLLIN)) {
+                cout << "管道信号！" << endl ;
                 char client ;
                 int ret = recv(fd, &client, sizeof(client), 0) ;
                 if(ret < 0) {
                     cout << __LINE__ << "      " << __FILE__ << endl ;
                     return ;
                 }
+                cout << "接收到信号！" << endl ;
                 int connFd = accept(listenFd, NULL, NULL) ;
                 if(connFd < 0) {
                     cout << __LINE__ << "       " << __FILE__ << endl ;
@@ -208,6 +214,7 @@ void processPool<T> :: runChild() {
                     cout << __LINE__ <<  "         " << __FILE__ << endl ;
                     return ;
                 }
+                cout << "创建用户对象" << endl ;
                 //创建用户对象
                 user[connFd] = make_shared<T>(epollFd, connFd) ;
             } 

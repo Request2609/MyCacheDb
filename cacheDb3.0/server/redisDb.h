@@ -9,7 +9,6 @@
 #include <cstdarg>
 #include <map>
 
-
 #include "timer.h"
 #include "msg.pb.h"
 #include "timer.h"
@@ -30,6 +29,36 @@ class dbObject ;
 class strings;
 class hashSet ;
 class factory ;
+class hashFunc ;
+class equalFunc ;
+class key ; 
+class hashFunc ;
+class equalFunc ;
+
+class key {
+public :
+    key() {}
+    key(int n, int t, string c) : num(n), type(t), cmd(c) {}
+public :
+    int num ;
+    int type ;
+    string cmd ;
+} ;
+
+class hashFunc {
+public :
+    std :: size_t operator()(const key& k) const{
+        return (((hash<int>()(k.num)<<1)^(hash<string>()(k.cmd)<<1))>>1)^(hash<int>()(k.type) >> 1) ;
+    }   
+} ;
+
+class equalFunc {
+public :
+    bool operator() (const key& k1, const key& k2) const{
+        return k1.num == k2.num && k1.type == k2.type && k1.cmd == k2.cmd ;
+    }   
+} ;
+
 //数据库对象
 class redisDb {
 public :
@@ -38,8 +67,8 @@ public :
 private :
     //数据库编号
     int num ;
-    //string的存储方式,第一个元素是数据库编号，第二个是命令，第三个是具体的数据对象，三元组确定对象
-    map<pair<pair<int, int>,string>, shared_ptr<dbObject>> db ;
+    //为了查找快速，这里使用hashmap维护每个缓存数据库
+    unordered_map<key, shared_ptr<dbObject>, hashFunc, equalFunc> db ;
 public :
     //往数据库中写数据
     int initDb() ;

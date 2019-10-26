@@ -1,10 +1,16 @@
 #include "rdb.h"
 
+string rdb :: tmpFileName(const char* fileName) {
+    string tmp = fileName ;
+    tmp += ".tmp" ;
+    return tmp ;
+}
+
 //保存到文件
 int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
-    cout << "数据库中的对象数量！" << db->getSize() << endl ;
-    ofstream out(fileName, ios::out|ios::binary|ios::trunc) ;
-    //以二进制写形式创建rdb文件
+    string ss = tmpFileName(fileName) ;  
+    
+    ofstream out(ss, ios::out|ios::binary|ios::trunc) ;
     if(out.fail()) {
        cout << __FILE__ << "    " << __LINE__ << endl ;
         return -1;
@@ -24,8 +30,7 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
         //字符串类别是string
         out << "e:" ;
         if(type == DB_STRING) {
-            cout << "string lei xing !" << endl ;
-            string value = rd->getValue() ;
+            string value = rd->getValue() ; 
             string key = rd->getKey() ;
             out << rd->getEndTime() << "\r\n" ;
             out << "ctp:" << DB_STRING << "\r\n" ;
@@ -40,12 +45,14 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
         }
         rd = db->getNextDb() ;
     }
-    out << "\r\n" ;  
     out.close() ;
+    remove(fileName) ;
+    rename(ss.data(), fileName) ;
     return 1 ;
 }
 
 void rdb :: processHash(ofstream& out, const shared_ptr<dbObject>rd) {
+
     string key = rd->getKey() ;
     string value="" ;
     int len = 0 ;
@@ -216,32 +223,39 @@ int rdb :: getAllFileName(vector<string>&nameLs) {
 }
 
 string rdb :: getFileInfo(const string s) {
-    int fd = open(s.c_str(), O_RDWR|O_CREAT) ;
+    int fd = open(s.c_str(), O_RDWR) ;
     if(fd < 0) {
-        cout << __LINE__ << "     " << __FILE__ << endl ;
+        cout << strerror(errno) << "     " << __LINE__ << "     " << __FILE__ << endl ;
         return "" ;
     }
     struct stat st ;
     int ret = fstat(fd, &st) ;
+    if(st.st_size == 0) {
+        cout << "数据库文件为空！" << endl ;
+        return "" ;
+    }
     if(ret < 0) {
         cout << __FILE__ << "       " << __LINE__ << endl ;
         return "" ;
     }
+    long size = st.st_size ;
+    if(size%4096 != 0) {
+        size = (size/4096+1)*4096 ;
+    }
     //内存映射
-    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0) ;
+    char* flag = (char*)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0) ;
     if(flag == NULL) {
             cout << __FILE__ << "    " << __LINE__ << endl ;
             return "" ;
     }
     close(fd) ;
     string b = flag ;
-    munmap(flag, st.st_size) ;
+    munmap(flag, size) ;
     return b ;
 }
 
 //初始化数据库
 int rdb :: initRedis(cmdSet* cmdset) {
-
     vector<string>nameLs ;
     int i = getAllFileName(nameLs) ;
     if(nameLs.size() == 0|| i < 0) {
@@ -251,13 +265,14 @@ int rdb :: initRedis(cmdSet* cmdset) {
         if(s.size() == 0) {
             continue ;
         }
+        cout << "获取文件信息！"<< endl ;
         string str = getFileInfo(s) ;   
         if(str.empty()) {
             return -1 ;
         } 
-        //文件信息
         shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
     }
+    cout << "init ok!" <<endl ;
     return 1 ;
 }
 
