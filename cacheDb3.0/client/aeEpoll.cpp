@@ -1,5 +1,4 @@
 #include "aeEpoll.h"
-
 int aeEpoll :: add(int fd, int events) {
     
     struct epoll_event ev ;
@@ -45,7 +44,7 @@ int aeEpoll :: del(int fd) {
 
 //将所有活跃事件收起来ls
 int aeEpoll :: wait(vector<epoll_event>&ls) {
-    
+
     int ret = 0 ;   
     int eventNum = epoll_wait(epFd, &eventFds[0], eventFds.capacity(), -1) ;
     if(eventNum < 0) {
