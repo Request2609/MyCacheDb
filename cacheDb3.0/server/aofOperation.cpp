@@ -1,10 +1,8 @@
-
 #include "aofOperation.h"
 
 unsigned long aofOperation :: seq = 0 ;
+unordered_map<aofKey, map<string, vector<pair<string, string>>>, aofHashFunc, aofEqualFunc>aofOperation:: aofHsetRcd ;
 unordered_map<aofKey, map<string, string>, aofHashFunc, aofEqualFunc> aofOperation::aofStrRcd ;
-unordered_map<aofKey, map<string, vector<string, string>>, aofHashFunc, aofEqualFunc>aofOperation:: aofHsetRcd ;
-shared_ptr<threadpool>aofOperation :: pool = make_shared<threadpool>(4);
 
 void aofOperation :: stringData(const int num, const shared_ptr<Command>&cmd) {
     aofKey akey ;
@@ -19,6 +17,7 @@ void aofOperation :: stringData(const int num, const shared_ptr<Command>&cmd) {
 }
 
 void aofOperation :: hsetData(const int num, const shared_ptr<Command>&cmd) {
+    cout << "正在进行异步持久化!" << endl ;
     //获取键值
     aofKey af ;
     af.num = num ;
@@ -37,10 +36,10 @@ void aofOperation :: hsetData(const int num, const shared_ptr<Command>&cmd) {
         }
         for(int j= 0; j<lk; j++) {
             string kk = cmd->keys(i).key(j) ;
-            string vv = tmp->vals(i-1).val(j) ;
+            string vv = cmd->vals(i-1).val(j) ;
             ls.push_back({kk, vv}) ;
         }   
     }
-    aofHsetRcd[af] = ls ;
+    //aofHsetRcd[af] = ls ;
 }
 

@@ -39,7 +39,7 @@ class factory ;
 class redisCommand ;
 class cmdCb ;
 class Flag ;
-class threadpool ;
+class threadPool ;
 class aofKey ;
 class aofOperation ;
 
@@ -61,7 +61,7 @@ public :
     } 
     ~redisCommand() {}
 public :
- //   static int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
+    int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
     int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
     void setCallBack(saveCall save) { 
         this->save = save ;}
@@ -95,7 +95,7 @@ public:
     cmdSet() ;
     ~cmdSet() {}
 public :
-    static shared_ptr<threadpool>pool ; 
+    shared_ptr<threadPool>pool ; 
     int initCmdCb() ;
     int getSize() { return dbLs.size() ; }
     int expend(int num) ;

@@ -29,7 +29,7 @@ public:
     static int isKeyExist(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&cmd) ;
     static int setCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res);
     static int getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
-    static int bgSave(vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
+    static int bgSave(const vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
     static int setHget(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
     static char getFlag() ;
     static int setFlag(char c) ;

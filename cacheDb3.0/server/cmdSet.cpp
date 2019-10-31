@@ -3,7 +3,6 @@
 #include "rdb.h"
 
 //先创建四个线程
-shared_ptr<threadpool> cmdSet :: pool = make_shared<threadpool>(4);
 
 //初始化命令集
 cmdSet :: cmdSet() {
@@ -15,6 +14,7 @@ cmdSet :: cmdSet() {
 } 
 
 int cmdSet :: initCmdCb() {
+    pool = make_shared<threadPool>(4);
     //初始化set命令
     shared_ptr<redisCommand>tset(new redisCommand("set", -3, "w",  1, 1, 1, 0, 0)) ;
     //函数指针不能作为构造函数参数
@@ -43,7 +43,6 @@ int cmdSet :: initCmdCb() {
 }
 
 //初始化数据库
-    static shared_ptr<threadpool>pool ; 
 
 int cmdSet :: initRedis() {
    rdb :: initRedis(this) ;
@@ -113,7 +112,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "set")) {
         //调用命令对应的函数
         //先将写的信息存在aof缓存中
-        aofOperation :: getData(num, cmd) ;
+        aofOperation :: hsetData(num, cmd) ;
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         //处理失败
     }
@@ -126,7 +125,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         if(isFirst == 1) { 
             //获取上一次持久化的结果
             if(res.get() < 0) {
-                response.set_reply("PREVIOUS SAVE FAILED, CONTINUE TO TRY AGAIN！") ; 
+                response->set_reply("PREVIOUS SAVE FAILED, CONTINUE TO TRY AGAIN！") ; 
                 isFirst = 0 ;
             }
         } 
@@ -164,7 +163,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         //如果是第一次进行持久化
         if(isFirst == 0) {
             //开线程进行处理
-            res = cmdSet :: pool->commit(cmdCb::save, dvLs) ;
+            res = pool->commit(cmdCb::save, dbLs) ;
             //将isFirst标记为1
             isFirst = 1 ;
         }
