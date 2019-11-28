@@ -17,6 +17,7 @@ namespace STRING_ {
 namespace CMDTYPE_ {
     const int STRING = 3 ;
     const int DB_HASH= 4 ;
+    const int DB_LIST = 5 ;
 } 
 
 class recoverDb {
@@ -25,10 +26,12 @@ public:
     ~recoverDb() {}
     static bool  isRedis(string& s) ;
     static shared_ptr<redisDb> recover(string& s, cmdSet* cmdset) ;
+    static int getListObject(string& s, shared_ptr<dbObject>& ob) ;
     static void getHead(string& s) ;
     static int getNum(string& s) ;
     static long getTime(string& buf) ;
     static int getType(string& s) ;
+    static string getListValues(string& s) ;
     static int getEncoding(string& s) ;
     static string getKey(string& s, string& value) ;
     static void stringGet(string& s, shared_ptr<dbObject>& ob) ;

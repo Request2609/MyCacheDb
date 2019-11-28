@@ -47,7 +47,7 @@ struct TableStruct_msg_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[6]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,6 +61,9 @@ extern CommandDefaultTypeInternal _Command_default_instance_;
 class Key;
 class KeyDefaultTypeInternal;
 extern KeyDefaultTypeInternal _Key_default_instance_;
+class ListObject;
+class ListObjectDefaultTypeInternal;
+extern ListObjectDefaultTypeInternal _ListObject_default_instance_;
 class Response;
 class ResponseDefaultTypeInternal;
 extern ResponseDefaultTypeInternal _Response_default_instance_;
@@ -74,6 +77,7 @@ extern ValueDefaultTypeInternal _Value_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Messages::Command* Arena::CreateMaybeMessage<::Messages::Command>(Arena*);
 template<> ::Messages::Key* Arena::CreateMaybeMessage<::Messages::Key>(Arena*);
+template<> ::Messages::ListObject* Arena::CreateMaybeMessage<::Messages::ListObject>(Arena*);
 template<> ::Messages::Response* Arena::CreateMaybeMessage<::Messages::Response>(Arena*);
 template<> ::Messages::Time* Arena::CreateMaybeMessage<::Messages::Time>(Arena*);
 template<> ::Messages::Value* Arena::CreateMaybeMessage<::Messages::Value>(Arena*);
@@ -527,6 +531,171 @@ class Time :
 };
 // -------------------------------------------------------------------
 
+class ListObject :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Messages.ListObject) */ {
+ public:
+  ListObject();
+  virtual ~ListObject();
+
+  ListObject(const ListObject& from);
+  ListObject(ListObject&& from) noexcept
+    : ListObject() {
+    *this = ::std::move(from);
+  }
+
+  inline ListObject& operator=(const ListObject& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ListObject& operator=(ListObject&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const ListObject& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ListObject* internal_default_instance() {
+    return reinterpret_cast<const ListObject*>(
+               &_ListObject_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(ListObject& a, ListObject& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ListObject* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ListObject* New() const final {
+    return CreateMaybeMessage<ListObject>(nullptr);
+  }
+
+  ListObject* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ListObject>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const ListObject& from);
+  void MergeFrom(const ListObject& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ListObject* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Messages.ListObject";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_msg_2eproto);
+    return ::descriptor_table_msg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kValsFieldNumber = 2,
+    kKeyFieldNumber = 1,
+  };
+  // repeated .Messages.Value vals = 2;
+  int vals_size() const;
+  void clear_vals();
+  ::Messages::Value* mutable_vals(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >*
+      mutable_vals();
+  const ::Messages::Value& vals(int index) const;
+  ::Messages::Value* add_vals();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >&
+      vals() const;
+
+  // optional string key = 1;
+  bool has_key() const;
+  private:
+  bool _internal_has_key() const;
+  public:
+  void clear_key();
+  const std::string& key() const;
+  void set_key(const std::string& value);
+  void set_key(std::string&& value);
+  void set_key(const char* value);
+  void set_key(const char* value, size_t size);
+  std::string* mutable_key();
+  std::string* release_key();
+  void set_allocated_key(std::string* key);
+  private:
+  const std::string& _internal_key() const;
+  void _internal_set_key(const std::string& value);
+  std::string* _internal_mutable_key();
+  public:
+
+  // @@protoc_insertion_point(class_scope:Messages.ListObject)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value > vals_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr key_;
+  friend struct ::TableStruct_msg_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Command :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Messages.Command) */ {
  public:
@@ -576,7 +745,7 @@ class Command :
                &_Command_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(Command& a, Command& b) {
     a.Swap(&b);
@@ -649,6 +818,7 @@ class Command :
     kValsFieldNumber = 5,
     kCmdFieldNumber = 2,
     kTimeFieldNumber = 8,
+    kLobFieldNumber = 9,
     kStatusFieldNumber = 1,
     kLenFieldNumber = 3,
     kTypeFieldNumber = 6,
@@ -707,6 +877,17 @@ class Command :
   ::Messages::Time* mutable_time();
   void set_allocated_time(::Messages::Time* time);
 
+  // optional .Messages.ListObject lob = 9;
+  bool has_lob() const;
+  private:
+  bool _internal_has_lob() const;
+  public:
+  void clear_lob();
+  const ::Messages::ListObject& lob() const;
+  ::Messages::ListObject* release_lob();
+  ::Messages::ListObject* mutable_lob();
+  void set_allocated_lob(::Messages::ListObject* lob);
+
   // optional int32 status = 1;
   bool has_status() const;
   private:
@@ -754,6 +935,7 @@ class Command :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value > vals_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr cmd_;
   ::Messages::Time* time_;
+  ::Messages::ListObject* lob_;
   ::PROTOBUF_NAMESPACE_ID::int32 status_;
   ::PROTOBUF_NAMESPACE_ID::int32 len_;
   bool type_;
@@ -811,7 +993,7 @@ class Response :
                &_Response_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(Response& a, Response& b) {
     a.Swap(&b);
@@ -1090,25 +1272,129 @@ inline void Time::set_time(double value) {
 
 // -------------------------------------------------------------------
 
+// ListObject
+
+// optional string key = 1;
+inline bool ListObject::_internal_has_key() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline bool ListObject::has_key() const {
+  return _internal_has_key();
+}
+inline void ListObject::clear_key() {
+  key_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& ListObject::key() const {
+  // @@protoc_insertion_point(field_get:Messages.ListObject.key)
+  return _internal_key();
+}
+inline void ListObject::set_key(const std::string& value) {
+  _internal_set_key(value);
+  // @@protoc_insertion_point(field_set:Messages.ListObject.key)
+}
+inline std::string* ListObject::mutable_key() {
+  // @@protoc_insertion_point(field_mutable:Messages.ListObject.key)
+  return _internal_mutable_key();
+}
+inline const std::string& ListObject::_internal_key() const {
+  return key_.GetNoArena();
+}
+inline void ListObject::_internal_set_key(const std::string& value) {
+  _has_bits_[0] |= 0x00000001u;
+  key_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void ListObject::set_key(std::string&& value) {
+  _has_bits_[0] |= 0x00000001u;
+  key_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Messages.ListObject.key)
+}
+inline void ListObject::set_key(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _has_bits_[0] |= 0x00000001u;
+  key_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Messages.ListObject.key)
+}
+inline void ListObject::set_key(const char* value, size_t size) {
+  _has_bits_[0] |= 0x00000001u;
+  key_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Messages.ListObject.key)
+}
+inline std::string* ListObject::_internal_mutable_key() {
+  _has_bits_[0] |= 0x00000001u;
+  return key_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* ListObject::release_key() {
+  // @@protoc_insertion_point(field_release:Messages.ListObject.key)
+  if (!has_key()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000001u;
+  return key_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void ListObject::set_allocated_key(std::string* key) {
+  if (key != nullptr) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  key_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), key);
+  // @@protoc_insertion_point(field_set_allocated:Messages.ListObject.key)
+}
+
+// repeated .Messages.Value vals = 2;
+inline int ListObject::vals_size() const {
+  return vals_.size();
+}
+inline void ListObject::clear_vals() {
+  vals_.Clear();
+}
+inline ::Messages::Value* ListObject::mutable_vals(int index) {
+  // @@protoc_insertion_point(field_mutable:Messages.ListObject.vals)
+  return vals_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >*
+ListObject::mutable_vals() {
+  // @@protoc_insertion_point(field_mutable_list:Messages.ListObject.vals)
+  return &vals_;
+}
+inline const ::Messages::Value& ListObject::vals(int index) const {
+  // @@protoc_insertion_point(field_get:Messages.ListObject.vals)
+  return vals_.Get(index);
+}
+inline ::Messages::Value* ListObject::add_vals() {
+  // @@protoc_insertion_point(field_add:Messages.ListObject.vals)
+  return vals_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >&
+ListObject::vals() const {
+  // @@protoc_insertion_point(field_list:Messages.ListObject.vals)
+  return vals_;
+}
+
+// -------------------------------------------------------------------
+
 // Command
 
 // optional int32 status = 1;
 inline bool Command::_internal_has_status() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline bool Command::has_status() const {
   return _internal_has_status();
 }
 inline void Command::clear_status() {
   status_ = 0;
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Command::status() const {
   // @@protoc_insertion_point(field_get:Messages.Command.status)
   return status_;
 }
 inline void Command::set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
   status_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.status)
 }
@@ -1185,21 +1471,21 @@ inline void Command::set_allocated_cmd(std::string* cmd) {
 
 // optional int32 len = 3;
 inline bool Command::_internal_has_len() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline bool Command::has_len() const {
   return _internal_has_len();
 }
 inline void Command::clear_len() {
   len_ = 0;
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Command::len() const {
   // @@protoc_insertion_point(field_get:Messages.Command.len)
   return len_;
 }
 inline void Command::set_len(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
   len_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.len)
 }
@@ -1266,42 +1552,42 @@ Command::vals() const {
 
 // optional bool type = 6;
 inline bool Command::_internal_has_type() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline bool Command::has_type() const {
   return _internal_has_type();
 }
 inline void Command::clear_type() {
   type_ = false;
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline bool Command::type() const {
   // @@protoc_insertion_point(field_get:Messages.Command.type)
   return type_;
 }
 inline void Command::set_type(bool value) {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
   type_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.type)
 }
 
 // optional int32 num = 7;
 inline bool Command::_internal_has_num() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline bool Command::has_num() const {
   return _internal_has_num();
 }
 inline void Command::clear_num() {
   num_ = 0;
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Command::num() const {
   // @@protoc_insertion_point(field_get:Messages.Command.num)
   return num_;
 }
 inline void Command::set_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000040u;
   num_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.num)
 }
@@ -1356,6 +1642,58 @@ inline void Command::set_allocated_time(::Messages::Time* time) {
   }
   time_ = time;
   // @@protoc_insertion_point(field_set_allocated:Messages.Command.time)
+}
+
+// optional .Messages.ListObject lob = 9;
+inline bool Command::_internal_has_lob() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline bool Command::has_lob() const {
+  return _internal_has_lob();
+}
+inline void Command::clear_lob() {
+  if (lob_ != nullptr) lob_->Clear();
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline const ::Messages::ListObject& Command::lob() const {
+  const ::Messages::ListObject* p = lob_;
+  // @@protoc_insertion_point(field_get:Messages.Command.lob)
+  return p != nullptr ? *p : *reinterpret_cast<const ::Messages::ListObject*>(
+      &::Messages::_ListObject_default_instance_);
+}
+inline ::Messages::ListObject* Command::release_lob() {
+  // @@protoc_insertion_point(field_release:Messages.Command.lob)
+  _has_bits_[0] &= ~0x00000004u;
+  ::Messages::ListObject* temp = lob_;
+  lob_ = nullptr;
+  return temp;
+}
+inline ::Messages::ListObject* Command::mutable_lob() {
+  _has_bits_[0] |= 0x00000004u;
+  if (lob_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Messages::ListObject>(GetArenaNoVirtual());
+    lob_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Messages.Command.lob)
+  return lob_;
+}
+inline void Command::set_allocated_lob(::Messages::ListObject* lob) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete lob_;
+  }
+  if (lob) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      lob = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, lob, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  lob_ = lob;
+  // @@protoc_insertion_point(field_set_allocated:Messages.Command.lob)
 }
 
 // -------------------------------------------------------------------
@@ -1435,6 +1773,8 @@ inline void Response::set_allocated_reply(std::string* reply) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

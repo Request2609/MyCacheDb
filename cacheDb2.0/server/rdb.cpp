@@ -8,8 +8,8 @@ string rdb :: tmpFileName(const char* fileName) {
 
 //保存到文件
 int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
+    //获取数据库文件
     string ss = tmpFileName(fileName) ;  
-    
     ofstream out(ss, ios::out|ios::binary|ios::trunc) ;
     if(out.fail()) {
        cout << __FILE__ << "    " << __LINE__ << endl ;
@@ -29,20 +29,26 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
         int type = rd->getType() ;
         //字符串类别是string
         out << "e:" ;
+        out << rd->getEndTime() << "\r\n" ;
         if(type == DB_STRING) {
             string value = rd->getValue() ; 
             string key = rd->getKey() ;
-            out << rd->getEndTime() << "\r\n" ;
             out << "ctp:" << DB_STRING << "\r\n" ;
             processString(key, out, value) ;
         }
         //hash的保存
         if(type == DB_HASH) {
             string key = rd->getKey() ;
-            out << rd->getEndTime()<<"\r\n" ;
+        //    out << rd->getEndTime()<<"\r\n" ;
             out << "ctp:" << DB_HASH << "\r\n" ;
             processHash(out, rd) ;         
         }
+        //是链表
+        if(type == DB_LIST) {
+          //  out << rd->getEndTime() << "\r\n" ;
+            out  <<"ctp:" << DB_LIST << "\r\n" ;
+            processList(out, rd) ;
+        }   
         rd = db->getNextDb() ;
     }
     out << "\r\n" ;  
@@ -52,6 +58,18 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
     rename(ss.data(), fileName) ;
     return 1 ;
 }
+
+void rdb :: processList(ofstream& aa, const shared_ptr<dbObject>rd) {
+    string key = rd->getKey() ;
+    aa << key << "\r\n" ;
+    vector<string> ls = rd->getValues("") ;
+    int len = ls.size() ;
+    for(int i=0; i<len; i++) {
+        aa <<ls[i]<< "\r\n" ;
+    }
+    aa << "\r$\n" ;
+}
+
 
 void rdb :: processHash(ofstream& out, const shared_ptr<dbObject>rd) {
 
@@ -90,6 +108,7 @@ void rdb :: processString(const string key, ofstream& out, const string value) {
         //将键值写入到文件中
         out << key <<":" << a << "\r$\n" ;
     }   
+
     else if(type == ENCODING_INT::INT16) {
         out << "ec:" << STRING :: REDIS_ENCODING_INT << "\r\n" ;
         //值

@@ -53,6 +53,7 @@ public :
             this->microSecond = msecond ;
             this->calls = calls ;
     } 
+
     ~redisCommand() {}
 public :
     int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 

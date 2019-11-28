@@ -84,7 +84,7 @@ void clientLoop :: start(string ip, string port) {
 }
 
 int clientLoop :: setEndSig() {
-      
+        
 }
 
 //向服务器发送请求

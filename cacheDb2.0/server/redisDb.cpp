@@ -5,8 +5,8 @@ using namespace type ;
 int redisDb :: isExist(shared_ptr<Command>&cmds) {
     string cmd = cmds->cmd() ;
     //如果是set 命令
+    int num = cmds->num() ;
     if(cmd == "set") {
-        int num = cmds->num() ;
         string k = cmds->keys(0).key(0) ;
         key ke(num, type::DB_STRING, k) ;
         auto res = db.find(ke) ;
@@ -17,7 +17,6 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         res->second->setValue(cmds->vals(0).val(0)) ;
     }
     if(cmd == "hset") {
-        int num = cmds->num() ;
         string k = cmds->keys(0).key(0) ;
         string kk = cmds->keys(1).key(0) ;
         string vv = cmds->vals(0).val(0) ;
@@ -40,6 +39,18 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
             }
         }
         res->second->setNum(cmds->num()) ;
+    }
+    if(cmd == "lpop") {
+        ListObject lob = cmds->lob() ;
+        string keys = lob.key() ;
+        key ke(num, type::DB_LIST, keys) ;
+        auto res = db.find(ke) ;
+        if(res == db.end()) {
+            return -1 ;
+        }
+        string val = res->getValue() ; 
+        int num = res->objectSize() ;
+        res->reply(to_string(num)+"  "+val) ;
     }
     return 1 ;
 }
@@ -73,8 +84,11 @@ shared_ptr<dbObject> redisDb :: getNextDb() {
 void redisDb :: append(shared_ptr<dbObject>rdb) {   
     //三元组确定对象
     key k  ;
+    //数据库号
     k.num = rdb->getNum() ;
+    //类型
     k.type = rdb->getType() ;
+    //键值
     k.cmd = rdb->getKey() ;
     db.insert({k, rdb}); 
 }
@@ -110,6 +124,11 @@ void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         }
         res->set_reply("\""+feild+"\"") ;
     }
+    if(!strcasecmp(md.c_str(), "lpop")) {
+        string value ;
+        string key = cmd->lob().key() ;
+            
+    }
 }
 
 string redisDb :: findHgetRequest(const string k, 
@@ -131,29 +150,6 @@ string redisDb :: findHgetRequest(const string k,
     auto s = res->second->getValues(feild) ;
     return s[0] ;   
 }
-
-void hashSet :: print() {
-    for(auto s : values) {
-        cout << num <<"==============>  " <<  s.first <<"  -------  "<< s.second <<"    " <<  type<< endl ;
-    }
-}
-
-void strings :: print() {
-    cout << type<< "    " << num<< "   "<< key << "    "<< value << endl ;
-}
-
-
-vector<string> hashSet :: getValues(const string s) {
-    vector<string>ls ;
-    auto val = values.find(s) ;
-    if(val == values.end()) {
-        ls.push_back("hashset has no this feild!") ;
-        return ls ;
-    }
-    ls.push_back(values[s]) ;
-    return ls ;
-}
-
 void redisDb :: print() {
     for(auto res=db.begin(); res != db.end(); res++) {
         res->second->print() ;
@@ -177,29 +173,3 @@ string redisDb :: findGetRequest(const string k, const int num) {
 }
 
 
-string hashSet :: getValue() {
-    static int flag = 0 ;
-    static auto iter = values.begin() ;
-    if(flag == 0) {
-        iter = values.begin() ;
-    }
-    if(iter == values.end()) {
-        iter = values.begin() ;
-        flag = 0 ;
-        return "" ;
-    }
-    flag = 1 ;
-    string vv = iter->first + "\r\n" + iter->second ;
-    iter++ ;
-    return vv ;
-}
-
-//字符串的形式传进来
-void hashSet :: setValue(string value, ...) {
-    string key = value ;
-    va_list va ;
-    va_start(va, value) ;
-    char* val = va_arg(va, char*) ;
-    values[key] = val ;
-    va_end(va) ;
-}

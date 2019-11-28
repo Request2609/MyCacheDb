@@ -31,8 +31,13 @@ message Command {
     //正在操作的数据库编号
     optional int32 num = 7 ;
     optional Time time = 8;
-//    required string k = 9 ;
+    optional ListObject lob = 9 ;
 }   
+
+message ListObject {
+    optional string key = 1;
+    repeated Value vals = 2 ;
+}
 
 message Response {
     required string reply = 1 ;

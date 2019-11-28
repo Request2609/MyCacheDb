@@ -10,6 +10,7 @@ void cmds :: build() {
     cmdList.insert({"hset", -1}) ;
     cmdList.insert({"hget", 3}) ;
     cmdList.insert({"bgsave", 1}) ;
+    cmdList.insert({"lpush", -1}) ;
 }
 
 cmds :: cmds() {
@@ -17,14 +18,14 @@ cmds :: cmds() {
 
 cmds :: ~cmds() {}
 
-
 //匹配键值对
 //创建命令表
-int request :: processCmd(vector<string>&res, Command&com) {
+int request :: processCmd(vector<string>&res, Command& com) {
     //创建命令集合
     static cmds cd ;
     cd.build() ;
     int len = res.size() ;
+
     if(!strcasecmp(res[0].c_str(), "set")) {
         //获取该命令的参数个数
         int ret = cd.cmdList[res[0]] ;
@@ -34,6 +35,11 @@ int request :: processCmd(vector<string>&res, Command&com) {
         }
         cmdProcess :: setSet(res, com) ;
     } 
+
+    else if(!strcasecmp(res[0].c_str(), "lpush")) {
+        cmdProcess :: getListObject(res, com) ;
+    }
+
     //get命令
     else if(!strcasecmp(res[0].c_str(), "get")) {
         int ret = cd.cmdList[res[0]] ;
@@ -43,6 +49,7 @@ int request :: processCmd(vector<string>&res, Command&com) {
         }   
         cmdProcess :: setGet(res, com) ;
     }
+
     else if(!strcasecmp(res[0].c_str(), "save")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {
@@ -51,6 +58,7 @@ int request :: processCmd(vector<string>&res, Command&com) {
         }
         cmdProcess :: setSave(res, com) ;
     }
+
     else if(!strcasecmp(res[0].c_str(), "hset")) {
         //不定参数,哈希表的总参数个数是偶数
         if(cd.cmdList[res[0]] != -1 || (len%2))  {
@@ -59,6 +67,7 @@ int request :: processCmd(vector<string>&res, Command&com) {
         } 
         cmdProcess :: setHset(res, com) ;
     }
+
     else if(!strcasecmp(res[0].c_str(), "hget")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {

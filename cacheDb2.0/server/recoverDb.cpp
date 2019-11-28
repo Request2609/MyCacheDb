@@ -18,8 +18,10 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
         if(times == 0) {
             break ;
         }
+        
         //超时的话，就找下一个
         if(times > 0 && times < timer :: getCurTime()) {
+            //每个对象元素结束的标识
             long index = s.find("\r$\n") ;
             s = s.c_str() + index + 3;
             continue ;
@@ -43,11 +45,42 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             }
             cmdset->addObjectToDb(num, ob) ;
         }
+        
+        if(type == CMDTYPE_::DB_LIST) {
+            shared_ptr<dbObject> ob = factory :: getObject("lpush") ;
+            ob->setType(CMDTYPE_::DB_LIST) ;
+            ob->setNum(num) ;
+            ob->setEndTime(times) ;
+            getListObject(s, ob) ;
+            cmdset->addObjectToDb(ob) ;
+        }
     }
     if(flag == 1) {
         cmdset->append(db) ;
     }
     return db ;
+}
+
+
+string recoverDb:: getListValues(string& s) {
+    string ss ;
+    int i = 0 ;
+    for(i=0; s[i]!='\r'; i++) {
+        ss += s[i] ;    
+    }
+    s = s.substr(i+2) ; 
+}
+
+int recoverDb :: getListObject(string& s, shared_ptr<dbObject>& ob) {
+    //获取键值
+    string key = getHashKey(s) ;    
+    ob->setKey(key) ;
+    //找值
+    while(1) {
+        string ss = getListValues(s) ;
+        ob->setValue("", ss.c_str()) ;
+    }
+    return 1 ;
 }
 
 int recoverDb :: hashGet(string& s, shared_ptr<dbObject>&ob) {
@@ -93,9 +126,11 @@ pair<string, string> recoverDb :: getAttrKV(string& s) {
 
 //获取key对象
 string recoverDb :: getHashKey(string& s) {
+    //找'\r\n'
     long index = s.find("\r\n") ;
     string key ;
     long i = 0 ;
+    //从'\r\n'后面开始找键，碰到'r'结束
     for(i=index+2; s[i] != '\r'; i++) {
         key += s[i] ;
     }
@@ -260,3 +295,4 @@ int recoverDb :: getNum(string& buf) {
     buf = buf.c_str() + index ;
     return atoi(n.c_str()) ;
 }
+

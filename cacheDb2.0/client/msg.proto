@@ -15,7 +15,12 @@ message Time {
     optional double time = 1;
 }
 
-message Command {
+messge ListObject {
+    optional string key = 1;
+    repeated Value vals = 2 ;
+}
+
+message Command {   
     //标识发送是失败还是成功
     optional int32 status = 1;
     //命令
@@ -31,9 +36,11 @@ message Command {
     optional bool type = 6 ;
     //正在操作的数据库编号
     optional int32 num = 7 ;
-    optional Time time = 8;
+    optional Time time = 8 ; 
+    optional ListObject lob = 9 ;
 }   
 
 message Response {
     required string reply = 1 ;
 }
+

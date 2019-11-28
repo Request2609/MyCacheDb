@@ -59,3 +59,14 @@ void cmdProcess :: setHset(vector<string>&res,Command& com) {
     }
 }
 
+void cmdProcess :: getListObject(vector<string>& res, Command& com) {
+        
+    ListObject* lob = com.add_lob() ;
+    com.set_cmd(res[0]) ;
+    int len = res.size() ;
+    Value* val = lob->add_vals() ;
+    for(int i=1; i<len; i++) {
+        string*v = val->add_val() ;
+        *v = res[i] ;
+    }
+}

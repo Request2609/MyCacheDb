@@ -50,9 +50,10 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         cmdSet_->redisCommandProc(num, wcmd) ;
         shared_ptr<Response>r = cmdSet_->getResponse() ;
         res.set_reply(r->reply()) ;
-        //销毁响应的智能指针
+        //销毁相应的智能指针
         r = nullptr ;
     } 
+
     shared_ptr<Response>re(new Response(res)) ;
     rc->response(re, tmp->getConnFd()) ;
     bf->clear() ;

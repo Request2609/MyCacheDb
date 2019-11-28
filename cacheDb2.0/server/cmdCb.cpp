@@ -40,6 +40,36 @@ int cmdCb :: setFlag(char c) {
     return 1 ;
 }
 
+string cmdCb :: lPop(const string key, int num, int type) {
+    
+}
+
+string cmdCb :: getList() {
+
+}
+
+//设置push命令
+int cmdCb :: setLpush(shared_ptr<redisDb>&wcmd, 
+                      shared_ptr<Command>&tmp, 
+                      shared_ptr<Response>& res) {
+
+    shared_ptr<dbObject>se = factory::getObject("lpush");
+    ListObject key = tmp->lob() ;
+    string k = key.key() ;
+    int len = key.vals_size() ;
+    for(int i=0; i<len; i++) {
+        int num = se->setValues("", key.vals(i)) ;
+    }
+
+    se->setNum(tmp->num()) ;
+    se->setType(type::DB_LIST) ;
+    int num = se->objectNum() ;
+    //设置成功，返回当前队列中的元素个数
+    res->set_reply(to_string(num)) ;
+    wcmd->append(se) ;
+    return 1 ;
+ }
+
 int cmdCb :: setHash(shared_ptr<redisDb>&wcmd, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {               
@@ -72,6 +102,13 @@ int cmdCb :: setHash(shared_ptr<redisDb>&wcmd,
     se->setType(type::DB_HASH) ;
     wcmd->append(se) ;
     res->set_reply("OK") ;
+}
+
+int cmdCb :: lPop(shared_ptr<redisDb>& db, 
+         shared_ptr<Command>&tmp, 
+         shared_ptr<Response>& res) {
+    db->queryDb(res, tmp) ;
+    return 1 ;
 }
 
 int cmdCb :: setHget(shared_ptr<redisDb>&db, 

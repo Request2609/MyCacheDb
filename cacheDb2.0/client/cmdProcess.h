@@ -19,6 +19,7 @@ public:
     static void setHset(vector<string>&res,Command& com) ;
     static void setBgSave(vector<string>&res,Command& com) ;
     static void setHget(vector<string>&res,Command& com) ;
+    static void  getListObject(vector<string>& res, Command com) ;
 private:
 
 };

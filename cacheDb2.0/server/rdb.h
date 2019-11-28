@@ -85,4 +85,5 @@ public:
 public :
     static void processString(const string key, ofstream& aa, const string value) ;
     static void processHash(ofstream& aa, const shared_ptr<dbObject>rd) ;
+    static void processList(ofstream& aa, const shared_ptr<dbObject>rd) ;
 } ;
