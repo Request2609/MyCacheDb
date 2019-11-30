@@ -38,7 +38,8 @@ void MyTimer :: on_timer(unsigned long long now) {
 
 //客户端时间没到，执行此操作
 void MyTimer :: add_time(unsigned long long now) {
-    //先删除当前的节点
+    //先删除当前的
+    //节点
     manager_->remove_timer(m_nHeapIndex) ;
     //给当前节点延长时间
     m_nExpires = m_nInterval + now ;

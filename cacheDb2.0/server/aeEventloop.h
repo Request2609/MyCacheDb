@@ -71,11 +71,13 @@ public :
     static int notifyToSave(int fd) ;
 public :
     void initDataInfo() ;
+    shared_ptr<aeEpoll> getEp() { return aep ; }
     int addTimerEvent() ;
     //时间事件回调
     void setReadCallBack(callBack readCb) { 
         timerCall = readCall = readCb ; 
     }
+
     int acceptNewConnect(int fd) ;
     void setCallBack(callBack readCb, callBack writeCb) ;
     int addServerEvent(string addr, string port) ;

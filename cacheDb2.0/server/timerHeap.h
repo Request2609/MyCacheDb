@@ -14,6 +14,7 @@ class TimerManager;
 class aeEpoll ; 
 
 class MyTimer {
+
     typedef std::function<int(map<int, shared_ptr<aeEvent>>&eventData, int, shared_ptr<aeEpoll>&aep)>Func;
 public :
     //访问aeEventloop中的对象

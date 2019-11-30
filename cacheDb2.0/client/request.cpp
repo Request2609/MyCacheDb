@@ -11,6 +11,8 @@ void cmds :: build() {
     cmdList.insert({"hget", 3}) ;
     cmdList.insert({"bgsave", 1}) ;
     cmdList.insert({"lpush", -1}) ;
+    cmdList.insert({"lpop", 0}) ;
+    cmdList.insert({"blpop", -1}) ;
 }
 
 cmds :: cmds() {
@@ -83,6 +85,10 @@ int request :: processCmd(vector<string>&res, Command& com) {
             return -1 ;
         }
         cmdProcess :: setSave(res, com) ;
+    }
+    else if(!strcasecmp(res[0].c_str(), "blpop")) {
+        int ret = cd.cmdList[res[0]] ;
+        
     }
     else {
         cout << "command not found" << endl ;

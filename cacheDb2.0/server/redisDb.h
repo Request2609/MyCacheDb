@@ -82,7 +82,9 @@ public :
     shared_ptr<dbObject>getNextDb() ;
     string findGetRequest(const string name, const int num) ;
     string findHgetRequest(const string key, const string field) ;
-    void queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
+    string findListRequest(const string key, const int num) ;
+    void processBlpop() ;
+    int queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
     void append(shared_ptr<dbObject>rdb) ;
     int getSize() { return db.size(); }
         //命令键

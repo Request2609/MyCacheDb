@@ -171,6 +171,7 @@ int aeEventloop :: acceptNewConnect(int fd) {
     tmp->setWriteCallBack(writeCall) ;
     tmp->setConnFd(newFd)  ;
     tmp->setServFd(fd) ;
+    tmp->setAep(aep) ;
     //将事件加入到epoll中
     aep->add(newFd, READ) ;
     //为每个描述符设置超时时间

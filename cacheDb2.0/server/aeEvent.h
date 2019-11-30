@@ -8,10 +8,13 @@
 #include "aeSocket.h"
 #include "buffer.h"
 #include "aeSocket.h"
+#include "aeEpoll.h"
+#include "timerHeap.h"
 
 using namespace std ;
 #define SIZE 4096
 
+class TimerManager ;
 //事件
 namespace event {
     const int timeout = 1 ;
@@ -33,6 +36,7 @@ public :
     ~aeEvent() {
     }
 private :
+    shared_ptr<TimerManager> tman ;
     //套接字对象
     aeSocket sock ;
     int connFd ;
@@ -47,6 +51,8 @@ private :
     //写回调函数
     callBack writeFunc ;
     //epoll事件
+    shared_ptr<aeEpoll> aep ;
+
     epoll_event* ev ;
     int servFd ;
     int writeFd ;
@@ -72,5 +78,15 @@ public :
     buffer* getBuf() { return &buf ; }
     void setReadCallBack(callBack cb) { readFunc = cb ;}
     void setWriteCallBack(callBack cb) { writeFunc = cb; }
+    shared_ptr<aeEpoll> getEp() { return aep ; }
+    void setAep(shared_ptr<aeEpoll>aep) {
+        this->aep = aep ;
+    }
+    void setTman(shared_ptr<TimerManager>tman) {
+        this->tman = tman ;
+    }
+    shared_ptr<TimerManager> getTimerManager() {
+        return tman ;
+    }
 } ;
 

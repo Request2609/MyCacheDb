@@ -817,12 +817,12 @@ class Command :
     kKeysFieldNumber = 4,
     kValsFieldNumber = 5,
     kCmdFieldNumber = 2,
-    kTimeFieldNumber = 8,
     kLobFieldNumber = 9,
     kStatusFieldNumber = 1,
     kLenFieldNumber = 3,
     kTypeFieldNumber = 6,
     kNumFieldNumber = 7,
+    kTimeFieldNumber = 8,
   };
   // repeated .Messages.Key keys = 4;
   int keys_size() const;
@@ -865,17 +865,6 @@ class Command :
   void _internal_set_cmd(const std::string& value);
   std::string* _internal_mutable_cmd();
   public:
-
-  // optional .Messages.Time time = 8;
-  bool has_time() const;
-  private:
-  bool _internal_has_time() const;
-  public:
-  void clear_time();
-  const ::Messages::Time& time() const;
-  ::Messages::Time* release_time();
-  ::Messages::Time* mutable_time();
-  void set_allocated_time(::Messages::Time* time);
 
   // optional .Messages.ListObject lob = 9;
   bool has_lob() const;
@@ -924,6 +913,15 @@ class Command :
   ::PROTOBUF_NAMESPACE_ID::int32 num() const;
   void set_num(::PROTOBUF_NAMESPACE_ID::int32 value);
 
+  // optional double time = 8;
+  bool has_time() const;
+  private:
+  bool _internal_has_time() const;
+  public:
+  void clear_time();
+  double time() const;
+  void set_time(double value);
+
   // @@protoc_insertion_point(class_scope:Messages.Command)
  private:
   class _Internal;
@@ -934,12 +932,12 @@ class Command :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key > keys_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value > vals_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr cmd_;
-  ::Messages::Time* time_;
   ::Messages::ListObject* lob_;
   ::PROTOBUF_NAMESPACE_ID::int32 status_;
   ::PROTOBUF_NAMESPACE_ID::int32 len_;
   bool type_;
   ::PROTOBUF_NAMESPACE_ID::int32 num_;
+  double time_;
   friend struct ::TableStruct_msg_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1380,21 +1378,21 @@ ListObject::vals() const {
 
 // optional int32 status = 1;
 inline bool Command::_internal_has_status() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline bool Command::has_status() const {
   return _internal_has_status();
 }
 inline void Command::clear_status() {
   status_ = 0;
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Command::status() const {
   // @@protoc_insertion_point(field_get:Messages.Command.status)
   return status_;
 }
 inline void Command::set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000004u;
   status_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.status)
 }
@@ -1471,21 +1469,21 @@ inline void Command::set_allocated_cmd(std::string* cmd) {
 
 // optional int32 len = 3;
 inline bool Command::_internal_has_len() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline bool Command::has_len() const {
   return _internal_has_len();
 }
 inline void Command::clear_len() {
   len_ = 0;
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Command::len() const {
   // @@protoc_insertion_point(field_get:Messages.Command.len)
   return len_;
 }
 inline void Command::set_len(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000008u;
   len_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.len)
 }
@@ -1552,108 +1550,77 @@ Command::vals() const {
 
 // optional bool type = 6;
 inline bool Command::_internal_has_type() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline bool Command::has_type() const {
   return _internal_has_type();
 }
 inline void Command::clear_type() {
   type_ = false;
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline bool Command::type() const {
   // @@protoc_insertion_point(field_get:Messages.Command.type)
   return type_;
 }
 inline void Command::set_type(bool value) {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000010u;
   type_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.type)
 }
 
 // optional int32 num = 7;
 inline bool Command::_internal_has_num() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline bool Command::has_num() const {
   return _internal_has_num();
 }
 inline void Command::clear_num() {
   num_ = 0;
-  _has_bits_[0] &= ~0x00000040u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Command::num() const {
   // @@protoc_insertion_point(field_get:Messages.Command.num)
   return num_;
 }
 inline void Command::set_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000040u;
+  _has_bits_[0] |= 0x00000020u;
   num_ = value;
   // @@protoc_insertion_point(field_set:Messages.Command.num)
 }
 
-// optional .Messages.Time time = 8;
+// optional double time = 8;
 inline bool Command::_internal_has_time() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline bool Command::has_time() const {
   return _internal_has_time();
 }
 inline void Command::clear_time() {
-  if (time_ != nullptr) time_->Clear();
-  _has_bits_[0] &= ~0x00000002u;
+  time_ = 0;
+  _has_bits_[0] &= ~0x00000040u;
 }
-inline const ::Messages::Time& Command::time() const {
-  const ::Messages::Time* p = time_;
+inline double Command::time() const {
   // @@protoc_insertion_point(field_get:Messages.Command.time)
-  return p != nullptr ? *p : *reinterpret_cast<const ::Messages::Time*>(
-      &::Messages::_Time_default_instance_);
-}
-inline ::Messages::Time* Command::release_time() {
-  // @@protoc_insertion_point(field_release:Messages.Command.time)
-  _has_bits_[0] &= ~0x00000002u;
-  ::Messages::Time* temp = time_;
-  time_ = nullptr;
-  return temp;
-}
-inline ::Messages::Time* Command::mutable_time() {
-  _has_bits_[0] |= 0x00000002u;
-  if (time_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Messages::Time>(GetArenaNoVirtual());
-    time_ = p;
-  }
-  // @@protoc_insertion_point(field_mutable:Messages.Command.time)
   return time_;
 }
-inline void Command::set_allocated_time(::Messages::Time* time) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == nullptr) {
-    delete time_;
-  }
-  if (time) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
-    if (message_arena != submessage_arena) {
-      time = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, time, submessage_arena);
-    }
-    _has_bits_[0] |= 0x00000002u;
-  } else {
-    _has_bits_[0] &= ~0x00000002u;
-  }
-  time_ = time;
-  // @@protoc_insertion_point(field_set_allocated:Messages.Command.time)
+inline void Command::set_time(double value) {
+  _has_bits_[0] |= 0x00000040u;
+  time_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Command.time)
 }
 
 // optional .Messages.ListObject lob = 9;
 inline bool Command::_internal_has_lob() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
 inline bool Command::has_lob() const {
   return _internal_has_lob();
 }
 inline void Command::clear_lob() {
   if (lob_ != nullptr) lob_->Clear();
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline const ::Messages::ListObject& Command::lob() const {
   const ::Messages::ListObject* p = lob_;
@@ -1663,13 +1630,13 @@ inline const ::Messages::ListObject& Command::lob() const {
 }
 inline ::Messages::ListObject* Command::release_lob() {
   // @@protoc_insertion_point(field_release:Messages.Command.lob)
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000002u;
   ::Messages::ListObject* temp = lob_;
   lob_ = nullptr;
   return temp;
 }
 inline ::Messages::ListObject* Command::mutable_lob() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000002u;
   if (lob_ == nullptr) {
     auto* p = CreateMaybeMessage<::Messages::ListObject>(GetArenaNoVirtual());
     lob_ = p;
@@ -1688,9 +1655,9 @@ inline void Command::set_allocated_lob(::Messages::ListObject* lob) {
       lob = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, lob, submessage_arena);
     }
-    _has_bits_[0] |= 0x00000004u;
+    _has_bits_[0] |= 0x00000002u;
   } else {
-    _has_bits_[0] &= ~0x00000004u;
+    _has_bits_[0] &= ~0x00000002u;
   }
   lob_ = lob;
   // @@protoc_insertion_point(field_set_allocated:Messages.Command.lob)

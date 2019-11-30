@@ -5,10 +5,8 @@
 using namespace std ;
 using namespace Messages ;
 
-//反序列化的接口实现
-Command getParseString(string* aa) {
-    Command cmm ;
-    cmm.ParseFromString(*aa) ;
-    return cmm ;
-}
+class callMethod {
+public :
+    static void func(map<int, shared_ptr<aeEvent>>, int fd, ) ;
+} ; 
 

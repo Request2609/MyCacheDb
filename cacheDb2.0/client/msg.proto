@@ -15,7 +15,7 @@ message Time {
     optional double time = 1;
 }
 
-messge ListObject {
+message ListObject {
     optional string key = 1;
     repeated Value vals = 2 ;
 }
@@ -36,7 +36,7 @@ message Command {
     optional bool type = 6 ;
     //正在操作的数据库编号
     optional int32 num = 7 ;
-    optional Time time = 8 ; 
+    optional double time = 8 ; 
     optional ListObject lob = 9 ;
 }   
 

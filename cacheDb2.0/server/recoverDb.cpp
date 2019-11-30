@@ -18,7 +18,6 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
         if(times == 0) {
             break ;
         }
-        
         //超时的话，就找下一个
         if(times > 0 && times < timer :: getCurTime()) {
             //每个对象元素结束的标识
@@ -39,7 +38,6 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             ob->setNum(num) ;
             ob->setEndTime(times) ;
             int ret = hashGet(s, ob) ; 
-            
             if(ret < 0) {
                 return nullptr ;
             }

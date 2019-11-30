@@ -12,6 +12,19 @@ void cmdProcess :: setSet(vector<string>& res, Command& com) {
     *v = res[2] ;
 }
 
+void cmdProcess :: getBlpop(vector<string>& res, Command& cmd) {
+    cmd.set_cmd(res[0]) ;
+    int len = res.size() ;
+    Key* key= cmd.add_keys() ;
+    for(int i=1; i<len-1; i++) {
+        string* k = key->add_key() ;
+        *k = res[i] ;
+    }
+    string time = res[len-1] ;
+    int t = atoi(time.c_str()) ;
+    cmd.set_time(t) ; 
+}
+
 void cmdProcess :: setGet(vector<string>& res, Command& cmd) {
     cmd.set_cmd("get") ;
     Key* key = cmd.add_keys() ;

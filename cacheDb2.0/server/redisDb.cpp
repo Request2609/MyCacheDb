@@ -94,7 +94,7 @@ void redisDb :: append(shared_ptr<dbObject>rdb) {
 }
 
 //查询数据库,get命令等
-void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
+int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     //get查询
     string md = cmd->cmd() ;
     int num = cmd->num() ;
@@ -120,15 +120,53 @@ void redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         string feild = findHgetRequest(key, value) ;
         if(feild == "") {
             res->set_reply("no the object!") ;
-            return ;
+            return 1;
         }
         res->set_reply("\""+feild+"\"") ;
     }
-    if(!strcasecmp(md.c_str(), "lpop")) {
+    int flag = 0;
+    if(!strcasecmp(md.c_str(), "lpop") || !strcasecmp(md.c_str(), "blpop")) {
         string value ;
         string key = cmd->lob().key() ;
-            
+        ListObject lb = cmd->lob() ;
+        string val = findListRequest(key, num) ;
+        if(!strcasecmp(md.c_str(), "blpop")) {
+            flag = 1 ;
+        }
+        if(val.empty() && flag == 0) {
+            res->set_reply("null") ;
+            return 1 ;
+        }
+        //当blpop为空的时候,返回一个0
+        if(val.empty()) {
+            int a = 0 ;
+            return a;
+        }
+        res->set_reply(val) ;
     }
+    return 1 ;
+}
+
+void redisDb :: processBlpop() {
+    
+}
+
+
+string redisDb::findListRequest(const string k, const int num) {
+    key ke ;
+    ke.num = num ;
+    ke.cmd = k ;
+    ke.type = type::DB_LIST ;
+    auto res = db.find(ke) ;
+    if(res == db.end()) {
+        return "" ;
+    }
+    if(res->objectSize() == 0) {
+        return "" ;
+    }
+    string t= res->getValue()
+    int len = res->objectSize() ;
+    return t+" "+to_string(len) ;
 }
 
 string redisDb :: findHgetRequest(const string k, 

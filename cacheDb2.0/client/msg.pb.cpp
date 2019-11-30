@@ -16,7 +16,6 @@
 #include <google/protobuf/port_def.inc>
 extern PROTOBUF_INTERNAL_EXPORT_msg_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Key_msg_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_msg_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_ListObject_msg_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_msg_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Time_msg_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_msg_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Value_msg_2eproto;
 namespace Messages {
 class ValueDefaultTypeInternal {
@@ -55,11 +54,10 @@ static void InitDefaultsscc_info_Command_msg_2eproto() {
   ::Messages::Command::InitAsDefaultInstance();
 }
 
-::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<4> scc_info_Command_msg_2eproto =
-    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 4, 0, InitDefaultsscc_info_Command_msg_2eproto}, {
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<3> scc_info_Command_msg_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 3, 0, InitDefaultsscc_info_Command_msg_2eproto}, {
       &scc_info_Key_msg_2eproto.base,
       &scc_info_Value_msg_2eproto.base,
-      &scc_info_Time_msg_2eproto.base,
       &scc_info_ListObject_msg_2eproto.base,}};
 
 static void InitDefaultsscc_info_Key_msg_2eproto() {
@@ -182,15 +180,15 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_msg_2eproto::offsets[] PROTOBU
   PROTOBUF_FIELD_OFFSET(::Messages::Command, num_),
   PROTOBUF_FIELD_OFFSET(::Messages::Command, time_),
   PROTOBUF_FIELD_OFFSET(::Messages::Command, lob_),
-  3,
+  2,
   0,
+  3,
+  ~0u,
+  ~0u,
   4,
-  ~0u,
-  ~0u,
   5,
   6,
   1,
-  2,
   PROTOBUF_FIELD_OFFSET(::Messages::Response, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::Messages::Response, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -221,13 +219,12 @@ const char descriptor_table_protodef_msg_2eproto[] PROTOBUF_SECTION_VARIABLE(pro
   "\n\tmsg.proto\022\010Messages\"\024\n\005Value\022\013\n\003val\030\001 "
   "\003(\t\"\022\n\003Key\022\013\n\003key\030\001 \003(\t\"\024\n\004Time\022\014\n\004time\030"
   "\001 \001(\001\"8\n\nListObject\022\013\n\003key\030\001 \001(\t\022\035\n\004vals"
-  "\030\002 \003(\0132\017.Messages.Value\"\313\001\n\007Command\022\016\n\006s"
+  "\030\002 \003(\0132\017.Messages.Value\"\273\001\n\007Command\022\016\n\006s"
   "tatus\030\001 \001(\005\022\013\n\003cmd\030\002 \002(\t\022\013\n\003len\030\003 \001(\005\022\033\n"
   "\004keys\030\004 \003(\0132\r.Messages.Key\022\035\n\004vals\030\005 \003(\013"
   "2\017.Messages.Value\022\014\n\004type\030\006 \001(\010\022\013\n\003num\030\007"
-  " \001(\005\022\034\n\004time\030\010 \001(\0132\016.Messages.Time\022!\n\003lo"
-  "b\030\t \001(\0132\024.Messages.ListObject\"\031\n\010Respons"
-  "e\022\r\n\005reply\030\001 \002(\t"
+  " \001(\005\022\014\n\004time\030\010 \001(\001\022!\n\003lob\030\t \001(\0132\024.Messag"
+  "es.ListObject\"\031\n\010Response\022\r\n\005reply\030\001 \002(\t"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_msg_2eproto_deps[1] = {
 };
@@ -242,7 +239,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_msg
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_msg_2eproto_once;
 static bool descriptor_table_msg_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_msg_2eproto = {
-  &descriptor_table_msg_2eproto_initialized, descriptor_table_protodef_msg_2eproto, "msg.proto", 376,
+  &descriptor_table_msg_2eproto_initialized, descriptor_table_protodef_msg_2eproto, "msg.proto", 360,
   &descriptor_table_msg_2eproto_once, descriptor_table_msg_2eproto_sccs, descriptor_table_msg_2eproto_deps, 6, 0,
   schemas, file_default_instances, TableStruct_msg_2eproto::offsets,
   file_level_metadata_msg_2eproto, 6, file_level_enum_descriptors_msg_2eproto, file_level_service_descriptors_msg_2eproto,
@@ -1290,8 +1287,6 @@ void ListObject::InternalSwap(ListObject* other) {
 // ===================================================================
 
 void Command::InitAsDefaultInstance() {
-  ::Messages::_Command_default_instance_._instance.get_mutable()->time_ = const_cast< ::Messages::Time*>(
-      ::Messages::Time::internal_default_instance());
   ::Messages::_Command_default_instance_._instance.get_mutable()->lob_ = const_cast< ::Messages::ListObject*>(
       ::Messages::ListObject::internal_default_instance());
 }
@@ -1299,34 +1294,29 @@ class Command::_Internal {
  public:
   using HasBits = decltype(std::declval<Command>()._has_bits_);
   static void set_has_status(HasBits* has_bits) {
-    (*has_bits)[0] |= 8u;
+    (*has_bits)[0] |= 4u;
   }
   static void set_has_cmd(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
   static void set_has_len(HasBits* has_bits) {
-    (*has_bits)[0] |= 16u;
+    (*has_bits)[0] |= 8u;
   }
   static void set_has_type(HasBits* has_bits) {
-    (*has_bits)[0] |= 32u;
+    (*has_bits)[0] |= 16u;
   }
   static void set_has_num(HasBits* has_bits) {
-    (*has_bits)[0] |= 64u;
+    (*has_bits)[0] |= 32u;
   }
-  static const ::Messages::Time& time(const Command* msg);
   static void set_has_time(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
+    (*has_bits)[0] |= 64u;
   }
   static const ::Messages::ListObject& lob(const Command* msg);
   static void set_has_lob(HasBits* has_bits) {
-    (*has_bits)[0] |= 4u;
+    (*has_bits)[0] |= 2u;
   }
 };
 
-const ::Messages::Time&
-Command::_Internal::time(const Command* msg) {
-  return *msg->time_;
-}
 const ::Messages::ListObject&
 Command::_Internal::lob(const Command* msg) {
   return *msg->lob_;
@@ -1347,28 +1337,23 @@ Command::Command(const Command& from)
   if (from._internal_has_cmd()) {
     cmd_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.cmd_);
   }
-  if (from.has_time()) {
-    time_ = new ::Messages::Time(*from.time_);
-  } else {
-    time_ = nullptr;
-  }
   if (from.has_lob()) {
     lob_ = new ::Messages::ListObject(*from.lob_);
   } else {
     lob_ = nullptr;
   }
   ::memcpy(&status_, &from.status_,
-    static_cast<size_t>(reinterpret_cast<char*>(&num_) -
-    reinterpret_cast<char*>(&status_)) + sizeof(num_));
+    static_cast<size_t>(reinterpret_cast<char*>(&time_) -
+    reinterpret_cast<char*>(&status_)) + sizeof(time_));
   // @@protoc_insertion_point(copy_constructor:Messages.Command)
 }
 
 void Command::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Command_msg_2eproto.base);
   cmd_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  ::memset(&time_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&num_) -
-      reinterpret_cast<char*>(&time_)) + sizeof(num_));
+  ::memset(&lob_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&time_) -
+      reinterpret_cast<char*>(&lob_)) + sizeof(time_));
 }
 
 Command::~Command() {
@@ -1378,7 +1363,6 @@ Command::~Command() {
 
 void Command::SharedDtor() {
   cmd_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete time_;
   if (this != internal_default_instance()) delete lob_;
 }
 
@@ -1400,23 +1384,19 @@ void Command::Clear() {
   keys_.Clear();
   vals_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
       cmd_.ClearNonDefaultToEmptyNoArena();
     }
     if (cached_has_bits & 0x00000002u) {
-      GOOGLE_DCHECK(time_ != nullptr);
-      time_->Clear();
-    }
-    if (cached_has_bits & 0x00000004u) {
       GOOGLE_DCHECK(lob_ != nullptr);
       lob_->Clear();
     }
   }
-  if (cached_has_bits & 0x00000078u) {
+  if (cached_has_bits & 0x0000007cu) {
     ::memset(&status_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&num_) -
-        reinterpret_cast<char*>(&status_)) + sizeof(num_));
+        reinterpret_cast<char*>(&time_) -
+        reinterpret_cast<char*>(&status_)) + sizeof(time_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
@@ -1494,11 +1474,12 @@ const char* Command::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // optional .Messages.Time time = 8;
+      // optional double time = 8;
       case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 66)) {
-          ptr = ctx->ParseMessage(mutable_time(), ptr);
-          CHK_(ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 65)) {
+          _Internal::set_has_time(&has_bits);
+          time_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
+          ptr += sizeof(double);
         } else goto handle_unusual;
         continue;
       // optional .Messages.ListObject lob = 9;
@@ -1628,11 +1609,13 @@ bool Command::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .Messages.Time time = 8;
+      // optional double time = 8;
       case 8: {
-        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (66 & 0xFF)) {
-          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
-               input, mutable_time()));
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (65 & 0xFF)) {
+          _Internal::set_has_time(&_has_bits_);
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   double, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &time_)));
         } else {
           goto handle_unusual;
         }
@@ -1679,7 +1662,7 @@ failure:
 
   cached_has_bits = _has_bits_[0];
   // optional int32 status = 1;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000004u) {
     stream->EnsureSpace(&target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->status(), target);
   }
@@ -1695,7 +1678,7 @@ failure:
   }
 
   // optional int32 len = 3;
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000008u) {
     stream->EnsureSpace(&target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->len(), target);
   }
@@ -1717,27 +1700,25 @@ failure:
   }
 
   // optional bool type = 6;
-  if (cached_has_bits & 0x00000020u) {
+  if (cached_has_bits & 0x00000010u) {
     stream->EnsureSpace(&target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(6, this->type(), target);
   }
 
   // optional int32 num = 7;
-  if (cached_has_bits & 0x00000040u) {
+  if (cached_has_bits & 0x00000020u) {
     stream->EnsureSpace(&target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->num(), target);
   }
 
-  // optional .Messages.Time time = 8;
-  if (cached_has_bits & 0x00000002u) {
+  // optional double time = 8;
+  if (cached_has_bits & 0x00000040u) {
     stream->EnsureSpace(&target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        8, _Internal::time(this), target, stream);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteDoubleToArray(8, this->time(), target);
   }
 
   // optional .Messages.ListObject lob = 9;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000002u) {
     stream->EnsureSpace(&target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessageToArray(
@@ -1782,44 +1763,42 @@ size_t Command::ByteSizeLong() const {
 
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 0x0000007eu) {
-    // optional .Messages.Time time = 8;
-    if (cached_has_bits & 0x00000002u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *time_);
-    }
-
     // optional .Messages.ListObject lob = 9;
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *lob_);
     }
 
     // optional int32 status = 1;
-    if (cached_has_bits & 0x00000008u) {
+    if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
           this->status());
     }
 
     // optional int32 len = 3;
-    if (cached_has_bits & 0x00000010u) {
+    if (cached_has_bits & 0x00000008u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
           this->len());
     }
 
     // optional bool type = 6;
-    if (cached_has_bits & 0x00000020u) {
+    if (cached_has_bits & 0x00000010u) {
       total_size += 1 + 1;
     }
 
     // optional int32 num = 7;
-    if (cached_has_bits & 0x00000040u) {
+    if (cached_has_bits & 0x00000020u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
           this->num());
+    }
+
+    // optional double time = 8;
+    if (cached_has_bits & 0x00000040u) {
+      total_size += 1 + 8;
     }
 
   }
@@ -1863,22 +1842,22 @@ void Command::MergeFrom(const Command& from) {
       cmd_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.cmd_);
     }
     if (cached_has_bits & 0x00000002u) {
-      mutable_time()->::Messages::Time::MergeFrom(from.time());
-    }
-    if (cached_has_bits & 0x00000004u) {
       mutable_lob()->::Messages::ListObject::MergeFrom(from.lob());
     }
-    if (cached_has_bits & 0x00000008u) {
+    if (cached_has_bits & 0x00000004u) {
       status_ = from.status_;
     }
-    if (cached_has_bits & 0x00000010u) {
+    if (cached_has_bits & 0x00000008u) {
       len_ = from.len_;
     }
-    if (cached_has_bits & 0x00000020u) {
+    if (cached_has_bits & 0x00000010u) {
       type_ = from.type_;
     }
-    if (cached_has_bits & 0x00000040u) {
+    if (cached_has_bits & 0x00000020u) {
       num_ = from.num_;
+    }
+    if (cached_has_bits & 0x00000040u) {
+      time_ = from.time_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -1911,12 +1890,12 @@ void Command::InternalSwap(Command* other) {
   vals_.InternalSwap(&other->vals_);
   cmd_.Swap(&other->cmd_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
-  swap(time_, other->time_);
   swap(lob_, other->lob_);
   swap(status_, other->status_);
   swap(len_, other->len_);
   swap(type_, other->type_);
   swap(num_, other->num_);
+  swap(time_, other->time_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Command::GetMetadata() const {

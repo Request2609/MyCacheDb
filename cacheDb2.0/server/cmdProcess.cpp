@@ -47,7 +47,17 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         int num = wcmd->num() ;
         //获取当前所在数据库
         //没找到
-        cmdSet_->redisCommandProc(num, wcmd) ;
+        //只需要关注blpop是否成功，不成功将当前处理的事件加到
+        //队列中，并设置定时器
+        int a = cmdSet_->redisCommandProc(num, wcmd) ;
+        if(a == 0) {
+            listWaitQueue :: add(tmp) ;
+            //创建一个定时器，时间到就返回客户端
+            int t = wcmd->time() ;
+            //设置定时器 
+            setClock(tmp, t) ;
+        }
+        ////////做一些事情
         shared_ptr<Response>r = cmdSet_->getResponse() ;
         res.set_reply(r->reply()) ;
         //销毁相应的智能指针
@@ -59,6 +69,11 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     bf->clear() ;
     //获取到响应的结果
     return 1 ;
+}
+
+//设置定时时间
+void cmdProcess :: setClock(shared_ptr<aeEvent>aet, int t) {
+    
 }
 
 int cmdProcess :: sendMsg(shared_ptr<aeEvent>tmp) {

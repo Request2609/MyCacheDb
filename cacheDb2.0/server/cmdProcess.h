@@ -3,6 +3,7 @@
 #include <memory>   
 #include <vector>
 #include <string>
+#include "listWaitQueue.h"
 #include "timerHeap.h"
 #include "aeEvent.h"
 #include "buffer.h"
@@ -12,6 +13,7 @@
 #include "serializeParse.h"
 #include "readWrite.h"
 #include "rpc.h"
+
 #define SIZE 4096
 using namespace std ;
 
@@ -19,6 +21,7 @@ class aeEvent ;
 class rpc ;
 class cmdSet ;
 class redisCommand ;
+class listWaitQueue ;
 
 //错误类型
 enum {
@@ -47,6 +50,7 @@ public :
     //时间事件回调
     void timeCb() ;
 public :
+    void setClock(shared_ptr<aeEvent> aet, int t) ;
     int initRedis() ;
     void setRpc(shared_ptr<rpc>rc) { this->rc = rc ; }
     void setRpcMethod() ;
@@ -56,7 +60,6 @@ public :
     int findCmd(const shared_ptr<Command>tmp) ;
     void setTimerCall(task& cb)  { timeCall = move(cb) ; } 
 private :
-    
     //命令集
     //键值以后的部分成员
     shared_ptr<cmdSet> cmdSet_ ;

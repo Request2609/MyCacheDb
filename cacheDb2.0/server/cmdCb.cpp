@@ -1,6 +1,5 @@
 #include "cmdCb.h"
 
-
 char cmdCb :: getFlag() {
     char c = '-' ;
     int fd = open(FLAG_FILE, O_RDWR|O_CREAT) ;   
@@ -19,6 +18,13 @@ char cmdCb :: getFlag() {
     c = flag[0] ;
     munmap((void*)flag, st.st_size) ;
     return c ;
+}
+
+int cmdCb:: blpop(shared_ptr<redisDb>&db, 
+                  shared_ptr<Command>&tmp, 
+                  shared_ptr<Response>&res) {
+    int aa = db->queryDb(res, tmp) ;
+    return aa;
 }
 
 int cmdCb :: setFlag(char c) {
@@ -40,30 +46,32 @@ int cmdCb :: setFlag(char c) {
     return 1 ;
 }
 
-string cmdCb :: lPop(const string key, int num, int type) {
-    
-}
 
 string cmdCb :: getList() {
-
+    
 }
 
 //设置push命令
 int cmdCb :: setLpush(shared_ptr<redisDb>&wcmd, 
                       shared_ptr<Command>&tmp, 
                       shared_ptr<Response>& res) {
-
+    
     shared_ptr<dbObject>se = factory::getObject("lpush");
     ListObject key = tmp->lob() ;
     string k = key.key() ;
     int len = key.vals_size() ;
     for(int i=0; i<len; i++) {
-        int num = se->setValues("", key.vals(i)) ;
+        Value val = key.vals(i) ;
+        int s = val.val_size() ;
+        for(int j=0; j<s; j++) {
+            string ss = val.val(j) ;
+            se->setValue("", ss.c_str()) ;
+        }
     }
 
     se->setNum(tmp->num()) ;
-    se->setType(type::DB_LIST) ;
-    int num = se->objectNum() ;
+    se->setType(type::DB_LIST_) ;
+    int num = se->objectSize() ;
     //设置成功，返回当前队列中的元素个数
     res->set_reply(to_string(num)) ;
     wcmd->append(se) ;
@@ -99,7 +107,7 @@ int cmdCb :: setHash(shared_ptr<redisDb>&wcmd,
     }
     se->setNum(tmp->num()) ;
     se->setName("hset") ;
-    se->setType(type::DB_HASH) ;
+    se->setType(type::DB_HASH_) ;
     wcmd->append(se) ;
     res->set_reply("OK") ;
 }

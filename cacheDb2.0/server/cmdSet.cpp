@@ -48,6 +48,10 @@ int cmdSet :: initCmdCb() {
     shared_ptr<redisCommand>lpop(new redisCommand("lpop", -3, "wm",  1, 1, 1, 0, 0)) ;
     lpush->setCallBack(cmdCb :: setLpop) ;
     cmdList.insert({"lpop", lpop}) ;
+    
+    shared_ptr<redisCommand>blpop(new redisCommand("blpop", -3, "wm",  1, 1, 1, 0, 0)) ;
+    lpush->setCallBack(cmdCb :: setBlpop) ;
+    cmdList.insert({"blpop", blpop}) ;
 }   
 
 //初始化数据库
@@ -56,6 +60,7 @@ int cmdSet :: initRedis() {
 }
 
 int cmdSet:: findCmd(string cmd) {
+
     if(cmdList.find(cmd) == cmdList.end()) {
         return NOTFOUND ;
     }   
@@ -115,7 +120,9 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         //处理失败
     }
-
+    if(!strcasecmp(cd.c_str(), "lpop")) {
+        a = cmdList[cd]->cb(wrdb, cmd, response) ;
+    }
     //lpush命令
     if(!strcasecmp(cd.c_str(), "lpush")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;   
@@ -124,6 +131,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "get")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
     }
+
     if(!strcasecmp(cd.c_str(), "save")) {
         //将数据库遍历一遍
         a = cmdList[cd]->saveCb(dbLs) ;
@@ -156,7 +164,15 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         a = cmdList[aa]->saveCb(dbLs) ;
         response->set_reply("OK") ;
     }
-
+    if(!strcasecmp(cd.c_str(), "blpop")) {
+        string aa = "blpop" ;
+        //给a设置一个特殊值
+        a = cmdList[aa]->cb(wrdb, cmd, response) ;
+        //接收a的值进行判断
+        if(a == 0) {
+            return 0 ;
+        }
+    }   
     if(a < 0) {
         response->set_reply("FAIL") ;
         return PROCESSERROR ;
