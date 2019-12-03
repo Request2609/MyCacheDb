@@ -1,0 +1,1 @@
+lsof -Pnl +M -i4|grep 端口
