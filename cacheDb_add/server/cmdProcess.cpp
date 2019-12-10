@@ -33,6 +33,10 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     //获取对端序列化到结果
     //反序列化,弱引用
     shared_ptr<Command>wcmd = rc->getParseString(buff) ;
+    ListObject lob = wcmd->lob() ;
+    string key = lob.key() ;
+   // cout << "传过来的键值:" << key << endl ;
+    Value* val =  lob.add_vals() ;
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
     shared_ptr<Response> res = nullptr;
@@ -51,6 +55,9 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         //只需要关注blpop是否成功，不成功将当前处理的事件加到
         //队列中，并设置定时器
         int a = cmdSet_->redisCommandProc(num, wcmd) ;
+        res = cmdSet_->getResponse() ;
+        //cout <<"回复的结果：--->" << res->reply() << endl ;
+        //链表阻塞形式获取对象的回复，a=0队列为空
         if(a == 0) {
             flag = 1 ;
             listWaitQueue :: add(tmp) ;
@@ -60,16 +67,11 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
             setClock(tmp, t) ;
             return 1;
         }
-        ////////做一些事情
-        shared_ptr<Response>r = cmdSet_->getResponse() ;
-        res->set_reply(r->reply()) ;
-        //销毁相应的智能指针
-        r = nullptr ;
     } 
 
     if(flag != 1) {
-        shared_ptr<Response>re(new Response) ;
-        rc->response(re, tmp->getConnFd()) ;
+        cout << "智能指针设置的值:" << res->reply() << endl ;
+        rc->response(res, tmp->getConnFd()) ;
         bf->clear() ;
     }
     //获取到响应的结果
@@ -77,7 +79,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
 }
 
 //设置定时事件
-void cmdProcess :: setClock(shared_ptr<aeEvent>aet, int t) {
+void cmdProcess :: setClock(shared_ptr<aeEvent>aet, unsigned int t) {
     //将事件加到队列中
     listWaitQueue :: add(aet) ;
     //将该对象加到定时器中

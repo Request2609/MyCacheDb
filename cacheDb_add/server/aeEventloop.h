@@ -22,6 +22,7 @@ enum {
 } ;
 
 class TimerManager ;
+class signalSet ;
 
 //创建事件循环
 class aeEventloop {

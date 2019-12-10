@@ -1,6 +1,7 @@
 #include "aeEventloop.h"
 
 int aeEventloop :: efd ;
+int aeEventloop ::  wakeBlpopFd ;
 //初始化事件
 //创建epoll句柄等工作
 aeEventloop :: aeEventloop() {

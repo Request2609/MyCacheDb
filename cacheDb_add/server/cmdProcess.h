@@ -30,6 +30,8 @@ class backInfo ;
 class listWaitQueue ;
 class aeEvent ;
 class listWaitQueue ;
+class TimerManager ;
+class MyTimer ;
 
 //错误类型
 enum {
@@ -58,7 +60,7 @@ public :
     //时间事件回调
     void timeCb() ;
 public :
-    void setClock(shared_ptr<aeEvent> aet, int t) ;
+    void setClock(shared_ptr<aeEvent> aet, unsigned int t) ;
     int initRedis() ;
     void setRpc(shared_ptr<rpc>rc) { this->rc = rc ; }
     void setRpcMethod() ;

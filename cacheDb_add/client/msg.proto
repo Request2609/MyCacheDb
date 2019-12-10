@@ -1,7 +1,6 @@
 syntax = "proto2" ; 
 
 package Messages ;
-
 //命令的值
 message Value {
     repeated string val = 1;
@@ -37,7 +36,7 @@ message Command {
     //正在操作的数据库编号
     optional int32 num = 7 ;
     optional double time = 8 ; 
-    optional ListObject lob = 9 ;
+    repeated ListObject lob = 9 ;
 }   
 
 message Response {

@@ -22,13 +22,16 @@ void rpc :: setCallMethod(call cb) {
 string rpc :: getResponse() {
     string res  ;
     char buf[BFSIZE] ;
-    if(read(conFd, buf, sizeof(buf)) < 0) {
+    int n = 0 ;
+    if((n = read(conFd, buf, sizeof(buf))) < 0) {
         cout << __FILE__ << "           " << __LINE__<< "  " << strerror(errno)<< endl ;
         return "" ;
     }
+   /// cout << "获取到回应!" << "     响应字节数:" << n << endl ;
     Response re ;
     //反序列化
     re.ParseFromArray(buf, sizeof(buf)) ;
+    //cout << re.reply() << endl ;
     res = re.reply() ;
     return res ;
 }

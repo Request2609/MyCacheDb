@@ -9,6 +9,7 @@ rpc :: rpc()  {
 //处理结果，并返回相应的结果
 shared_ptr<Command> rpc :: getParseString(string* buff) {
     //在消息处理处，反序列化
+    ///cout <<"数据:" <<  buff << endl ;
     auto res = parseMethod(buff) ;
     return res ;
 }
@@ -35,6 +36,6 @@ int rpc :: response(shared_ptr<Response>res, int fd) {
 shared_ptr<Command> requestMethod(string* s) {
     Command cmd ;
     cmd.ParseFromString(*s) ;
-    shared_ptr<Command>comm(new Command(cmd)) ;
+    shared_ptr<Command>comm = make_shared<Command>(cmd) ;
     return comm ;
 }

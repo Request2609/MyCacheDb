@@ -3,6 +3,7 @@
 int signalSet :: timeSlot = 300 ;
 int signalSet :: pipeFd[2] ;
 int signalSet :: efd ;
+int signalSet:: wakeBlpopFd ;
 //int signalSet :: efd ;
 //等待被触发的时钟信号
 void signalSet :: addSig(int sig) {

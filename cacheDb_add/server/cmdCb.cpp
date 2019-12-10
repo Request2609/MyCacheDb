@@ -20,7 +20,7 @@ char cmdCb :: getFlag() {
     return c ;
 }
 
-int cmdCb:: blpop(shared_ptr<redisDb>&db, 
+int cmdCb:: blPop(shared_ptr<redisDb>&db, 
                   shared_ptr<Command>&tmp, 
                   shared_ptr<Response>&res) {
     int aa = db->queryDb(res, tmp) ;

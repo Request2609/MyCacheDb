@@ -42,10 +42,9 @@ public:
     static int bgSave(vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
     static int setHget(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
     static char getFlag() ;
-    static string lPop() ;
+    //static string lPop() ;
     static int lPop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
-    static string lPop(const string key, int num, int type) ;
     static vector<string>getList() ;
     static int setFlag(char c) ;
-    int  blpop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) ;
+    static int  blPop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) ;
 };

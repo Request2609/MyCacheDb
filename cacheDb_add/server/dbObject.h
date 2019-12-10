@@ -9,7 +9,7 @@
 #include <list>
 using namespace std ;
 
-
+class lsObject ;
 
 class dbObject {
 public:
@@ -75,19 +75,24 @@ public :
 
 class lsObject : public dbObject{
 public :
-    lsObject() {}
+    lsObject() {
+        timeout = -1 ;
+        count = -1 ;
+    }
     ~lsObject() {}
 public :
     void print() {}
     //set操作
     long long  getEndTime() { return timeout ; }
-    void setEndTime(long long e)  ;
-    virtual int getType()  ;
+    void setEndTime(long long e) {}
+    int getType()  { return type; }
     void setType(int type) { this->type = type ; }
-    void setKey(string k) ;
+    void setKey(string k) {key = k ;}
     void setValue(string v, ...) ;
-    void setName(string name) ;
-    virtual void setNum(int num) { this->num = num ; }
+    void setName(string name) {
+        this->name =name ;
+    }
+    void setNum(int num) { this->num = num ; }
     string  getName() { return "" ;}
     string getKey() { return key ; }
     int getNum() { return num ; }
@@ -101,6 +106,7 @@ private :
     list<string> ls ;
     int num ;
     int type ;
+    string name ;
 } ; 
 
 class hashSet : public dbObject {

@@ -23,6 +23,14 @@ int TimerManager :: getSize() {
     return heap_.size() ;
 }
 
+void MyTimer :: start(wakeBlPopCall func, unsigned int ms, TimerType type) {
+    wakeFunc = func ;
+    m_nInterval = ms ;
+    m_nExpires = ms+TimerManager::get_current_millisecs() ;
+    manager_->add_timer(*this) ;
+    timerType_ = type ;
+}
+
 void  MyTimer :: start(Func fun, unsigned int interval, TimerType timetpe) {
 	m_nInterval = interval;
 	m_timerfunc = fun;

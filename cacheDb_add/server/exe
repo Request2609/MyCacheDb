@@ -1,4 +1,2 @@
-make clean
-make
-./Server 127.0.0.1 9090
+./Server 127.0.0.1 8888
 

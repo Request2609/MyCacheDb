@@ -50,7 +50,7 @@ int cmdSet :: initCmdCb() {
     cmdList.insert({"lpop", lpop}) ;
     
     shared_ptr<redisCommand>blpop(new redisCommand("blpop", -3, "wm",  1, 1, 1, 0, 0)) ;
-    lpush->setCallBack(cmdCb :: blpop) ;
+    lpush->setCallBack(cmdCb :: blPop) ;
     cmdList.insert({"blpop", blpop}) ;
 }   
 

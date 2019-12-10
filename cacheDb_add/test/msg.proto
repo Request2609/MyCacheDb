@@ -1,0 +1,9 @@
+syntax="proto2"
+
+message msg {
+    map<string, lists> ls = 1;
+}
+
+message lists {
+    repeated string val =1;
+}

@@ -78,6 +78,7 @@ void clientLoop :: start(string ip, string port) {
         }
         //返回结果并打印
         string a = rc->getResponse() ;
+        cout << a << endl ;
        //序列化
     }
 }
