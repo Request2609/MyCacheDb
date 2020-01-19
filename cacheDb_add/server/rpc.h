@@ -12,6 +12,7 @@ class rpc ;
 
 
 shared_ptr<::Command> requestMethod(string* s) ;
+
 class rpc {
     typedef function<void(shared_ptr<Response>res, int fd)> request ;
     typedef function<shared_ptr<::Command>(string*)> parse ;

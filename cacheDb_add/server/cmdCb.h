@@ -41,10 +41,8 @@ public:
     static int getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
     static int bgSave(vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
     static int setHget(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
-    static char getFlag() ;
     //static string lPop() ;
     static int lPop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
     static vector<string>getList() ;
-    static int setFlag(char c) ;
     static int  blPop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) ;
 };

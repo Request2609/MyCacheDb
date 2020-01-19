@@ -25,13 +25,16 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             s = s.c_str() + index + 3;
             continue ;
         }
+
         int  type = getType(s) ;
         if(type == CMDTYPE_::STRING) {
             shared_ptr<dbObject>ob = factory :: getObject("set") ;
             stringGet(s, ob) ;
             ob->setEndTime(times) ;
+            cout <<"获取到键: "<<  ob->getKey() << "   获取到值:"<< ob->getValue()<< endl ;
             cmdset->addObjectToDb(num, ob) ;
         }
+
         if(type == CMDTYPE_::DB_HASH) {
             shared_ptr<dbObject> ob = factory :: getObject("hset") ;
             ob->setType(DB_HASH) ;
@@ -41,6 +44,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             if(ret < 0) {
                 return nullptr ;
             }
+            cout << "获取hash键:" << ob->getKey() << endl ;
             cmdset->addObjectToDb(num, ob) ;
         }
         

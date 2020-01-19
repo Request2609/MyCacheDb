@@ -1,5 +1,5 @@
 #include "cmdCb.h"
-
+/*
 char cmdCb :: getFlag() {
     char c = '-' ;
     int fd = open(FLAG_FILE, O_RDWR|O_CREAT) ;   
@@ -19,14 +19,14 @@ char cmdCb :: getFlag() {
     munmap((void*)flag, st.st_size) ;
     return c ;
 }
-
+*/
 int cmdCb:: blPop(shared_ptr<redisDb>&db, 
                   shared_ptr<Command>&tmp, 
                   shared_ptr<Response>&res) {
     int aa = db->queryDb(res, tmp) ;
     return aa;
 }
-
+/*
 int cmdCb :: setFlag(char c) {
     int fd = open(FLAG_FILE, O_RDWR|O_CREAT) ;  
     if(fd < 0) {
@@ -45,7 +45,7 @@ int cmdCb :: setFlag(char c) {
     munmap((void*)flag, st.st_size) ;
     return 1 ;
 }
-
+*/
 
 //设置push命令
 int cmdCb :: setLpush(shared_ptr<redisDb>&wcmd, 

@@ -70,7 +70,6 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     } 
 
     if(flag != 1) {
-        cout << "智能指针设置的值:" << res->reply() << endl ;
         rc->response(res, tmp->getConnFd()) ;
         bf->clear() ;
     }

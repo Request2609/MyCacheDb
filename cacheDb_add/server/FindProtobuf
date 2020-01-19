@@ -1,0 +1,9 @@
+include(FindProtobuf)
+find_package(Protobuf REQUIRED)
+include_directories(${PROTOBUF_INCLUDE_DIR})
+...
+target_link_libraries(complex
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    ${PROTOBUF_LIBRARY}
+)

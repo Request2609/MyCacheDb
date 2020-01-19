@@ -31,7 +31,6 @@ string rpc :: getResponse() {
     Response re ;
     //反序列化
     re.ParseFromArray(buf, sizeof(buf)) ;
-    //cout << re.reply() << endl ;
     res = re.reply() ;
     return res ;
 }
@@ -50,13 +49,13 @@ int rpc :: Connect() {
 }
 
 int rpc :: sendRequest(vector<string>&argStl, int num) { 
-
     int count = 0 ;
     this->num = num ;
     int ret = request(conFd, argStl, num) ; 
     if(ret < 0) {
         return -5 ;
     }
+    cout << "从这里开始" << endl ;
     //断开连接
     if(ret == 5) {
         while(count < 5) {

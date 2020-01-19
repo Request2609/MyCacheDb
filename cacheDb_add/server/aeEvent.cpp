@@ -30,6 +30,7 @@ int aeEvent :: processRead() {
     for(int i=0; i<ret; i++) {
         buf.append(buff[i]) ;
     }
+    cout <<"收到数据："<<buff << endl ;
     //收到数据
     //将数据返回给事件循环/*
     //调用相应的回调处理可读事件

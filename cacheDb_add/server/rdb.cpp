@@ -293,6 +293,7 @@ int rdb :: initRedis(cmdSet* cmdset) {
         } 
         shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
     }
+
     cout << "init ok!" <<endl ;
     return 1 ;
 }

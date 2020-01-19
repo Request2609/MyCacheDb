@@ -111,7 +111,7 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         else {
             res->set_reply("\""+r+"\"") ;
         }
-        //cout << "获取请求的结果：" << res->reply() << endl ;
+        cout << "get命令处理完成" << endl ;
     }
     if(!strcasecmp(md.c_str(), "hget")) {
         string value ;

@@ -27,7 +27,6 @@ int request :: processCmd(vector<string>&res, Command& com) {
     static cmds cd ;
     cd.build() ;
     int len = res.size() ;
-
     if(!strcasecmp(res[0].c_str(), "set")) {
         //获取该命令的参数个数
         int ret = cd.cmdList[res[0]] ;
@@ -40,6 +39,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
 
     else if(!strcasecmp(res[0].c_str(), "lpush")) {
         cmdProcess :: getListObject(res, com) ;
+        return 1;
     }
 
     //get命令
@@ -88,7 +88,6 @@ int request :: processCmd(vector<string>&res, Command& com) {
     }
     else if(!strcasecmp(res[0].c_str(), "blpop")) {
         int ret = cd.cmdList[res[0]] ;
-        
     }
     else {
         cout << "command not found" << endl ;
@@ -99,7 +98,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
 
 
 int request :: sendReq(int fd, vector<string>&res, int num) {
-
+    cout << "创建命令表!" << endl ;
     Command cmd ;
     cmds cd ;
     cd.build() ;
@@ -111,6 +110,8 @@ int request :: sendReq(int fd, vector<string>&res, int num) {
         return -1;
     }
     else {
+        cout << "处理数据"<< endl ;
+        cout << cmd.cmd() << endl ;
         //从第一个数据
         int r = processCmd(res, cmd) ;
         if(r < 0) {
@@ -118,7 +119,6 @@ int request :: sendReq(int fd, vector<string>&res, int num) {
         }
     }
     int s = sendAfterSerial(fd, cmd) ;
-    //cout << "fasongwancheng!" << endl ;
     return s ;
 }
 
@@ -146,7 +146,7 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
     //序列化的结果
     cmd.SerializeToString(&a) ;
     int len = a.size() ;
-    //检验是否与服务器器建立了连接
+    //检验是否与服务器器建立了
     int ret = isConnect(fd) ;
     if(ret == 0) {
         return 5 ;
@@ -158,7 +158,7 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
         cout << "errno connect" << endl ;
         return -1;
     }
-    //cout << "发送完成！hahah" << endl ;
+    cout << "发送完成！" << endl ;
     cmd.clear_cmd() ;
     return 1 ;
 }
