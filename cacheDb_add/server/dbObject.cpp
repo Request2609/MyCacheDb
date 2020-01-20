@@ -12,6 +12,12 @@ void strings :: print() {
     cout << type<< "    " << num<< "   "<< key << "    "<< value << endl ;
 }
 
+void lsObject :: print() {
+    cout << "list对象的键值:" << key << endl ;
+    for(auto s : ls) {
+        cout << s << "    " << endl ; 
+    }
+}
 
 vector<string> hashSet :: getValues(const string s) {
     vector<string>ls ;

@@ -73,9 +73,11 @@ int cmdSet :: initRedis() {
 int cmdSet:: findCmd(string cmd) {
 
     if(cmdList.find(cmd) == cmdList.end()) {
+        cout << "命令没有找到!" << endl  ;
         return NOTFOUND ;
     }   
     else {
+        cout << "命令找到了" << endl ;
         return FOUND ;
     }
 }
@@ -124,6 +126,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //根据数据库编号找到数据库
     shared_ptr<redisDb> wrdb = getDB(num) ;
     string cd = cmd->cmd() ;
+    cout <<"命令-->" << cd << endl ;
     //不区分大小写a
     int a ;
     if(!strcasecmp(cd.c_str(), "set")) {
@@ -139,13 +142,15 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "lpush")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;   
         //get 命令
-        if(!strcasecmp(cd.c_str(), "get")) {
-            a = cmdList[cd]->cb(wrdb, cmd, response) ;
-            cout << response->reply() << endl ;
-        }
     }
+    if(!strcasecmp(cd.c_str(), "get")) {
+        a = cmdList[cd]->cb(wrdb, cmd, response) ;
+        cout << response->reply() << endl ;
+    }
+
     if(!strcasecmp(cd.c_str(), "save")) {
         //将数据库遍历一遍
+        cout << "执行save--->"<< a << endl ;
         a = cmdList[cd]->saveCb(dbLs) ;
         if(a < 0) {
             response->set_reply("SAVE FAIL!") ;
@@ -153,6 +158,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         else {
             response->set_reply("OK") ;
         }
+        cout << "执行完成--->"<< a << endl ;
     }
     //哈希
     if(!strcasecmp(cd.c_str(), "hset")) {
@@ -189,12 +195,11 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         response->set_reply("FAIL") ;
         return PROCESSERROR ;
     }
-
     return SUCESS ;
 }
-    int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 
-        if(callBack == nullptr) {
-            return -1;
-        }
-        return callBack(db, wcmd, res) ; 
+int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 
+    if(callBack == nullptr) {
+        return -1;
     }
+    return callBack(db, wcmd, res) ; 
+}

@@ -81,7 +81,7 @@ public :
     }
     ~lsObject() {}
 public :
-    void print() {}
+    void print() ;
     //set操作
     long long  getEndTime() { return timeout ; }
     void setEndTime(long long e) {}

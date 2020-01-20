@@ -134,7 +134,6 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     if(!strcasecmp(md.c_str(), "lpop") || !strcasecmp(md.c_str(), "blpop")) {
         string value ;
         string key = cmd->lob(0).key() ;
-        ListObject lb = cmd->lob(0) ;
         string val = findListRequest(key, num) ;
         if(!strcasecmp(md.c_str(), "blpop")) {
             flag = 1 ;
@@ -168,12 +167,24 @@ string redisDb::findListRequest(const string k, const int num) {
         return "" ;
     }
     if(res->second->objectSize() == 0) {
+        //删除对象在数据库中的数据
+        removeDataByKey(ke) ;
         return "" ;
     }
     string t= res->second->getValue() ;
     int len = res->second->objectSize() ;   
     return t+" "+to_string(len) ;
 }
+
+void redisDb :: removeDataByKey(key k) {
+    for(auto s=db.begin(); s != db.end(); s++) {
+        if(k == s->first){
+            db.erase(s) ;
+            break ;
+        }
+    }
+}
+
 
 string redisDb :: findHgetRequest(const string k, 
                                   const string feild) {

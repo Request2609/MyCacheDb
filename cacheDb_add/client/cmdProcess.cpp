@@ -52,6 +52,12 @@ void cmdProcess :: setHget(vector<string>&res,Command& com) {
     *val = res[2] ;
 }
 
+void cmdProcess :: setLPopObject(vector<string>& res, Command& com) {
+    com.set_cmd(res[0]) ;
+    ListObject* lob = com.add_lob() ;
+    lob->set_key(res[1]) ;
+}
+
 //设置hash
 void cmdProcess :: setHset(vector<string>&res,Command& com) {
     int len = res.size() ;

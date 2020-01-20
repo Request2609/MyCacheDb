@@ -41,6 +41,9 @@ class key {
 public :
     key() {}
     key(int n, int t, string c) : num(n), type(t), cmd(c) {}
+    bool operator==(const key&k) {
+        return num==k.num&&cmd==k.cmd&&type==k.type ;
+    }
 public :
     int num ;
     int type ;
@@ -91,7 +94,6 @@ public :
     int isExist(shared_ptr<Command>&cmds) ;
     //获取key
     //删除当前数据库中的一个对象
-    void del() {
-    }
+    void removeDataByKey(key k) ;
 } ;
 

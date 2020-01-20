@@ -24,6 +24,7 @@ public :
     map<string, int>cmdList ;
 public :
     void build() ;
+    bool isCmdExist(string cmd) ;
 };
 
 class request {

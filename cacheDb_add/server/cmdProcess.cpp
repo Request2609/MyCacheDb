@@ -30,15 +30,12 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果
     const char* buff = bf->getBuf() ;
-    cout << "将要处理的数据" << endl ;
-    cout << bf->getBuf() << endl ;
-    cout << "--------------" << endl ;
-    cout << buff << endl ;
     //获取对端序列化到结果
     //反序列化,弱引用
     shared_ptr<Command>wcmd = rc->getParseString(buff) ;
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
+
     shared_ptr<Response> res = nullptr;
     //解析命令不合法
     if(ret == NOT_FOUND) {

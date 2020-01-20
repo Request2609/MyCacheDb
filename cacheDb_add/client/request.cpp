@@ -2,6 +2,7 @@
 
 class cmds ;
 void cmds :: build() {
+ 
     cmdList.insert(make_pair("set", 3)) ;
     cmdList.insert(make_pair("get", 2)) ;
     //验证命令
@@ -11,7 +12,7 @@ void cmds :: build() {
     cmdList.insert({"hget", 3}) ;
     cmdList.insert({"bgsave", 1}) ;
     cmdList.insert({"lpush", -1}) ;
-    cmdList.insert({"lpop", 0}) ;
+    cmdList.insert({"lpop", 2}) ;
     cmdList.insert({"blpop", -1}) ;
 }
 
@@ -19,6 +20,15 @@ cmds :: cmds() {
 }
 
 cmds :: ~cmds() {}
+
+bool cmds ::isCmdExist(string cmd) {
+    for(auto s : cmdList) {
+        if(s.first == cmd) {
+            return true ;
+        }
+    }
+    return false ;
+}
 
 //匹配键值对
 //创建命令表
@@ -70,6 +80,14 @@ int request :: processCmd(vector<string>&res, Command& com) {
         cmdProcess :: setHset(res, com) ;
     }
 
+    else if(!strcasecmp(res[0].c_str(), "lpop")) {
+        if(cd.cmdList[res[0]] != len) {
+            cout << "error command" << endl ;
+            return -1 ;
+        }
+        cmdProcess :: setLPopObject(res, com) ;      
+    }
+
     else if(!strcasecmp(res[0].c_str(), "hget")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {
@@ -102,15 +120,12 @@ int request :: sendReq(int fd, vector<string>&res, int num) {
     Command cmd ;
     cmds cd ;
     cd.build() ;
-    auto ret = cd.cmdList.find(res[0]) ;
-    cmd.set_num(num) ;
     //没找到命令
-    if(ret == cd.cmdList.end()) {
+    if(!cd.isCmdExist(res[0])) {
         cout << "command not found!"<< endl ;  
-        return -1;
+        return -1 ;
     }
     else {
-        cout << cmd.cmd() << endl ;
         //从第一个数据
         int r = processCmd(res, cmd) ;
         if(r < 0) {
@@ -146,7 +161,6 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
     string a ;
     //序列化的结果
     cmd.SerializeToArray(buff, REQ_SIZE) ;
-
     //检验是否与服务器器建立了
     int ret = isConnect(fd) ;
     if(ret == 0) {

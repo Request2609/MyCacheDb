@@ -33,6 +33,8 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             stringGet(s, ob) ;
             ob->setEndTime(times) ;
             cmdset->addObjectToDb(num, ob) ;
+            cout << "string 对象"<< endl ;
+            ob->print() ;
         }
 
         if(type == CMDTYPE_::DB_HASH) {
@@ -44,17 +46,24 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             if(ret < 0) {
                 return nullptr ;
             }
+            cout <<"hash对象" << endl ;
            cmdset->addObjectToDb(num, ob) ;
+           ob->print() ;
         }
         
         if(type == CMDTYPE_::DB_LIST) {
             shared_ptr<dbObject> ob = factory :: getObject("lpush") ;
             ob->setType(CMDTYPE_::DB_LIST) ;
             ob->setNum(num) ;
+            cout << "数据库编号:" << num << endl ;
             ob->setEndTime(times) ;
+            cout << "时间:" << times << endl ;
             getListObject(s, ob) ;
             cmdset->addObjectToDb(num, ob) ;
+            cout << "list对象！"<< endl ;
+            ob->print() ;
         }
+        
     }
     if(flag == 1) {
         cmdset->append(db) ;
@@ -65,22 +74,28 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
 
 
 string recoverDb:: getListValues(string& s) {
-    string ss ;
+    string ss="" ;
     int i = 0 ;
-    for(i=0; s[i]!='\r'; i++) {
+    for(i=0; s[i]!='\r' && s[i]!='\n'; i++) {
+        if(s[i] == '$') {
+            return ss ;
+        }
         ss += s[i] ;    
     }
     s = s.substr(i+2) ; 
+    return ss ;
 }
 
 int recoverDb :: getListObject(string& s, shared_ptr<dbObject>& ob) {
     //获取键值
     string key = getHashKey(s) ;    
+    cout << "键值:" << key << endl ;
     ob->setKey(key) ;
     //找值
     while(1) {
         string ss = getListValues(s) ;
-        ob->setValue("", ss.c_str()) ;
+        if(ss == "") break ;
+        ob->setValue(ss.c_str()) ;
     }
     return 1 ;
 }

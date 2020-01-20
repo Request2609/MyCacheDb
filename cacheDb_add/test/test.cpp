@@ -17,7 +17,6 @@ void swap(shared_ptr<A>&aa) {
     cout << "swap:" << aa->a << endl ;
     aa->a = 19 ;
 }
-
 int main()
 {
     shared_ptr<A>aa = make_shared<A>(10) ;

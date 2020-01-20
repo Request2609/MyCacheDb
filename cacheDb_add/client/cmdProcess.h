@@ -20,7 +20,8 @@ public:
     static void setBgSave(vector<string>&res,Command& com) ;
     static void setHget(vector<string>&res,Command& com) ;
     static void getBlpop(vector<string>& res, Command& com) ;
-    static void  getListObject(vector<string>& res, Command& com) ;
+    static void getListObject(vector<string>& res, Command& com) ;
+    static void setLPopObject(vector<string>&res, Command& com) ;
 private:
     
 };

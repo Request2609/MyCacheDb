@@ -2,10 +2,10 @@
 int cmdCb:: blPop(shared_ptr<redisDb>&db, 
                   shared_ptr<Command>&tmp, 
                   shared_ptr<Response>&res) {
-    cout << "执行blpop函数" << endl ;
     int aa = db->queryDb(res, tmp) ;
     return aa;
 }
+
 //设置push命令
 int cmdCb :: setLpush(shared_ptr<redisDb>&wcmd, 
                       shared_ptr<Command>&tmp, 
@@ -73,7 +73,6 @@ int cmdCb :: setHash(shared_ptr<redisDb>&wcmd,
 int cmdCb :: lPop(shared_ptr<redisDb>& db, 
          shared_ptr<Command>&tmp, 
          shared_ptr<Response>& res) {
-    cout << "执行lpop函数" << endl ;
     db->queryDb(res, tmp) ;
     return 1 ;
 }
