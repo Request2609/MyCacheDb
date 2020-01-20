@@ -158,7 +158,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         else {
             response->set_reply("OK") ;
         }
-        cout << "执行完成--->"<< a << endl ;
     }
     //哈希
     if(!strcasecmp(cd.c_str(), "hset")) {
