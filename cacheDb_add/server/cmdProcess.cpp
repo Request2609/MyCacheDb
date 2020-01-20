@@ -29,14 +29,14 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     int flag = 0 ;
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果
-    string* buff = bf->getBuf() ;
+    const char* buff = bf->getBuf() ;
+    cout << "将要处理的数据" << endl ;
+    cout << bf->getBuf() << endl ;
+    cout << "--------------" << endl ;
+    cout << buff << endl ;
     //获取对端序列化到结果
     //反序列化,弱引用
     shared_ptr<Command>wcmd = rc->getParseString(buff) ;
-    ListObject lob = wcmd->lob() ;
-    string key = lob.key() ;
-   // cout << "传过来的键值:" << key << endl ;
-    Value* val =  lob.add_vals() ;
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
     shared_ptr<Response> res = nullptr;
@@ -58,7 +58,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         res = cmdSet_->getResponse() ;
         //cout <<"回复的结果：--->" << res->reply() << endl ;
         //链表阻塞形式获取对象的回复，a=0队列为空
-        if(a == 0) {
+        /*if(a == 0) {
             flag = 1 ;
             listWaitQueue :: add(tmp) ;
             //创建一个定时器，时间到就返回客户端
@@ -66,7 +66,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
             //设置定时器 
             setClock(tmp, t) ;
             return 1;
-        }
+        }*/
     } 
 
     if(flag != 1) {

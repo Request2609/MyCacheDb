@@ -40,16 +40,23 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         }
         res->second->setNum(cmds->num()) ;
     }
-    if(cmd == "lpop") {
-        ListObject lob = cmds->lob() ;
+    if(cmd == "lpush") {
+        ListObject lob = cmds->lob(0) ;
         string keys = lob.key() ;
         key ke(num, type::DB_LIST, keys) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
             return -1 ;
         }
-        string val = res->second->getValue() ; 
-        int num = res->second->objectSize() ;
+        int len = lob.vals_size() ;
+        for(int i=0; i<len; i++) {
+            int size = lob.vals(i).val_size() ;
+            for(int j=0; j<size; j++) {
+                res->second->setValue(lob.vals(i).val(j)) ;
+            }
+        }
+        num = res->second->objectSize() ;
+        return num ;   
     }
     return 1 ;
 }
@@ -96,9 +103,8 @@ void redisDb :: append(shared_ptr<dbObject>rdb) {
 int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     //get查询
     string md = cmd->cmd() ;
-    int num = cmd->num() ;
-    cout << "数据库中的数据信息------>" << endl ;
-    print() ;
+    int num = cmd->num() ;/*
+    cout << "当前数据库编号" << num << endl ;*/
     if(!strcasecmp(md.c_str(), "get")) {
         //在本数据库中找set对象并且查询的值
         string key ;
@@ -111,8 +117,8 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         else {
             res->set_reply("\""+r+"\"") ;
         }
-        cout << "get命令处理完成" << endl ;
     }
+
     if(!strcasecmp(md.c_str(), "hget")) {
         string value ;
         string key = cmd->keys(0).key(0) ;
@@ -127,8 +133,8 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     int flag = 0;
     if(!strcasecmp(md.c_str(), "lpop") || !strcasecmp(md.c_str(), "blpop")) {
         string value ;
-        string key = cmd->lob().key() ;
-        ListObject lb = cmd->lob() ;
+        string key = cmd->lob(0).key() ;
+        ListObject lb = cmd->lob(0) ;
         string val = findListRequest(key, num) ;
         if(!strcasecmp(md.c_str(), "blpop")) {
             flag = 1 ;

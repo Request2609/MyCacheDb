@@ -2,7 +2,7 @@
 #include "serializeParse.h"
 
 int aeEvent :: processRead() { 
-
+        
     if(mask == event::timeout) {
         uint64_t ret = 0 ;
         int res = read(connFd, &ret, sizeof(ret)) ;
@@ -14,23 +14,22 @@ int aeEvent :: processRead() {
         return ret ;
     }
     //读取数据
-    char buff[SIZE] ;
+//    char buff[SIZE] ;
     //读数据
-    int ret = read(connFd, buff, sizeof(buff)) ;
+    buf.init() ;
+    int ret = read(connFd, buf.getBuf(), SIZE) ;
     if(ret < 0) {
         cout << __FILE__  << "      " << connFd << "      "  << __LINE__ << "                " << strerror(errno) << endl ;
         return -1 ;
     }
+
     if(ret == 0) {
         //一个客户端断开连接
         cout << "one user disconnect!" << endl ;
         return 0 ;
     } 
     //根据返回值，将数据读到buf
-    for(int i=0; i<ret; i++) {
-        buf.append(buff[i]) ;
-    }
-    cout <<"收到数据："<<buff << endl ;
+  //  cout << buf.getBuf() << endl ;
     //收到数据
     //将数据返回给事件循环/*
     //调用相应的回调处理可读事件

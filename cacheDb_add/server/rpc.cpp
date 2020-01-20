@@ -7,22 +7,18 @@ rpc :: rpc()  {
 
 
 //处理结果，并返回相应的结果
-shared_ptr<Command> rpc :: getParseString(string* buff) {
+shared_ptr<Command> rpc :: getParseString(const char* buf) {
     //在消息处理处，反序列化
-    auto res = parseMethod(buff) ;
-    cout << res->lob().key() << endl ;
+    auto res = parseMethod(buf) ;
     return res ;
 }
 
 
 int rpc :: response(shared_ptr<Response>res, int fd) {
     //回复客户端
-    string s ;
-    s = res->reply() ;
     //序列化，转化成string
-    res->SerializeToString(&s) ;
     char buf[4096] ;
-    strcpy(buf, s.c_str()) ;
+    res->SerializeToArray(buf, 4096) ;
     //向客户端发送消息
     int ret = send(fd, buf, sizeof(buf), 0) ;
     if(ret < 0) {
@@ -33,9 +29,9 @@ int rpc :: response(shared_ptr<Response>res, int fd) {
 }
 
 ///反序列化
-shared_ptr<Command> requestMethod(string* s) {
+shared_ptr<Command> requestMethod(const char* buf) {
     Command cmd ;
-    cmd.ParseFromString(*s) ;
+    cmd.ParseFromArray(buf, 4096) ;
     shared_ptr<Command>comm = make_shared<Command>(cmd) ;
     return comm ;
 }

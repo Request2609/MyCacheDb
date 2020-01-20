@@ -105,6 +105,7 @@ public :
     int findCmd(string cmd) ;  
     shared_ptr<Response> getResponse() { return response ; }
     int append(shared_ptr<redisDb> db) ;
+    void print() ;
 private:
     shared_ptr<rdb> save ;
     //回复，响应

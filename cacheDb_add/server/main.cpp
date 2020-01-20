@@ -2,15 +2,18 @@
 #include "aeEvent.h"
 #include "cmdProcess.h"
 
-//保证朱创建一次
+//保证只创建一次
 static cmdProcess cmdPro ;
 static shared_ptr<rpc>rc = nullptr ;
 
 int readOnMessage(shared_ptr<aeEvent>tmp) { 
     if(rc == nullptr) {
+        //从文件中读取数据库中的数据
         cmdPro.initRedis() ; 
+        //初始化命令集合
         cmdPro.initCmdCb() ;
     }
+    //设置序列化和反序列化句柄
     rc = make_shared<rpc>() ;
     cmdPro.setRpc(rc) ;
     //处理消息

@@ -11,6 +11,7 @@ cmdSet :: cmdSet() {
     }
 } 
 
+//初始化命令表
 int cmdSet :: initCmdCb() {
     //初始化set命令
     shared_ptr<redisCommand>tset(new redisCommand("set", -3, "wm",  1, 1, 1, 0, 0)) ;
@@ -44,15 +45,25 @@ int cmdSet :: initCmdCb() {
     shared_ptr<redisCommand>lpush(new redisCommand("lpush", -3, "wm",  1, 1, 1, 0, 0)) ;
     lpush->setCallBack(cmdCb :: setLpush) ;
     cmdList.insert({"lpush", lpush}) ;   
+
     //从队列中弹出
     shared_ptr<redisCommand>lpop(new redisCommand("lpop", -3, "wm",  1, 1, 1, 0, 0)) ;
-    lpush->setCallBack(cmdCb :: lPop) ;
+    lpop->setCallBack(cmdCb :: lPop) ;
     cmdList.insert({"lpop", lpop}) ;
     
     shared_ptr<redisCommand>blpop(new redisCommand("blpop", -3, "wm",  1, 1, 1, 0, 0)) ;
-    lpush->setCallBack(cmdCb :: blPop) ;
+    blpop->setCallBack(cmdCb :: blPop) ;
     cmdList.insert({"blpop", blpop}) ;
 }   
+
+//打印数据苦衷当前信息
+void cmdSet :: print() {
+    for(auto s : dbLs) {
+        cout << "数据库编号:" << s.first << "  "<< endl ;
+        //数据库中的所有信息
+        s.second->print() ;
+    }
+}
 
 //初始化数据库
 int cmdSet :: initRedis() {
@@ -107,6 +118,7 @@ int cmdSet :: append(shared_ptr<redisDb> db) {
 }
 
 int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
+    //cout << "传进来的数据库编号!" <<num<< endl ;
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
@@ -122,23 +134,16 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "lpop")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
     }
+
     //lpush命令
     if(!strcasecmp(cd.c_str(), "lpush")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;   
-       //检测一下队列是否为空
-        int ret = listWaitQueue:: isEmpty() ;       
-        if(ret != 0) {
-            //获取到等待的客户端
-            auto res = listWaitQueue :: get() ;
-            //调用响应的回复函数
-            cmdProcess :: responseFunc(res->getConnFd()) ;
+        //get 命令
+        if(!strcasecmp(cd.c_str(), "get")) {
+            a = cmdList[cd]->cb(wrdb, cmd, response) ;
+            cout << response->reply() << endl ;
         }
     }
-    //get 命令
-    if(!strcasecmp(cd.c_str(), "get")) {
-        a = cmdList[cd]->cb(wrdb, cmd, response) ;
-    }
-
     if(!strcasecmp(cd.c_str(), "save")) {
         //将数据库遍历一遍
         a = cmdList[cd]->saveCb(dbLs) ;
@@ -184,12 +189,12 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         response->set_reply("FAIL") ;
         return PROCESSERROR ;
     }
+
     return SUCESS ;
 }
-
-int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 
-    if(callBack == nullptr) {
-        return -1;
+    int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 
+        if(callBack == nullptr) {
+            return -1;
+        }
+        return callBack(db, wcmd, res) ; 
     }
-    return callBack(db, wcmd, res) ; 
-}

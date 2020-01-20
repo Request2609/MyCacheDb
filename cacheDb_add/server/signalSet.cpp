@@ -1,6 +1,6 @@
 #include "signalSet.h"
 
-int signalSet :: timeSlot = 300 ;
+int signalSet :: timeSlot = 10000 ;
 int signalSet :: pipeFd[2] ;
 int signalSet :: efd ;
 int signalSet:: wakeBlpopFd ;

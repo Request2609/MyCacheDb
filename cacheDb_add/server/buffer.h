@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
+#include <string.h>
 #include <vector>
 using namespace std ;
 
-class buffer
-{
+class buffer {
 public:
     buffer() {
         readIndex = 0 ;
@@ -12,12 +12,14 @@ public:
     }
     ~buffer() {}
 public :
-    void append(char cc) { 
-        buf.push_back(cc) ;
-        readIndex ++ ; 
+    void init() {
+        bzero(buf,  sizeof(buf)) ;
     }
-    string* getBuf() {
-        return &buf ;
+    void append(char* cc) { 
+        memcpy(buf, cc, 4096-1) ;   
+    }
+    char* getBuf() {
+        return buf ;
     }
     char get() { 
         return buf[writeIndex++] ;
@@ -26,11 +28,11 @@ public :
     void clear() { 
         readIndex = 0;
         writeIndex = 0 ;
-        buf.clear() ;
     }
 
 private:
-    string buf ;
+    char buf[4096] ;
+  //  string buf ;
     long readIndex ;
     long writeIndex ;
 };

@@ -57,8 +57,6 @@ void cmdProcess :: setHset(vector<string>&res,Command& com) {
     int len = res.size() ;
     com.set_cmd(res[0]) ;
     string cmd = res[0] ;
-    //string keys = res[1] ;
-    com.set_cmd(cmd) ;
     Key* key = com.add_keys() ;
     string* k = key->add_key() ;
     *k = res[1] ;
@@ -77,12 +75,9 @@ void cmdProcess :: getListObject(vector<string>& res, Command& com) {
     ListObject *lob = com.add_lob() ;
     com.set_cmd(res[0]) ;
     lob->set_key(res[1]) ;
-    cout << "设置键："<< lob->key() << endl ; 
     int len = res.size() ;
     Value* val = lob->add_vals() ;
-    cout << "设置值:" << endl ;
     for(int i=2; i<len; i++) {
-        cout << res[i] << endl ;
         string*v = val->add_val() ;
         *v = res[i] ;
     }

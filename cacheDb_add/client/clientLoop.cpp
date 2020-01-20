@@ -71,7 +71,6 @@ void clientLoop :: start(string ip, string port) {
             cout << "bye bye!" << endl ; 
             break ;
         }
-        num =cmdStl.size() ;
         //解析并序列化发送命令
         int ret = rc->sendRequest(cmdStl, num) ;
         if(ret == -5 || ret == -1) {
@@ -79,7 +78,6 @@ void clientLoop :: start(string ip, string port) {
         }
         //返回结果并打印
         string a = rc->getResponse() ;
-        cout << a << endl ;
        //序列化
     }
 }

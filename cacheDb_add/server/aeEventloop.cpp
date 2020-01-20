@@ -207,7 +207,7 @@ int aeEventloop :: kickClient(map<int, shared_ptr<aeEvent>>&eventData,
     else {
         cout << eventData.size() << endl ;
     }
-    auto res = eventData.find(kickFd) ;
+    auto res = eventData.find(kickFd) ; 
     if(res == eventData.end()) {
         cout << __FILE__ << "          " << __LINE__ << endl ;
         return -1 ;

@@ -286,15 +286,15 @@ int rdb :: initRedis(cmdSet* cmdset) {
         if(s.size() == 0) {
             continue ;
         }
-        cout << "获取文件信息！"<< endl ;
         string str = getFileInfo(s) ;   
         if(str.empty()) {
             return -1 ;
         } 
         shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
     }
-
-    cout << "init ok!" <<endl ;
+ /*   cout << "打印一遍数据库信息" << endl ;
+    cmdset->print() ;*/
+    cout << "the server database init ok!" <<endl ;
     return 1 ;
 }
 

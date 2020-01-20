@@ -1,70 +1,32 @@
 #include "cmdCb.h"
-/*
-char cmdCb :: getFlag() {
-    char c = '-' ;
-    int fd = open(FLAG_FILE, O_RDWR|O_CREAT) ;   
-    if(fd < 0) {
-        cout << __FILE__ << "     " << __LINE__ << endl ;
-        return c ;
-    }
-    struct stat st ;
-    int ret = fstat(fd, &st) ;
-    if(ret < 0) {
-        cout << __LINE__ << "    " << __FILE__ << endl ;
-        return c ;
-    }
-    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd , 0) ;
-    close(fd) ;
-    c = flag[0] ;
-    munmap((void*)flag, st.st_size) ;
-    return c ;
-}
-*/
 int cmdCb:: blPop(shared_ptr<redisDb>&db, 
                   shared_ptr<Command>&tmp, 
                   shared_ptr<Response>&res) {
+    cout << "执行blpop函数" << endl ;
     int aa = db->queryDb(res, tmp) ;
     return aa;
 }
-/*
-int cmdCb :: setFlag(char c) {
-    int fd = open(FLAG_FILE, O_RDWR|O_CREAT) ;  
-    if(fd < 0) {
-        cout << __FILE__ << "     " << __LINE__ << endl ;
-        return -1 ;
-    }
-    struct stat st ;
-    int ret = fstat(fd, &st) ;
-    if(ret < 0) {
-        cout << __LINE__ << "     " << __FILE__ << endl ;
-        return -1 ;
-    }
-    char* flag = (char*)mmap(NULL, st.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0) ;
-    close(fd) ;
-    flag[0] = c ;
-    munmap((void*)flag, st.st_size) ;
-    return 1 ;
-}
-*/
-
 //设置push命令
 int cmdCb :: setLpush(shared_ptr<redisDb>&wcmd, 
                       shared_ptr<Command>&tmp, 
                       shared_ptr<Response>& res) {
-    
+    int ret = wcmd->isExist(tmp) ;
+    if(ret != -1) {
+        char buf[50] ;
+        sprintf(buf, "\n%d\n", ret) ;
+        res->set_reply(buf) ;
+        return ret ;
+    }
     shared_ptr<dbObject>se = factory::getObject("lpush");
-    ListObject key = tmp->lob() ;
-    string k = key.key() ;
-    int len = key.vals_size() ;
+    ListObject lob = tmp->lob(0) ;
+    se->setKey(lob.key()) ;
+    int len = lob.vals_size() ;
     for(int i=0; i<len; i++) {
-        Value val = key.vals(i) ;
-        int s = val.val_size() ;
-        for(int j=0; j<s; j++) {
-            string ss = val.val(j) ;
-            se->setValue("", ss.c_str()) ;
+        int size = lob.vals(i).val_size() ;
+        for(int j=0; j<size; j++) {
+            se->setValue(lob.vals(i).val(j)) ; 
         }
     }
-
     se->setNum(tmp->num()) ;
     se->setType(type::DB_LIST_) ;
     int num = se->objectSize() ;
@@ -77,7 +39,7 @@ int cmdCb :: setLpush(shared_ptr<redisDb>&wcmd,
 int cmdCb :: setHash(shared_ptr<redisDb>&wcmd, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {               
-
+    cout << "执行hash函数" << endl ;
     int ret = isKeyExist(wcmd, tmp) ;
     if(ret == 1) {
         res->set_reply("OK") ;
@@ -111,6 +73,7 @@ int cmdCb :: setHash(shared_ptr<redisDb>&wcmd,
 int cmdCb :: lPop(shared_ptr<redisDb>& db, 
          shared_ptr<Command>&tmp, 
          shared_ptr<Response>& res) {
+    cout << "执行lpop函数" << endl ;
     db->queryDb(res, tmp) ;
     return 1 ;
 }
@@ -118,6 +81,7 @@ int cmdCb :: lPop(shared_ptr<redisDb>& db,
 int cmdCb :: setHget(shared_ptr<redisDb>&db, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {
+    cout << "执行hget函数" << endl ;
     db->queryDb(res, tmp) ;
     return 1 ;
 }
@@ -157,6 +121,7 @@ int cmdCb :: save(vector<pair<int, shared_ptr<redisDb>>>& dls) {
 int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd, 
                     shared_ptr<Command>&cmd, 
                     shared_ptr<Response>& res) {
+    cout << "执行set函数" << endl ;
     int len = cmd->keys(0).key_size() ;
     //键的数量不是1,错误的
     int num = cmd->num() ;
@@ -184,6 +149,7 @@ int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd,
 int cmdCb :: getCmd(shared_ptr<redisDb>&db, 
                     shared_ptr<Command>&tmp, 
                     shared_ptr<Response>& res) {
+    cout << "执行get函数" << endl ;
     //在指定数据库中找相应的值
     db->queryDb(res, tmp) ;
     return 1 ;

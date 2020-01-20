@@ -86,6 +86,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
         }
         cmdProcess :: setSave(res, com) ;
     }
+
     else if(!strcasecmp(res[0].c_str(), "blpop")) {
         int ret = cd.cmdList[res[0]] ;
     }
@@ -98,7 +99,6 @@ int request :: processCmd(vector<string>&res, Command& com) {
 
 
 int request :: sendReq(int fd, vector<string>&res, int num) {
-    cout << "创建命令表!" << endl ;
     Command cmd ;
     cmds cd ;
     cd.build() ;
@@ -110,14 +110,13 @@ int request :: sendReq(int fd, vector<string>&res, int num) {
         return -1;
     }
     else {
-        cout << "处理数据"<< endl ;
         cout << cmd.cmd() << endl ;
         //从第一个数据
         int r = processCmd(res, cmd) ;
         if(r < 0) {
             return -1;
         }
-    }
+    }        
     int s = sendAfterSerial(fd, cmd) ;
     return s ;
 }
@@ -142,23 +141,21 @@ int request :: isConnect(int conFd) {
 }
 
 int request :: sendAfterSerial(int fd, Command& cmd) { 
+    char buff[REQ_SIZE] ;
+    bzero(buff, sizeof(buff)) ;
     string a ;
     //序列化的结果
-    cmd.SerializeToString(&a) ;
-    int len = a.size() ;
+    cmd.SerializeToArray(buff, REQ_SIZE) ;
+
     //检验是否与服务器器建立了
     int ret = isConnect(fd) ;
     if(ret == 0) {
         return 5 ;
     }
-    char buff[REQ_SIZE] ;
-    bzero(buff, sizeof(buff)) ;
-    strcpy(buff, a.c_str()) ;
     if(send(fd, buff, sizeof(buff), 0) < 0) {
         cout << "errno connect" << endl ;
         return -1;
     }
-    cout << "发送完成！" << endl ;
     cmd.clear_cmd() ;
     return 1 ;
 }

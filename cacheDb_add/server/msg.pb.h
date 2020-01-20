@@ -531,252 +531,6 @@ class Time :
 };
 // -------------------------------------------------------------------
 
-class Command :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Messages.Command) */ {
- public:
-  Command();
-  virtual ~Command();
-
-  Command(const Command& from);
-  Command(Command&& from) noexcept
-    : Command() {
-    *this = ::std::move(from);
-  }
-
-  inline Command& operator=(const Command& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Command& operator=(Command&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return GetMetadataStatic().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return GetMetadataStatic().reflection;
-  }
-  static const Command& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const Command* internal_default_instance() {
-    return reinterpret_cast<const Command*>(
-               &_Command_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    3;
-
-  friend void swap(Command& a, Command& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(Command* other) {
-    if (other == this) return;
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline Command* New() const final {
-    return CreateMaybeMessage<Command>(nullptr);
-  }
-
-  Command* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<Command>(arena);
-  }
-  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const Command& from);
-  void MergeFrom(const Command& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  #else
-  bool MergePartialFromCodedStream(
-      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
-      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  inline void SharedCtor();
-  inline void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(Command* other);
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "Messages.Command";
-  }
-  private:
-  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
-  public:
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-  private:
-  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
-    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_msg_2eproto);
-    return ::descriptor_table_msg_2eproto.file_level_metadata[kIndexInFileMessages];
-  }
-
-  public:
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kKeysFieldNumber = 4,
-    kValsFieldNumber = 5,
-    kCmdFieldNumber = 2,
-    kLobFieldNumber = 9,
-    kStatusFieldNumber = 1,
-    kLenFieldNumber = 3,
-    kTypeFieldNumber = 6,
-    kNumFieldNumber = 7,
-    kTimeFieldNumber = 8,
-  };
-  // repeated .Messages.Key keys = 4;
-  int keys_size() const;
-  void clear_keys();
-  ::Messages::Key* mutable_keys(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >*
-      mutable_keys();
-  const ::Messages::Key& keys(int index) const;
-  ::Messages::Key* add_keys();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >&
-      keys() const;
-
-  // repeated .Messages.Value vals = 5;
-  int vals_size() const;
-  void clear_vals();
-  ::Messages::Value* mutable_vals(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >*
-      mutable_vals();
-  const ::Messages::Value& vals(int index) const;
-  ::Messages::Value* add_vals();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >&
-      vals() const;
-
-  // required string cmd = 2;
-  bool has_cmd() const;
-  private:
-  bool _internal_has_cmd() const;
-  public:
-  void clear_cmd();
-  const std::string& cmd() const;
-  void set_cmd(const std::string& value);
-  void set_cmd(std::string&& value);
-  void set_cmd(const char* value);
-  void set_cmd(const char* value, size_t size);
-  std::string* mutable_cmd();
-  std::string* release_cmd();
-  void set_allocated_cmd(std::string* cmd);
-  private:
-  const std::string& _internal_cmd() const;
-  void _internal_set_cmd(const std::string& value);
-  std::string* _internal_mutable_cmd();
-  public:
-
-  // optional .Messages.ListObject lob = 9;
-  bool has_lob() const;
-  private:
-  bool _internal_has_lob() const;
-  public:
-  void clear_lob();
-  const ::Messages::ListObject& lob() const;
-  ::Messages::ListObject* release_lob();
-  ::Messages::ListObject* mutable_lob();
-  void set_allocated_lob(::Messages::ListObject* lob);
-
-  // optional int32 status = 1;
-  bool has_status() const;
-  private:
-  bool _internal_has_status() const;
-  public:
-  void clear_status();
-  ::PROTOBUF_NAMESPACE_ID::int32 status() const;
-  void set_status(::PROTOBUF_NAMESPACE_ID::int32 value);
-
-  // optional int32 len = 3;
-  bool has_len() const;
-  private:
-  bool _internal_has_len() const;
-  public:
-  void clear_len();
-  ::PROTOBUF_NAMESPACE_ID::int32 len() const;
-  void set_len(::PROTOBUF_NAMESPACE_ID::int32 value);
-
-  // optional bool type = 6;
-  bool has_type() const;
-  private:
-  bool _internal_has_type() const;
-  public:
-  void clear_type();
-  bool type() const;
-  void set_type(bool value);
-
-  // optional int32 num = 7;
-  bool has_num() const;
-  private:
-  bool _internal_has_num() const;
-  public:
-  void clear_num();
-  ::PROTOBUF_NAMESPACE_ID::int32 num() const;
-  void set_num(::PROTOBUF_NAMESPACE_ID::int32 value);
-
-  // optional double time = 8;
-  bool has_time() const;
-  private:
-  bool _internal_has_time() const;
-  public:
-  void clear_time();
-  double time() const;
-  void set_time(double value);
-
-  // @@protoc_insertion_point(class_scope:Messages.Command)
- private:
-  class _Internal;
-
-  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key > keys_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value > vals_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr cmd_;
-  ::Messages::ListObject* lob_;
-  ::PROTOBUF_NAMESPACE_ID::int32 status_;
-  ::PROTOBUF_NAMESPACE_ID::int32 len_;
-  bool type_;
-  ::PROTOBUF_NAMESPACE_ID::int32 num_;
-  double time_;
-  friend struct ::TableStruct_msg_2eproto;
-};
-// -------------------------------------------------------------------
-
 class ListObject :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Messages.ListObject) */ {
  public:
@@ -826,7 +580,7 @@ class ListObject :
                &_ListObject_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    3;
 
   friend void swap(ListObject& a, ListObject& b) {
     a.Swap(&b);
@@ -938,6 +692,252 @@ class ListObject :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value > vals_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr key_;
+  friend struct ::TableStruct_msg_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Command :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Messages.Command) */ {
+ public:
+  Command();
+  virtual ~Command();
+
+  Command(const Command& from);
+  Command(Command&& from) noexcept
+    : Command() {
+    *this = ::std::move(from);
+  }
+
+  inline Command& operator=(const Command& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Command& operator=(Command&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Command& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Command* internal_default_instance() {
+    return reinterpret_cast<const Command*>(
+               &_Command_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(Command& a, Command& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Command* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Command* New() const final {
+    return CreateMaybeMessage<Command>(nullptr);
+  }
+
+  Command* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Command>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Command& from);
+  void MergeFrom(const Command& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Command* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Messages.Command";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_msg_2eproto);
+    return ::descriptor_table_msg_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kKeysFieldNumber = 4,
+    kValsFieldNumber = 5,
+    kLobFieldNumber = 9,
+    kCmdFieldNumber = 2,
+    kStatusFieldNumber = 1,
+    kLenFieldNumber = 3,
+    kTypeFieldNumber = 6,
+    kNumFieldNumber = 7,
+    kTimeFieldNumber = 8,
+  };
+  // repeated .Messages.Key keys = 4;
+  int keys_size() const;
+  void clear_keys();
+  ::Messages::Key* mutable_keys(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >*
+      mutable_keys();
+  const ::Messages::Key& keys(int index) const;
+  ::Messages::Key* add_keys();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >&
+      keys() const;
+
+  // repeated .Messages.Value vals = 5;
+  int vals_size() const;
+  void clear_vals();
+  ::Messages::Value* mutable_vals(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >*
+      mutable_vals();
+  const ::Messages::Value& vals(int index) const;
+  ::Messages::Value* add_vals();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >&
+      vals() const;
+
+  // repeated .Messages.ListObject lob = 9;
+  int lob_size() const;
+  void clear_lob();
+  ::Messages::ListObject* mutable_lob(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::ListObject >*
+      mutable_lob();
+  const ::Messages::ListObject& lob(int index) const;
+  ::Messages::ListObject* add_lob();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::ListObject >&
+      lob() const;
+
+  // required string cmd = 2;
+  bool has_cmd() const;
+  private:
+  bool _internal_has_cmd() const;
+  public:
+  void clear_cmd();
+  const std::string& cmd() const;
+  void set_cmd(const std::string& value);
+  void set_cmd(std::string&& value);
+  void set_cmd(const char* value);
+  void set_cmd(const char* value, size_t size);
+  std::string* mutable_cmd();
+  std::string* release_cmd();
+  void set_allocated_cmd(std::string* cmd);
+  private:
+  const std::string& _internal_cmd() const;
+  void _internal_set_cmd(const std::string& value);
+  std::string* _internal_mutable_cmd();
+  public:
+
+  // optional int32 status = 1;
+  bool has_status() const;
+  private:
+  bool _internal_has_status() const;
+  public:
+  void clear_status();
+  ::PROTOBUF_NAMESPACE_ID::int32 status() const;
+  void set_status(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // optional int32 len = 3;
+  bool has_len() const;
+  private:
+  bool _internal_has_len() const;
+  public:
+  void clear_len();
+  ::PROTOBUF_NAMESPACE_ID::int32 len() const;
+  void set_len(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // optional bool type = 6;
+  bool has_type() const;
+  private:
+  bool _internal_has_type() const;
+  public:
+  void clear_type();
+  bool type() const;
+  void set_type(bool value);
+
+  // optional int32 num = 7;
+  bool has_num() const;
+  private:
+  bool _internal_has_num() const;
+  public:
+  void clear_num();
+  ::PROTOBUF_NAMESPACE_ID::int32 num() const;
+  void set_num(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // optional double time = 8;
+  bool has_time() const;
+  private:
+  bool _internal_has_time() const;
+  public:
+  void clear_time();
+  double time() const;
+  void set_time(double value);
+
+  // @@protoc_insertion_point(class_scope:Messages.Command)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key > keys_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value > vals_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::ListObject > lob_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr cmd_;
+  ::PROTOBUF_NAMESPACE_ID::int32 status_;
+  ::PROTOBUF_NAMESPACE_ID::int32 len_;
+  bool type_;
+  ::PROTOBUF_NAMESPACE_ID::int32 num_;
+  double time_;
   friend struct ::TableStruct_msg_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1270,297 +1270,6 @@ inline void Time::set_time(double value) {
 
 // -------------------------------------------------------------------
 
-// Command
-
-// optional int32 status = 1;
-inline bool Command::_internal_has_status() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline bool Command::has_status() const {
-  return _internal_has_status();
-}
-inline void Command::clear_status() {
-  status_ = 0;
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 Command::status() const {
-  // @@protoc_insertion_point(field_get:Messages.Command.status)
-  return status_;
-}
-inline void Command::set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000004u;
-  status_ = value;
-  // @@protoc_insertion_point(field_set:Messages.Command.status)
-}
-
-// required string cmd = 2;
-inline bool Command::_internal_has_cmd() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline bool Command::has_cmd() const {
-  return _internal_has_cmd();
-}
-inline void Command::clear_cmd() {
-  cmd_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline const std::string& Command::cmd() const {
-  // @@protoc_insertion_point(field_get:Messages.Command.cmd)
-  return _internal_cmd();
-}
-inline void Command::set_cmd(const std::string& value) {
-  _internal_set_cmd(value);
-  // @@protoc_insertion_point(field_set:Messages.Command.cmd)
-}
-inline std::string* Command::mutable_cmd() {
-  // @@protoc_insertion_point(field_mutable:Messages.Command.cmd)
-  return _internal_mutable_cmd();
-}
-inline const std::string& Command::_internal_cmd() const {
-  return cmd_.GetNoArena();
-}
-inline void Command::_internal_set_cmd(const std::string& value) {
-  _has_bits_[0] |= 0x00000001u;
-  cmd_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-}
-inline void Command::set_cmd(std::string&& value) {
-  _has_bits_[0] |= 0x00000001u;
-  cmd_.SetNoArena(
-    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:Messages.Command.cmd)
-}
-inline void Command::set_cmd(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  _has_bits_[0] |= 0x00000001u;
-  cmd_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:Messages.Command.cmd)
-}
-inline void Command::set_cmd(const char* value, size_t size) {
-  _has_bits_[0] |= 0x00000001u;
-  cmd_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:Messages.Command.cmd)
-}
-inline std::string* Command::_internal_mutable_cmd() {
-  _has_bits_[0] |= 0x00000001u;
-  return cmd_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline std::string* Command::release_cmd() {
-  // @@protoc_insertion_point(field_release:Messages.Command.cmd)
-  if (!has_cmd()) {
-    return nullptr;
-  }
-  _has_bits_[0] &= ~0x00000001u;
-  return cmd_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-}
-inline void Command::set_allocated_cmd(std::string* cmd) {
-  if (cmd != nullptr) {
-    _has_bits_[0] |= 0x00000001u;
-  } else {
-    _has_bits_[0] &= ~0x00000001u;
-  }
-  cmd_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), cmd);
-  // @@protoc_insertion_point(field_set_allocated:Messages.Command.cmd)
-}
-
-// optional int32 len = 3;
-inline bool Command::_internal_has_len() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline bool Command::has_len() const {
-  return _internal_has_len();
-}
-inline void Command::clear_len() {
-  len_ = 0;
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 Command::len() const {
-  // @@protoc_insertion_point(field_get:Messages.Command.len)
-  return len_;
-}
-inline void Command::set_len(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000008u;
-  len_ = value;
-  // @@protoc_insertion_point(field_set:Messages.Command.len)
-}
-
-// repeated .Messages.Key keys = 4;
-inline int Command::keys_size() const {
-  return keys_.size();
-}
-inline void Command::clear_keys() {
-  keys_.Clear();
-}
-inline ::Messages::Key* Command::mutable_keys(int index) {
-  // @@protoc_insertion_point(field_mutable:Messages.Command.keys)
-  return keys_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >*
-Command::mutable_keys() {
-  // @@protoc_insertion_point(field_mutable_list:Messages.Command.keys)
-  return &keys_;
-}
-inline const ::Messages::Key& Command::keys(int index) const {
-  // @@protoc_insertion_point(field_get:Messages.Command.keys)
-  return keys_.Get(index);
-}
-inline ::Messages::Key* Command::add_keys() {
-  // @@protoc_insertion_point(field_add:Messages.Command.keys)
-  return keys_.Add();
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >&
-Command::keys() const {
-  // @@protoc_insertion_point(field_list:Messages.Command.keys)
-  return keys_;
-}
-
-// repeated .Messages.Value vals = 5;
-inline int Command::vals_size() const {
-  return vals_.size();
-}
-inline void Command::clear_vals() {
-  vals_.Clear();
-}
-inline ::Messages::Value* Command::mutable_vals(int index) {
-  // @@protoc_insertion_point(field_mutable:Messages.Command.vals)
-  return vals_.Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >*
-Command::mutable_vals() {
-  // @@protoc_insertion_point(field_mutable_list:Messages.Command.vals)
-  return &vals_;
-}
-inline const ::Messages::Value& Command::vals(int index) const {
-  // @@protoc_insertion_point(field_get:Messages.Command.vals)
-  return vals_.Get(index);
-}
-inline ::Messages::Value* Command::add_vals() {
-  // @@protoc_insertion_point(field_add:Messages.Command.vals)
-  return vals_.Add();
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >&
-Command::vals() const {
-  // @@protoc_insertion_point(field_list:Messages.Command.vals)
-  return vals_;
-}
-
-// optional bool type = 6;
-inline bool Command::_internal_has_type() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline bool Command::has_type() const {
-  return _internal_has_type();
-}
-inline void Command::clear_type() {
-  type_ = false;
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline bool Command::type() const {
-  // @@protoc_insertion_point(field_get:Messages.Command.type)
-  return type_;
-}
-inline void Command::set_type(bool value) {
-  _has_bits_[0] |= 0x00000010u;
-  type_ = value;
-  // @@protoc_insertion_point(field_set:Messages.Command.type)
-}
-
-// optional int32 num = 7;
-inline bool Command::_internal_has_num() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline bool Command::has_num() const {
-  return _internal_has_num();
-}
-inline void Command::clear_num() {
-  num_ = 0;
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 Command::num() const {
-  // @@protoc_insertion_point(field_get:Messages.Command.num)
-  return num_;
-}
-inline void Command::set_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _has_bits_[0] |= 0x00000020u;
-  num_ = value;
-  // @@protoc_insertion_point(field_set:Messages.Command.num)
-}
-
-// optional double time = 8;
-inline bool Command::_internal_has_time() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
-}
-inline bool Command::has_time() const {
-  return _internal_has_time();
-}
-inline void Command::clear_time() {
-  time_ = 0;
-  _has_bits_[0] &= ~0x00000040u;
-}
-inline double Command::time() const {
-  // @@protoc_insertion_point(field_get:Messages.Command.time)
-  return time_;
-}
-inline void Command::set_time(double value) {
-  _has_bits_[0] |= 0x00000040u;
-  time_ = value;
-  // @@protoc_insertion_point(field_set:Messages.Command.time)
-}
-
-// optional .Messages.ListObject lob = 9;
-inline bool Command::_internal_has_lob() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline bool Command::has_lob() const {
-  return _internal_has_lob();
-}
-inline void Command::clear_lob() {
-  if (lob_ != nullptr) lob_->Clear();
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline const ::Messages::ListObject& Command::lob() const {
-  const ::Messages::ListObject* p = lob_;
-  // @@protoc_insertion_point(field_get:Messages.Command.lob)
-  return p != nullptr ? *p : *reinterpret_cast<const ::Messages::ListObject*>(
-      &::Messages::_ListObject_default_instance_);
-}
-inline ::Messages::ListObject* Command::release_lob() {
-  // @@protoc_insertion_point(field_release:Messages.Command.lob)
-  _has_bits_[0] &= ~0x00000002u;
-  ::Messages::ListObject* temp = lob_;
-  lob_ = nullptr;
-  return temp;
-}
-inline ::Messages::ListObject* Command::mutable_lob() {
-  _has_bits_[0] |= 0x00000002u;
-  if (lob_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Messages::ListObject>(GetArenaNoVirtual());
-    lob_ = p;
-  }
-  // @@protoc_insertion_point(field_mutable:Messages.Command.lob)
-  return lob_;
-}
-inline void Command::set_allocated_lob(::Messages::ListObject* lob) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
-  if (message_arena == nullptr) {
-    delete lob_;
-  }
-  if (lob) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
-    if (message_arena != submessage_arena) {
-      lob = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, lob, submessage_arena);
-    }
-    _has_bits_[0] |= 0x00000002u;
-  } else {
-    _has_bits_[0] &= ~0x00000002u;
-  }
-  lob_ = lob;
-  // @@protoc_insertion_point(field_set_allocated:Messages.Command.lob)
-}
-
-// -------------------------------------------------------------------
-
 // ListObject
 
 // optional string key = 1;
@@ -1661,6 +1370,275 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >&
 ListObject::vals() const {
   // @@protoc_insertion_point(field_list:Messages.ListObject.vals)
   return vals_;
+}
+
+// -------------------------------------------------------------------
+
+// Command
+
+// optional int32 status = 1;
+inline bool Command::_internal_has_status() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline bool Command::has_status() const {
+  return _internal_has_status();
+}
+inline void Command::clear_status() {
+  status_ = 0;
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Command::status() const {
+  // @@protoc_insertion_point(field_get:Messages.Command.status)
+  return status_;
+}
+inline void Command::set_status(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000002u;
+  status_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Command.status)
+}
+
+// required string cmd = 2;
+inline bool Command::_internal_has_cmd() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline bool Command::has_cmd() const {
+  return _internal_has_cmd();
+}
+inline void Command::clear_cmd() {
+  cmd_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& Command::cmd() const {
+  // @@protoc_insertion_point(field_get:Messages.Command.cmd)
+  return _internal_cmd();
+}
+inline void Command::set_cmd(const std::string& value) {
+  _internal_set_cmd(value);
+  // @@protoc_insertion_point(field_set:Messages.Command.cmd)
+}
+inline std::string* Command::mutable_cmd() {
+  // @@protoc_insertion_point(field_mutable:Messages.Command.cmd)
+  return _internal_mutable_cmd();
+}
+inline const std::string& Command::_internal_cmd() const {
+  return cmd_.GetNoArena();
+}
+inline void Command::_internal_set_cmd(const std::string& value) {
+  _has_bits_[0] |= 0x00000001u;
+  cmd_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+}
+inline void Command::set_cmd(std::string&& value) {
+  _has_bits_[0] |= 0x00000001u;
+  cmd_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Messages.Command.cmd)
+}
+inline void Command::set_cmd(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _has_bits_[0] |= 0x00000001u;
+  cmd_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Messages.Command.cmd)
+}
+inline void Command::set_cmd(const char* value, size_t size) {
+  _has_bits_[0] |= 0x00000001u;
+  cmd_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Messages.Command.cmd)
+}
+inline std::string* Command::_internal_mutable_cmd() {
+  _has_bits_[0] |= 0x00000001u;
+  return cmd_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* Command::release_cmd() {
+  // @@protoc_insertion_point(field_release:Messages.Command.cmd)
+  if (!has_cmd()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000001u;
+  return cmd_.ReleaseNonDefaultNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void Command::set_allocated_cmd(std::string* cmd) {
+  if (cmd != nullptr) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  cmd_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), cmd);
+  // @@protoc_insertion_point(field_set_allocated:Messages.Command.cmd)
+}
+
+// optional int32 len = 3;
+inline bool Command::_internal_has_len() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline bool Command::has_len() const {
+  return _internal_has_len();
+}
+inline void Command::clear_len() {
+  len_ = 0;
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Command::len() const {
+  // @@protoc_insertion_point(field_get:Messages.Command.len)
+  return len_;
+}
+inline void Command::set_len(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000004u;
+  len_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Command.len)
+}
+
+// repeated .Messages.Key keys = 4;
+inline int Command::keys_size() const {
+  return keys_.size();
+}
+inline void Command::clear_keys() {
+  keys_.Clear();
+}
+inline ::Messages::Key* Command::mutable_keys(int index) {
+  // @@protoc_insertion_point(field_mutable:Messages.Command.keys)
+  return keys_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >*
+Command::mutable_keys() {
+  // @@protoc_insertion_point(field_mutable_list:Messages.Command.keys)
+  return &keys_;
+}
+inline const ::Messages::Key& Command::keys(int index) const {
+  // @@protoc_insertion_point(field_get:Messages.Command.keys)
+  return keys_.Get(index);
+}
+inline ::Messages::Key* Command::add_keys() {
+  // @@protoc_insertion_point(field_add:Messages.Command.keys)
+  return keys_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Key >&
+Command::keys() const {
+  // @@protoc_insertion_point(field_list:Messages.Command.keys)
+  return keys_;
+}
+
+// repeated .Messages.Value vals = 5;
+inline int Command::vals_size() const {
+  return vals_.size();
+}
+inline void Command::clear_vals() {
+  vals_.Clear();
+}
+inline ::Messages::Value* Command::mutable_vals(int index) {
+  // @@protoc_insertion_point(field_mutable:Messages.Command.vals)
+  return vals_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >*
+Command::mutable_vals() {
+  // @@protoc_insertion_point(field_mutable_list:Messages.Command.vals)
+  return &vals_;
+}
+inline const ::Messages::Value& Command::vals(int index) const {
+  // @@protoc_insertion_point(field_get:Messages.Command.vals)
+  return vals_.Get(index);
+}
+inline ::Messages::Value* Command::add_vals() {
+  // @@protoc_insertion_point(field_add:Messages.Command.vals)
+  return vals_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::Value >&
+Command::vals() const {
+  // @@protoc_insertion_point(field_list:Messages.Command.vals)
+  return vals_;
+}
+
+// optional bool type = 6;
+inline bool Command::_internal_has_type() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline bool Command::has_type() const {
+  return _internal_has_type();
+}
+inline void Command::clear_type() {
+  type_ = false;
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline bool Command::type() const {
+  // @@protoc_insertion_point(field_get:Messages.Command.type)
+  return type_;
+}
+inline void Command::set_type(bool value) {
+  _has_bits_[0] |= 0x00000008u;
+  type_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Command.type)
+}
+
+// optional int32 num = 7;
+inline bool Command::_internal_has_num() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline bool Command::has_num() const {
+  return _internal_has_num();
+}
+inline void Command::clear_num() {
+  num_ = 0;
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Command::num() const {
+  // @@protoc_insertion_point(field_get:Messages.Command.num)
+  return num_;
+}
+inline void Command::set_num(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _has_bits_[0] |= 0x00000010u;
+  num_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Command.num)
+}
+
+// optional double time = 8;
+inline bool Command::_internal_has_time() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline bool Command::has_time() const {
+  return _internal_has_time();
+}
+inline void Command::clear_time() {
+  time_ = 0;
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline double Command::time() const {
+  // @@protoc_insertion_point(field_get:Messages.Command.time)
+  return time_;
+}
+inline void Command::set_time(double value) {
+  _has_bits_[0] |= 0x00000020u;
+  time_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Command.time)
+}
+
+// repeated .Messages.ListObject lob = 9;
+inline int Command::lob_size() const {
+  return lob_.size();
+}
+inline void Command::clear_lob() {
+  lob_.Clear();
+}
+inline ::Messages::ListObject* Command::mutable_lob(int index) {
+  // @@protoc_insertion_point(field_mutable:Messages.Command.lob)
+  return lob_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::ListObject >*
+Command::mutable_lob() {
+  // @@protoc_insertion_point(field_mutable_list:Messages.Command.lob)
+  return &lob_;
+}
+inline const ::Messages::ListObject& Command::lob(int index) const {
+  // @@protoc_insertion_point(field_get:Messages.Command.lob)
+  return lob_.Get(index);
+}
+inline ::Messages::ListObject* Command::add_lob() {
+  // @@protoc_insertion_point(field_add:Messages.Command.lob)
+  return lob_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Messages::ListObject >&
+Command::lob() const {
+  // @@protoc_insertion_point(field_list:Messages.Command.lob)
+  return lob_;
 }
 
 // -------------------------------------------------------------------

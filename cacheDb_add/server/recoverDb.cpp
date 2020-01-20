@@ -11,6 +11,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
         flag = 1 ;
         db = make_shared<redisDb>(num) ;
     }
+
     //记录之前的对象的种类
     int preType =  -1 ;
     while(1) {
@@ -31,7 +32,6 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             shared_ptr<dbObject>ob = factory :: getObject("set") ;
             stringGet(s, ob) ;
             ob->setEndTime(times) ;
-            cout <<"获取到键: "<<  ob->getKey() << "   获取到值:"<< ob->getValue()<< endl ;
             cmdset->addObjectToDb(num, ob) ;
         }
 
@@ -44,8 +44,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             if(ret < 0) {
                 return nullptr ;
             }
-            cout << "获取hash键:" << ob->getKey() << endl ;
-            cmdset->addObjectToDb(num, ob) ;
+           cmdset->addObjectToDb(num, ob) ;
         }
         
         if(type == CMDTYPE_::DB_LIST) {
@@ -60,6 +59,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
     if(flag == 1) {
         cmdset->append(db) ;
     }
+    
     return db ;
 }
 
@@ -94,7 +94,7 @@ int recoverDb :: hashGet(string& s, shared_ptr<dbObject>&ob) {
             break ;
         }
         ob->setValue(pp.first, pp.second.c_str()) ;
-    }
+    } 
     return 1 ;
 }
 

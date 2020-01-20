@@ -4,6 +4,7 @@
 Response rpc :: getParseString(string* buff) {
     //在消息处理处，反序列化
     auto res = parseMethod(buff) ;
+    cout << res.reply()<< endl ;
     return res ;
 }
 
@@ -27,11 +28,11 @@ string rpc :: getResponse() {
         cout << __FILE__ << "           " << __LINE__<< "  " << strerror(errno)<< endl ;
         return "" ;
     }
-   /// cout << "获取到回应!" << "     响应字节数:" << n << endl ;
     Response re ;
     //反序列化
     re.ParseFromArray(buf, sizeof(buf)) ;
     res = re.reply() ;
+    cout << re.reply() << endl ;
     return res ;
 }
 void rpc :: setCallMethod(parse par) {
@@ -55,7 +56,6 @@ int rpc :: sendRequest(vector<string>&argStl, int num) {
     if(ret < 0) {
         return -5 ;
     }
-    cout << "从这里开始" << endl ;
     //断开连接
     if(ret == 5) {
         while(count < 5) {

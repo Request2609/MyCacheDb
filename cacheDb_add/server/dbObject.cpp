@@ -1,10 +1,13 @@
 #include "dbObject.h"
 
+//测试用
 void hashSet :: print() {
+    cout << "hash对象键值" << endl ;
     for(auto s : values) {
+        cout << s.first << "   " <<s.second << endl ;
     }
 }
-
+//测试用
 void strings :: print() {
     cout << type<< "    " << num<< "   "<< key << "    "<< value << endl ;
 }
@@ -45,22 +48,13 @@ void hashSet :: setValue(string value, ...) {
     va_start(va, value) ;
     char* val = va_arg(va, char*) ;
     values[key] = val ;
+    cout << key << "     " << val << endl ;
     va_end(va) ;
 }
 
-void lsObject :: setValue(string key, ...) {
-    string value = key ;
-    this->key = value ;
-    va_list va ;
-    va_start(va, key) ;
-    //将参数列表加到队列
-    while(1) {
-        char* val = va_arg(va, char*) ;
-        if(strcmp(val, "") == 0) {
-            break ; 
-        }
-        ls.push_back(val) ;
-    }
+
+void lsObject :: setValue(string value, ...) {
+    ls.push_back(value) ;
 }   
 
 string lsObject :: getValue() {
