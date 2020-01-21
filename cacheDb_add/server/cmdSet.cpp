@@ -2,10 +2,11 @@
 #include "enum.h"
 #include "rdb.h"
 
+int cmdSet :: REDIS_NUM = 16 ;
 //初始化命令集
 cmdSet :: cmdSet() {
     //申请16个数据库
-    dbLs.reserve(16) ;
+    dbLs.reserve(REDIS_NUM) ;
     for(int i=0; i<16; i++) {
         dbLs.push_back({i ,shared_ptr<redisDb>(new redisDb(i))}) ;
     }
@@ -55,6 +56,13 @@ int cmdSet :: initCmdCb() {
     blpop->setCallBack(cmdCb :: blPop) ;
     cmdList.insert({"blpop", blpop}) ;
 }   
+
+void cmdSet::saveToFrozenRedis(vector<pair<int, shared_ptr<redisDb>>>&ls) {
+    if(frozenDbLs.size() != 0) {
+        cmdCb::save(frozenDbLs) ;
+    } 
+    frozenDbLs = dbLs ;
+}
 
 //打印数据苦衷当前信息
 void cmdSet :: print() {
@@ -120,15 +128,15 @@ int cmdSet :: append(shared_ptr<redisDb> db) {
 }
 
 int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
-    //cout << "传进来的数据库编号!" <<num<< endl ;
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
+    logRecord::setcmdSet(this) ;
+    logRecord::changeCommand(cmd) ;
     shared_ptr<redisDb> wrdb = getDB(num) ;
     string cd = cmd->cmd() ;
     //不区分大小写a
-      
-    int a ;
+    int a = 0 ;
     if(!strcasecmp(cd.c_str(), "set")) {
         //调用命令对应的函数
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
@@ -141,7 +149,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //lpush命令
     if(!strcasecmp(cd.c_str(), "lpush")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;   
-        //get 命令
     }
 
     if(!strcasecmp(cd.c_str(), "get")) {
@@ -190,6 +197,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
             return 0 ;
         }
     }
+
     if(a < 0) {
         response->set_reply("FAIL") ;
         return PROCESSERROR ;

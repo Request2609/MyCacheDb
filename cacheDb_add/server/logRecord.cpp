@@ -4,8 +4,22 @@ std::shared_ptr<logRecord> logRecord::lr=nullptr ;
 
 std::shared_ptr<threadPool> logRecord::pool ;
 
+std::map<int, long> logRecord::sizeMap ;
+
+cmdSet*logRecord::cset;
+
+mutex logRecord::mute ;
+//当前加到缓存中的数据和
+//只算key value的总长度
+long logRecord::SUM = 0 ;
+
 //文件大小限制4MB
 long logRecord:: MAX_FILE_SIZE = pow(2, 24) ;
+
+void logRecord::setcmdSet(cmdSet* cs) {
+    cset =  cs;
+}   
+
 std::shared_ptr<logRecord> logRecord::getRecordObject() {
     if(lr == nullptr) {
         lr = std::shared_ptr<logRecord>(new logRecord) ;
@@ -22,7 +36,7 @@ void logRecord::init() {
 void logRecord::changeCommand(const std::shared_ptr<Command>& cmd) {
     int type = cmd->type();
     //是读命令就返回
-    if(type == READ) {
+    if(type == READ_) {
         return ;
     }
     //数据库编号
@@ -40,8 +54,9 @@ void logRecord::changeCommand(const std::shared_ptr<Command>& cmd) {
     if(ml == "lpush") {
         s = formatListAddLog(cmd) ;
     }
-    pool->commit(record, s) ;
+    record(num ,s) ;
 }
+
 
 string logRecord::formatStringAddLog(const std::shared_ptr<Command>&cmd) {
     char buf[BUFFER_SIZE] ;
@@ -51,9 +66,23 @@ string logRecord::formatStringAddLog(const std::shared_ptr<Command>&cmd) {
     string key = cmd->keys(0).key(0) ;
     //校验和
     long all = 1+key.size()+value.size() ;
-    sprintf(buf, "%ld %c %s %s\r\n", all, '3', key.c_str(), value.c_str()) ;
+    //对sizemap中的共享变量加锁
+    lock_guard<mutex>mutex(mute) ;
+    sizeMap[cmd->num()] -= (key.size()+value.size()) ;
+    sprintf(buf, "%ld %s %s %s\r\n", all, cmd->cmd().c_str(), key.c_str(), value.c_str()) ;
+    //记录当前数据库日志长度已经超过了规定长度
+    if(sizeMap[cmd->num()] < 0) {
+           
+    }
+    else if(sizeMap[cmd->num() == 0]) {
+        
+    }
+    else {
+
+    }
     return buf ;
 }   
+
 
 string logRecord::formatHashAddLog(const std::shared_ptr<Command>&cmd) {
     char buf[BUFFER_SIZE] ;
@@ -66,14 +95,18 @@ string logRecord::formatHashAddLog(const std::shared_ptr<Command>&cmd) {
     for(int i=0; i<len; i++) {
         size = cmd->vals(i).val_size() ;
         for(int j=0; j<size; j++) {
-            all += cmd->vals(i).val(j).size() ;
-            values+=cmd->vals(i).val(j)+" " ;
+            all += cmd->vals(i).val(j).size()+cmd->keys(i+1).key(j).size() ;
+            values+=cmd->vals(i).val(j)+" "+ cmd->keys(i+1).key(j)+" ";
         }
+        break ;
     }
     //去掉末尾的空格
+    
+    lock_guard<mutex>mut(mute) ;
+    sizeMap[cmd->num()] -= (key.size()+all) ;
     values = values.substr(0, values.size()-1) ;
     all = 1+key.size() ;
-    sprintf(buf, "%ld %c %s %s\r\n", all, '4', key.c_str(), values.c_str()) ;
+    sprintf(buf, "%ld %s %s %s\r\n", all, cmd->cmd().c_str(), key.c_str(), values.c_str()) ;
     return buf ;
 }
 
@@ -92,9 +125,11 @@ string logRecord::formatListAddLog(const std::shared_ptr<Command>&cmd) {
             values+=lob.vals(i).val(j)+" " ;
         }
     }
+    lock_guard<mutex>mut(mute) ;
+    sizeMap[cmd->num()] -= (key.size()+all) ;
     values = values.substr(0, values.size()-1) ;
     all = 1+key.size() ;
-    sprintf(buf, "%ld %c %s %s\r\n", all, '5', key.c_str(), values.c_str()) ;
+    sprintf(buf, "%ld %s %s %s\r\n", all, cmd->cmd().c_str(), key.c_str(), values.c_str()) ;
     return buf ;
 }
 
@@ -140,6 +175,16 @@ void logRecord::record(int num, const string buf) {
     }
     ///记录日志
     lr->recordLog(num, buf.c_str()) ;
+    lock_guard<mutex>lk(logRecord::mute) ;
+    if(sizeMap[num]<=0) {
+        SUM+=logRecord::MAX_FILE_SIZE ;
+        SUM-=sizeMap[num] ;
+        sizeMap[num] = logRecord::MAX_FILE_SIZE ;
+        if(SUM >= MAX_FILE_SIZE*cmdSet::REDIS_NUM) {
+            cset->saveToFrozenRedis(cset->dbLs) ;
+        }   
+        SUM = 0 ;
+    }
 }   
 
 bool logRecord::isExistRedisLog(int num) {
@@ -150,6 +195,9 @@ bool logRecord::isExistRedisLog(int num) {
     return true ;
 }
 
+int logRecord :: setRecordFileFd() {
+    int fd = open("../logInfo/allLogFileName", O_RDWR) ;
+}
 void logRecord::addLog(int num) {
     char buf[512] ;
     bzero(buf, sizeof(buf)) ;
@@ -167,6 +215,14 @@ void logRecord::addLog(int num) {
     //以读写的行形式打开，写的时候强制将内核缓冲区的中的数据
     //刷到磁盘
     fd = open(buf, O_RDWR|O_SYNC) ;
+
+    //讲日志文件名称记录到文件中
+    strcat(buf, "\r\n") ;
+    write(recordFileFd, buf, sizeof(buf)) ;
+
     ls.insert({num, fd}) ;
+
+    //设置当前新数据库的编号和最大容量
+    sizeMap.insert({num, MAX_FILE_SIZE}) ;
 }
 

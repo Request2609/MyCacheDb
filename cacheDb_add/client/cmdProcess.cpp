@@ -1,6 +1,7 @@
 #include "cmdProcess.h"
 
 void cmdProcess :: setSet(vector<string>& res, Command& com) {
+    com.set_type(1) ;
     com.set_cmd(res[0]) ;
     Key* key = com.add_keys() ;
     string* k = key->add_key() ;
@@ -13,6 +14,7 @@ void cmdProcess :: setSet(vector<string>& res, Command& com) {
 }
 
 void cmdProcess :: getBlpop(vector<string>& res, Command& cmd) {
+    cmd.set_type(1) ;
     cmd.set_cmd(res[0]) ;
     int len = res.size() ;
     Key* key= cmd.add_keys() ;
@@ -27,22 +29,25 @@ void cmdProcess :: getBlpop(vector<string>& res, Command& cmd) {
 
 void cmdProcess :: setGet(vector<string>& res, Command& cmd) {
     cmd.set_cmd("get") ;
+    cmd.set_type(0) ;
     Key* key = cmd.add_keys() ;
     string* k = key->add_key() ;
     *k = res[1] ;
 }
 
 void cmdProcess :: setSave(vector<string>&res,Command& com) {
+    com.set_type(1) ;
     com.set_cmd(res[0]) ;
 }
 
 
 void cmdProcess :: setBgSave(vector<string>&res,Command& com) {
+    com.set_type(1) ;
     com.set_cmd(res[0]) ;
 }
 //设置Hget方法
 void cmdProcess :: setHget(vector<string>&res,Command& com) {
-
+    com.set_type(0) ;
     int len = res.size() ;
     com.set_cmd(res[0]) ;
     Key* key = com.add_keys() ;
@@ -54,12 +59,14 @@ void cmdProcess :: setHget(vector<string>&res,Command& com) {
 
 void cmdProcess :: setLPopObject(vector<string>& res, Command& com) {
     com.set_cmd(res[0]) ;
+    com.set_type(1) ;
     ListObject* lob = com.add_lob() ;
     lob->set_key(res[1]) ;
 }
 
 //设置hash
 void cmdProcess :: setHset(vector<string>&res,Command& com) {
+    com.set_type(1) ;
     int len = res.size() ;
     com.set_cmd(res[0]) ;
     string cmd = res[0] ;
@@ -77,7 +84,7 @@ void cmdProcess :: setHset(vector<string>&res,Command& com) {
 }
 
 void cmdProcess :: getListObject(vector<string>& res, Command& com) {
-        
+    com.set_type(0) ;
     ListObject *lob = com.add_lob() ;
     com.set_cmd(res[0]) ;
     lob->set_key(res[1]) ;

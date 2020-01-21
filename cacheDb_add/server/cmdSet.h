@@ -13,6 +13,7 @@
 #include "msg.pb.h"
 #include "rdb.h"
 #include "cmdCb.h"
+#include "logRecord.h"
 
 
 class rdb ;
@@ -36,6 +37,7 @@ class factory ;
 class redisCommand ;
 class cmdCb ;
 class Flag ;
+class logRecord ; 
 
 class redisCommand {
     //该命令的的处理函数
@@ -87,11 +89,13 @@ private :
 
 //命令集合
 class cmdSet {
+    friend class logRecord ;
 public:
     //设置命令的回调函数
     cmdSet() ;
     ~cmdSet() {}
 public :
+    static int REDIS_NUM;
     int initCmdCb() ;
     int getSize() { return dbLs.size() ; }
     int expend(int num) ;
@@ -106,12 +110,14 @@ public :
     shared_ptr<Response> getResponse() { return response ; }
     int append(shared_ptr<redisDb> db) ;
     void print() ;
+    void saveToFrozenRedis(vector<pair<int, shared_ptr<redisDb>>>&ls) ;
 private:
     shared_ptr<rdb> save ;
     //回复，响应
     shared_ptr<Response> response ;
     //数据库,键值是数据库编号码,之后数据库对象
     vector<pair<int, shared_ptr<redisDb>>>dbLs ;
+    vector<pair<int, shared_ptr<redisDb>>>frozenDbLs ;
     //命令名称，命令类型
     map<string, shared_ptr<redisCommand>> cmdList ;  
 };
