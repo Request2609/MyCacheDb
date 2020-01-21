@@ -21,6 +21,9 @@ void signalSet :: addWakeBlpopSig() {
 
 int signalSet :: createEventFd() {
     efd = aeSocket :: createEventFd() ;
+    if(efd < 0) {
+        return -1 ;
+    }
     return efd ;
 }
 

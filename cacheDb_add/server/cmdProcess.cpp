@@ -35,7 +35,6 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     shared_ptr<Command>wcmd = rc->getParseString(buff) ;
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
-
     shared_ptr<Response> res = nullptr;
     //解析命令不合法
     if(ret == NOT_FOUND) {
@@ -51,19 +50,8 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         //没找到
         //只需要关注blpop是否成功，不成功将当前处理的事件加到
         //队列中，并设置定时器
-        int a = cmdSet_->redisCommandProc(num, wcmd) ;
+        cmdSet_->redisCommandProc(num, wcmd) ;
         res = cmdSet_->getResponse() ;
-        //cout <<"回复的结果：--->" << res->reply() << endl ;
-        //链表阻塞形式获取对象的回复，a=0队列为空
-        /*if(a == 0) {
-            flag = 1 ;
-            listWaitQueue :: add(tmp) ;
-            //创建一个定时器，时间到就返回客户端
-            int t = wcmd->time() ;
-            //设置定时器 
-            setClock(tmp, t) ;
-            return 1;
-        }*/
     } 
 
     if(flag != 1) {
@@ -71,37 +59,6 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
         bf->clear() ;
     }
     //获取到响应的结果
-    return 1 ;
-}
-
-//设置定时事件
-void cmdProcess :: setClock(shared_ptr<aeEvent>aet, unsigned int t) {
-    //将事件加到队列中
-    listWaitQueue :: add(aet) ;
-    //将该对象加到定时器中
-    shared_ptr<TimerManager> tman = 
-        timeManagerFactory::getManager(2) ;
-    MyTimer  timer(tman) ;
-    int index = timer.getIndex() ;
-    //设置在堆中的index，在删除的时候方便删除
-    aet->setIndex(index) ;
-    timer.setTimeSlot(signalSet::timeSlot) ;
-    timer.setFd(aet->getConnFd()) ;
-    timer.setTimeSlot(t) ;
-    timer.start(&cmdProcess :: responseFunc, t, MyTimer::TimerType::ONCE) ;
-}   
-
-int cmdProcess :: responseFunc(int fd) {
-    string aa = "null" ;
-    Response res ;
-    res.set_reply("null") ;
-    res.SerializeToString(&aa) ;
-    char buf[4096] ;
-    bzero(buf, sizeof(buf)) ;
-    strcpy(buf, aa.c_str()) ;
-    //向客户端发送响应
-    send(fd, buf, sizeof(buf), 0) ;
-    listWaitQueue :: del(fd) ;
     return 1 ;
 }
 

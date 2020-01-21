@@ -126,7 +126,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //根据数据库编号找到数据库
     shared_ptr<redisDb> wrdb = getDB(num) ;
     string cd = cmd->cmd() ;
-    cout <<"命令-->" << cd << endl ;
     //不区分大小写a
     int a ;
     if(!strcasecmp(cd.c_str(), "set")) {
@@ -150,7 +149,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
 
     if(!strcasecmp(cd.c_str(), "save")) {
         //将数据库遍历一遍
-        cout << "执行save--->"<< a << endl ;
         a = cmdList[cd]->saveCb(dbLs) ;
         if(a < 0) {
             response->set_reply("SAVE FAIL!") ;

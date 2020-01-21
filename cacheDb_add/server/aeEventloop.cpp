@@ -14,6 +14,9 @@ aeEventloop :: aeEventloop() {
 }
 
 int aeEventloop:: init() {
+    //初始化检查的规则
+    auto check = checkOperation::getCheckObject();
+    check->getSaveRule() ;
     //从工厂中直接获取
     tman = timeManagerFactory::getManager(1) ;
     wakeblpop = timeManagerFactory::getManager(2) ;

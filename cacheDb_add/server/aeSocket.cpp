@@ -41,7 +41,10 @@ int aeSocket :: setNoBlocking(int fd) {
 
 int aeSocket :: createEventFd() {
     int efd = eventfd(0, EFD_CLOEXEC) ;
-  //  setNoBlocking(efd) ;
+    if(efd < 0) {
+        cout << __LINE__ << "   " << __FILE__ << endl ;
+        return -1 ;
+    }
     return efd ;
 }
 

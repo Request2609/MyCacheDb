@@ -60,7 +60,6 @@ public :
     //时间事件回调
     void timeCb() ;
 public :
-    void setClock(shared_ptr<aeEvent> aet, unsigned int t) ;
     int initRedis() ;
     void setRpc(shared_ptr<rpc>rc) { this->rc = rc ; }
     void setRpcMethod() ;
@@ -68,8 +67,6 @@ public :
     int sendMsg(shared_ptr<aeEvent>tmp) ;
     void getAfterKeyPart() ;
     int findCmd(shared_ptr<::Command>tmp) ;
-    void setTimerCall(task& cb)  { timeCall = move(cb) ; } 
-    static int responseFunc(int fd) ;
 private :
     //命令集
     //键值以后的部分成员
