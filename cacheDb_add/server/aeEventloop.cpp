@@ -16,11 +16,11 @@ aeEventloop :: aeEventloop() {
 int aeEventloop:: init() {
     //初始化检查的规则
     auto check = checkOperation::getCheckObject();
-    check->getSaveRule() ;
+    //check->getSaveRule() ;
+    //初始化记录日志
     //从工厂中直接获取
     tman = timeManagerFactory::getManager(1) ;
     wakeblpop = timeManagerFactory::getManager(2) ;
-    //刚开始创建16个数据库
     //创建一个epoll对象
     aep = make_shared<aeEpoll>() ;
     aep->epCreate(SIZE) ;

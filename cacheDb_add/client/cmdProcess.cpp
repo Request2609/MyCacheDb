@@ -8,7 +8,7 @@ void cmdProcess :: setSet(vector<string>& res, Command& com) {
     Value* val = com.add_vals() ;
     string* v = val->add_val() ;
     //设置数据库编号
-    com.set_num(0) ;
+  //  com.set_num(0) ;
     *v = res[2] ;
 }
 

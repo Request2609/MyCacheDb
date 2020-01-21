@@ -127,6 +127,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     shared_ptr<redisDb> wrdb = getDB(num) ;
     string cd = cmd->cmd() ;
     //不区分大小写a
+      
     int a ;
     if(!strcasecmp(cd.c_str(), "set")) {
         //调用命令对应的函数
@@ -142,6 +143,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;   
         //get 命令
     }
+
     if(!strcasecmp(cd.c_str(), "get")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         cout << response->reply() << endl ;

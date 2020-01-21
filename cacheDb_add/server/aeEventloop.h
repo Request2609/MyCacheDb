@@ -12,10 +12,11 @@
 #include "aeEvent.h"
 #include "timeManagerFactory.h"
 #include "msg.pb.h"
+#include "logRecord.h"
 
 using namespace Messages ;
 using namespace std ;
-
+class logRecord ;
 class timeManagerFactory ;
 enum {
     READ= EPOLLIN, 
