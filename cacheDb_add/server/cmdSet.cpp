@@ -14,6 +14,7 @@ cmdSet :: cmdSet() {
 
 //初始化命令表
 int cmdSet :: initCmdCb() {
+    pool = make_shared<threadPool>(8) ;
     //初始化set命令
     shared_ptr<redisCommand>tset(new redisCommand("set", -3, "wm",  1, 1, 1, 0, 0)) ;
     //函数指针不能作为构造函数参数
@@ -57,11 +58,23 @@ int cmdSet :: initCmdCb() {
     cmdList.insert({"blpop", blpop}) ;
 }   
 
-void cmdSet::saveToFrozenRedis(vector<pair<int, shared_ptr<redisDb>>>&ls) {
-    if(frozenDbLs.size() != 0) {
-        cmdCb::save(frozenDbLs) ;
-    } 
-    frozenDbLs = dbLs ;
+void cmdSet::saveToFrozenRedis(int num) {
+    for(auto s=frozenDbLs.begin(); s!=frozenDbLs.end(); s++) {
+        if(s->first == num) {
+            //当前的unmodify cache中不存在元素
+            if(s->second != nullptr) {
+                //将当前的unmodify数据持久化，并清空日志文件中的信息
+                char file[4096] ;
+                sprintf(file, ".db_%d", num) ;
+                //使用线程进行持久化
+                pool->commit(rdb::save, s->second, file) ;
+                //清空日志内容
+                logRecord::clearLogFile(num) ;
+            }
+            s->second = make_shared<>redisDb>(*dbLs[num]->second) ;
+            break ;
+        }
+    }
 }
 
 //打印数据苦衷当前信息
@@ -79,13 +92,10 @@ int cmdSet :: initRedis() {
 }
 
 int cmdSet:: findCmd(string cmd) {
-
     if(cmdList.find(cmd) == cmdList.end()) {
-        cout << "命令没有找到!" << endl  ;
         return NOTFOUND ;
-    }   
+    } 
     else {
-        cout << "命令找到了" << endl ;
         return FOUND ;
     }
 }
@@ -131,9 +141,15 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
-    logRecord::setcmdSet(this) ;
+    //logRecord::setcmdSet(this) ;
     logRecord::changeCommand(cmd) ;
     shared_ptr<redisDb> wrdb = getDB(num) ;
+    long size = logRecord::sizeMap[num] ;
+    //判断
+    if(size > logRecord::MAX_FILE_SIZE) {
+       saveToFrozenRedis(num) ;
+    }
+    //检测forzendbls中数据量是否超过log中记录的阀值
     string cd = cmd->cmd() ;
     //不区分大小写a
     int a = 0 ;

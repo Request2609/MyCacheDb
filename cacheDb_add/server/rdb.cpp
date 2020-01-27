@@ -9,8 +9,8 @@ string rdb :: tmpFileName(const char* fileName) {
 //保存到文件
 int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
     //获取数据库文件
-    string ss = tmpFileName(fileName) ;  
-    ofstream out(ss, ios::out|ios::binary|ios::trunc) ;
+    //string ss = tmpFileName(fileName) ;  
+    ofstream out(fileName, ios::out|ios::binary|ios::trunc|ios::app) ;
     if(out.fail()) {
        cout << __FILE__ << "    " << __LINE__ << endl ;
         return -1;
@@ -53,9 +53,6 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
     }
     out << "\r\n" ;  
     out.close() ;
-    cout << ss << "     " << fileName << endl ;
-    remove(fileName) ;
-    rename(ss.data(), fileName) ;
     return 1 ;
 }
 

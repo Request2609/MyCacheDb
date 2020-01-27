@@ -28,29 +28,35 @@ class threadPool ;
 class logErr ;
 class cmdSet ;
 
+const int TYPESTRING = 1 ;
+const int TYPEHASH = 2 ;
+const int TYPELIST = 3 ;
 const int OUT_WRITE = 1 ;
-
+const int BLOCK_SIZE = 4096 ;
 class logRecord {
 public:
     ~logRecord() {}
     static void init() ;
     static void changeCommand(const std::shared_ptr<Command>& cmd) ;
-    static void record(int num, const string  buf) ;
+    static void record(int num,string  buf) ;
     static void addRedisLog(int num) ;
     static void setcmdSet(cmdSet* cs) ;
+    //清空log文件
+    static void clearLogFile(int num) ;
     //判断是否存在数据库编号为num的日志
     static long SUM ;
-private:
+    static map<int, long>sizeMap ;
     static long MAX_FILE_SIZE ;
+private:
     logRecord() {}
     bool isExistRedisLog(int num) ;
     void recordLog(int num, const char* buf) ;
     void addLog(int num) ;
     static std::shared_ptr<logRecord>getRecordObject() ;
     static std::shared_ptr<logRecord> lr ;
-    static string formatStringAddLog(const std::shared_ptr<Command>&cmd) ;
-    static string formatHashAddLog(const std::shared_ptr<Command>&cmd) ;
-    static string formatListAddLog(const std::shared_ptr<Command>&cmd) ;
+    static string formatStringAddLog(const std::shared_ptr<Command>&cmd, int& size) ;
+    static string formatHashAddLog(const std::shared_ptr<Command>&cmd, int& size) ;
+    static string formatListAddLog(const std::shared_ptr<Command>&cmd, int& size) ;
     //打开记录文件记录　日志文件所有的名称(有效的)，frozen logfile在断开后不会再次遍历了
     int setRecordFileFd() ;
     //添加记录文件的信息
@@ -63,10 +69,9 @@ private:
     //数据的总子节数
     //第二个标志当前size是否可以修改，要是不可以，需要
     //等待条件变量
-    static map<int, long>sizeMap ;
     //锁保护多线程sizeMap中的数据
     static mutex mute ;
-    static std::shared_ptr<threadPool>pool ;
+    //static std::shared_ptr<threadPool>apool ;
     //发送信号，唤醒线程
     //第一个表示数据库编号，第二个表示data数据信息
     //这个map根据编号记录了日志

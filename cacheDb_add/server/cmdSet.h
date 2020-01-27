@@ -9,6 +9,7 @@
 #include <vector>
 #include <sys/mman.h>
 #include "redisDb.h"
+#include "ThreadPool.h"
 #include "aeEvent.h"
 #include "msg.pb.h"
 #include "rdb.h"
@@ -110,7 +111,7 @@ public :
     shared_ptr<Response> getResponse() { return response ; }
     int append(shared_ptr<redisDb> db) ;
     void print() ;
-    void saveToFrozenRedis(vector<pair<int, shared_ptr<redisDb>>>&ls) ;
+    void saveToFrozenRedis(int num) ;
 private:
     shared_ptr<rdb> save ;
     //回复，响应
@@ -120,5 +121,6 @@ private:
     vector<pair<int, shared_ptr<redisDb>>>frozenDbLs ;
     //命令名称，命令类型
     map<string, shared_ptr<redisCommand>> cmdList ;  
+    shared_ptr<threadPool> pool ;
 };
 
