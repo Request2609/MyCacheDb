@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <vector>
 #include <sys/mman.h>
+
 #include "redisDb.h"
 #include "ThreadPool.h"
 #include "aeEvent.h"
@@ -66,6 +67,7 @@ public :
     void setCallBack(call cb) { 
         this->callBack = cb ; 
     }
+    int append(int num, int type, shared_ptr<dbObject>ptr) ;
     string getName() { return name ; }
     //函数指针，指向命令的具体实现
 private :
@@ -112,6 +114,7 @@ public :
     int append(shared_ptr<redisDb> db) ;
     void print() ;
     void saveToFrozenRedis(int num) ;
+    void sigintProcess() ;
 private:
     shared_ptr<rdb> save ;
     //回复，响应

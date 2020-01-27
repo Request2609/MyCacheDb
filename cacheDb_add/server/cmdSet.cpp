@@ -77,10 +77,17 @@ void cmdSet::saveToFrozenRedis(int num) {
     }
 }
 
+void cmdSet :: append(int num, int type, shared_ptr<dbObject>dob) {
+    int size = dbLs.size() ;
+    for(int i=0; i<size; i++) {
+        //添加从日志中读出来的信息
+        
+    }
+}
+
 //打印数据苦衷当前信息
 void cmdSet :: print() {
     for(auto s : dbLs) {
-        cout << "数据库编号:" << s.first << "  "<< endl ;
         //数据库中的所有信息
         s.second->print() ;
     }

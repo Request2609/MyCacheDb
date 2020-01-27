@@ -17,7 +17,10 @@
 #include "cmdSet.h"
 #include "timer.h"
 #include "recoverDb.h"
+#include "easylogging++.h"
+#include "logErr.h"
 
+class logErr ;
 class cmdSet ;
 class rdb ;
 const int version = 1 ;
@@ -82,6 +85,7 @@ public:
     static int getAllFileName(vector<string>& nameLs) ;
     static bool isRedis(const char* buffer) ;
     static string tmpFileName(const char* fileName) ;
+    static int getLogFileName(vector<string>&logName) ;
 public :
     static void processString(const string key, ofstream& aa, const string value) ;
     static void processHash(ofstream& aa, const shared_ptr<dbObject>rd) ;

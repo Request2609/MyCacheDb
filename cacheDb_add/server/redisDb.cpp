@@ -61,11 +61,20 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
     return 1 ;
 }
 
+int redisDb::append(int num, int type, shared_ptr<dbObject>dob) {
+    key k ;
+    k.num = num ;
+    k.type = type ;
+    k.cmd = dob->getKey() ;
+    auto s = db.find(k) ;
+    if(s == db.end()) {
+        db.insert({k, dob}) ;
+    }
+}
+
 //遍历redis中的dbObject对象
 shared_ptr<dbObject> redisDb :: getNextDb() {
-    cout << "开始获取！"<< endl ;
     static auto res = db.begin();
-    cout << "获取下一个数据库！" << endl ;
     if(res == db.end() || !db.size()) { 
         res = db.begin() ;
         cout << "获取结束！"<< endl ;

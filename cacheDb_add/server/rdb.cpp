@@ -6,6 +6,7 @@ string rdb :: tmpFileName(const char* fileName) {
     return tmp ;
 }
 
+
 //保存到文件
 int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
     //获取数据库文件
@@ -240,6 +241,7 @@ int rdb :: getAllFileName(vector<string>&nameLs) {
     return 1 ;
 }
 
+
 string rdb :: getFileInfo(const string s) {
     int fd = open(s.c_str(), O_RDWR) ;
     if(fd < 0) {
@@ -289,9 +291,29 @@ int rdb :: initRedis(cmdSet* cmdset) {
         } 
         shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
     }
- /*   cout << "打印一遍数据库信息" << endl ;
-    cmdset->print() ;*/
-    cout << "the server database init ok!" <<endl ;
+    vector<string>logName ;
+    getLogFileName(logName);
+    int len = logName.size() ;
+    //恢复数据库
+    for(int i=0; i<len; i++) {
+           
+    }
     return 1 ;
 }
 
+int rdb::getLogFileName(vector<string>&logName) {
+    ifstream in("../logInfo/allLogFileName", ios::in) ;
+    if(in.fail()) {
+        string error = __FILE__  ;
+        error+=strerror(errno);
+        logErr::record(error) ;
+        return -1 ;   
+    }
+    while(!in.eof()) {
+        string s = "" ;
+        in>> s ;
+        logName.push_back(s) ;
+    }
+    in.close() ;
+    return 1 ;
+}

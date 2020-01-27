@@ -78,6 +78,7 @@ public :
     int initDb() ;
     //获取当前数据库id
     //判断数据库是否为空
+    int append(int num, int type, shared_ptr<dbObject>dob) ;
     int isEmpty() { return db.size() ; }
     void print() ;
     void setId(int id) { this->num = id ; }

@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <sys/mman.h>
+#include <string.h>
 #include <mutex>
 #include <cmath>
 #include <unistd.h>
@@ -41,12 +42,14 @@ public:
     static void record(int num,string  buf) ;
     static void addRedisLog(int num) ;
     static void setcmdSet(cmdSet* cs) ;
+    static int setRecordFileFd() ;
     //清空log文件
     static void clearLogFile(int num) ;
     //判断是否存在数据库编号为num的日志
     static long SUM ;
     static map<int, long>sizeMap ;
     static long MAX_FILE_SIZE ;
+    static int recordFileFd ;
 private:
     logRecord() {}
     bool isExistRedisLog(int num) ;
@@ -58,7 +61,6 @@ private:
     static string formatHashAddLog(const std::shared_ptr<Command>&cmd, int& size) ;
     static string formatListAddLog(const std::shared_ptr<Command>&cmd, int& size) ;
     //打开记录文件记录　日志文件所有的名称(有效的)，frozen logfile在断开后不会再次遍历了
-    int setRecordFileFd() ;
     //添加记录文件的信息
     int addRecordFileName(string name) ;
     //各个数据库的编号
@@ -76,7 +78,6 @@ private:
     //第一个表示数据库编号，第二个表示data数据信息
     //这个map根据编号记录了日志
     vector<pair<int, string>>block ;
-    int recordFileFd ;
     static cmdSet* cset;
 };
 

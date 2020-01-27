@@ -11,9 +11,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
         flag = 1 ;
         db = make_shared<redisDb>(num) ;
     }
-
     //记录之前的对象的种类
-    int preType =  -1 ;
     while(1) {
         long times = getTime(s) ;
         if(times == 0) {
@@ -33,10 +31,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             stringGet(s, ob) ;
             ob->setEndTime(times) ;
             cmdset->addObjectToDb(num, ob) ;
-            cout << "string 对象"<< endl ;
-            ob->print() ;
         }
-
         if(type == CMDTYPE_::DB_HASH) {
             shared_ptr<dbObject> ob = factory :: getObject("hset") ;
             ob->setType(DB_HASH) ;
@@ -46,22 +41,16 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             if(ret < 0) {
                 return nullptr ;
             }
-            cout <<"hash对象" << endl ;
            cmdset->addObjectToDb(num, ob) ;
-           ob->print() ;
         }
         
         if(type == CMDTYPE_::DB_LIST) {
             shared_ptr<dbObject> ob = factory :: getObject("lpush") ;
             ob->setType(CMDTYPE_::DB_LIST) ;
             ob->setNum(num) ;
-            cout << "数据库编号:" << num << endl ;
             ob->setEndTime(times) ;
-            cout << "时间:" << times << endl ;
             getListObject(s, ob) ;
             cmdset->addObjectToDb(num, ob) ;
-            cout << "list对象！"<< endl ;
-            ob->print() ;
         }
         
     }
