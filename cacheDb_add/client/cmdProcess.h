@@ -24,6 +24,8 @@ public:
     static void setLPopObject(vector<string>&res, Command& com) ;
     static void setZadd(vector<string>&res, Command& com) ;
     static void setZRange(vector<string>&res, Command& com) ;
+    static void setSadd(vector<string>&res, Command& com) ;
+    static void setSpop(vector<string>&res, Command& com) ;
 private:
     
 };

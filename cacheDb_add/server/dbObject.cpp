@@ -23,6 +23,7 @@ vector<string> sortSet::getValues(const string s) {
     return res ;
 }
 
+
 //intset集合中传值第一个从参数是分数，第二个参数是value
 void sortSet::setValue(string value, ...) {
     if(rbt == nullptr) {
@@ -102,6 +103,31 @@ void lsObject :: setValue(string value, ...) {
     ls.push_back(value) ;
 }   
 
+void setContain :: setValue(string value, ...) {
+    ls.insert(value) ;
+}   
+
+
+string setContain :: getValue() {
+    string sss = "";
+    if(ls.empty()) {
+        return "" ;
+    }
+    for(auto s= ls.begin(); s != ls.end(); s++) {
+        sss = *s ;
+        ls.erase(s) ;
+        break ;
+    }   
+    return sss ;
+}
+
+setContain::setContain() {
+
+}
+
+setContain::~setContain() {
+
+}
 string lsObject :: getValue() {
     string sss = "";
     if(ls.empty()) {

@@ -13,6 +13,20 @@ void cmdProcess :: setSet(vector<string>& res, Command& com) {
     *v = res[2] ;
 }
 
+void cmdProcess :: setSpop(vector<string>& res, Command& cmd) {
+    cmd.set_type(1) ;
+    cmd.set_cmd(res[0]) ;
+    int len = res.size() ;
+    Key* key= cmd.add_keys() ;
+    for(int i=1; i<len-1; i++) {
+        string* k = key->add_key() ;
+        *k = res[i] ;
+    }
+    string time = res[len-1] ;
+    int t = atoi(time.c_str()) ;
+    cmd.set_time(t) ; 
+}
+
 void cmdProcess :: getBlpop(vector<string>& res, Command& cmd) {
     cmd.set_type(1) ;
     cmd.set_cmd(res[0]) ;
@@ -95,7 +109,6 @@ void cmdProcess :: setZadd(vector<string>&res, Command& com) {
     return  ;
 }
 
-
 void cmdProcess::setZRange(vector<string>&res, Command& com) {
     com.set_type(0) ;
     com.set_cmd(res[0]) ;
@@ -107,6 +120,19 @@ void cmdProcess::setZRange(vector<string>&res, Command& com) {
     string* s1 = val->add_val() ;
     *s1 = res[3] ;
     return ;
+}
+
+void cmdProcess ::setSadd(vector<string>& res, Command& com) {
+    com.set_type(0) ;
+    ListObject *lob = com.add_lob() ;
+    com.set_cmd(res[0]) ;
+    lob->set_key(res[1]) ;
+    int len = res.size() ;
+    Value* val = lob->add_vals() ;
+    for(int i=2; i<len; i++) {
+        string*v = val->add_val() ;
+        *v = res[i] ;
+    }
 }
 
 void cmdProcess :: getListObject(vector<string>& res, Command& com) {

@@ -40,8 +40,8 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         }
         res->second->setNum(cmds->num()) ;
     }
+    ListObject lob = cmds->lob(0) ;
     if(cmd == "lpush") {
-        ListObject lob = cmds->lob(0) ;
         string keys = lob.key() ;
         key ke(num, type::DB_LIST, keys) ;
         auto res = db.find(ke) ;
@@ -59,7 +59,6 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         return num ;   
     }
     if(cmd == "zadd") {
-        ListObject lob = cmds->lob(0) ;
         string keys = lob.key() ;
         key ke(num, type::SORT_SET, keys) ;
         auto res = db.find(ke) ;
@@ -70,6 +69,20 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         string score = val.val(0);
         string value = val.val(1) ;
         res->second->setValue(score, value.c_str()) ;
+    }
+
+    if(cmd == "sadd") {
+        string keys = lob.key() ;
+        key ke(num, type::SET_SET, keys) ;
+        auto res = db.find(ke) ;
+        if(res == db.end()) {
+            return -1 ;
+        }
+        Value val = lob.vals(0) ;
+        int size = val.val_size() ;
+        for(int i=0; i<size; i++) {
+            res->second->setValue(val.val(i)) ;
+        }
     }
     return 1 ;
 }
@@ -176,7 +189,28 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         }
         res->set_reply(val) ;
     }
+    if(!strcasecmp(md.c_str(), "spop")) {
+        string key = cmd->lob(0).key() ;
+        string val = findSetRequest(key, num) ;
+        if(val.empty()) {
+            return -1 ;
+        }
+        res->set_reply(val) ;
+    }
     return 1 ;
+}
+
+string redisDb :: findSetRequest(const string k, const int num ){
+    key ke ;
+    ke.cmd = k ;
+    ke.num = num ;
+    ke.type= type::SET_SET ;
+    auto res = db.find(ke) ;
+    if(res == db.end()) {
+        return "" ;
+    }
+    string ss = res->second->getValue() ;
+    return ss ;  
 }
 
 string redisDb :: findSortSetValue(const shared_ptr<Command>& cmd) {

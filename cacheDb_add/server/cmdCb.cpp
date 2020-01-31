@@ -158,6 +158,29 @@ int cmdCb::sortSetAdd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_
     return 1 ;     
 }
 
+int cmdCb :: setSetValue(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) {
+    if(wcmd->isExist(tmp)>0) {
+        return 1 ;
+    }
+    auto se = factory::getObject("sadd") ;
+    ListObject lob = tmp->lob(0) ;
+    se->setKey(lob.key()) ;
+    Value val = lob.vals(0) ;
+    int size = val.val_size() ;
+    for(int i=0; i<size;i++) {
+       se->setValue(val.val(i)) ;
+    }
+    se->setType(type::SET_SET) ;
+    se->setNum(tmp->num()) ;
+    int ret = wcmd->append(tmp->num(), type::SET_SET, se);
+    return ret;
+}
+
+int cmdCb :: sPop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) {
+    int ret = wcmd->queryDb(res, tmp) ;
+    return ret ;
+}
+
 int cmdCb::sortSetGetMember(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) {
     int ret = wcmd->queryDb(res, tmp) ;
     return ret ;

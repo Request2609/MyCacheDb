@@ -65,7 +65,19 @@ int cmdSet :: initCmdCb() {
     shared_ptr<redisCommand>zrange = make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
     zrange->setCallBack(cmdCb :: sortSetGetMember) ;
     cmdList.insert({"zrange", zrange}) ;
+
+    //查询集合的
+    shared_ptr<redisCommand>sadd = make_shared<redisCommand>("sadd", -3, "wm",  1, 1, 1, 0, 0);
+    sadd->setCallBack(cmdCb :: setSetValue) ;
+    cmdList.insert({"sadd", sadd}) ;
+
+    //查询集合的
+    shared_ptr<redisCommand>spop = make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
+    spop->setCallBack(cmdCb :: sPop) ;
+    cmdList.insert({"spop", spop}) ;
 }   
+
+
 /*
 void cmdSet::saveToFrozenRedis(int num) {
     for(auto s=frozenDbLs.begin(); s!=frozenDbLs.end(); s++) {
@@ -248,6 +260,29 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         if(a == 0) {
             return 0 ;
         }
+    }
+    if(!strcasecmp(cd.c_str(), "sadd")) {
+         //给a设置一个特殊值
+        string aa = cd.c_str() ;
+        a = cmdList[aa]->cb(wrdb, cmd, response) ;
+        if(a > 1) {
+            response->set_reply("1") ;
+        }
+        //接收a的值进行判断
+        if(a == 0) {
+            return 0 ;
+        }
+    }
+
+    if(!strcasecmp(cd.c_str(), "spop")) {
+        //给a设置一个特殊值
+        string aa = cd.c_str() ;
+        a = cmdList[aa]->cb(wrdb, cmd, response) ;
+        //接收a的值进行判断
+        if(a == 0) {
+            return 0 ;
+        }
+        
     }
 
     if(a < 0) {
