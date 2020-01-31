@@ -1,3 +1,0 @@
-protoc --cpp_out=. msg.proto 
-mv msg.pb.cc msg.pb.cpp
-
