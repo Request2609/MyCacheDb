@@ -36,7 +36,6 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
     //记录日志
-      
     shared_ptr<Response> res = nullptr;
     //解析命令不合法
     if(ret == NOT_FOUND) {

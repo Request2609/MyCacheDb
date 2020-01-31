@@ -14,50 +14,59 @@ cmdSet :: cmdSet() {
 
 //初始化命令表
 int cmdSet :: initCmdCb() {
-    pool = make_shared<threadPool>(8) ;
+    //pool = make_shared<threadPool>(8) ;
     //初始化set命令
-    shared_ptr<redisCommand>tset(new redisCommand("set", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>tset = make_shared<redisCommand>("set", -3, "wm",  1, 1, 1, 0, 0) ;
     //函数指针不能作为构造函数参数
     tset->setCallBack(cmdCb :: setCmd) ;
     cmdList.insert(make_pair("set", tset)) ;
 
-    shared_ptr<redisCommand>tget(new redisCommand("get", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>tget = make_shared<redisCommand>("get", -3, "wm",  1, 1, 1, 0, 0) ;
     tget->setCallBack(cmdCb :: getCmd) ;
     cmdList.insert(make_pair("get", tget)) ;
     //设置数据库命令
-    shared_ptr<redisCommand>save(new redisCommand("save", -3, "r", 1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>save = make_shared<redisCommand>("save", -3, "r", 1, 1, 1, 0, 0) ;
     save->setCallBack(cmdCb :: save) ;
     cmdList.insert({"save", save}) ;
 
     //设置hash命令的回调以及相关的信息
-    shared_ptr<redisCommand>hashLs(new redisCommand("hset", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>hashLs = make_shared<redisCommand>("hset", -3, "wm",  1, 1, 1, 0, 0) ;
     hashLs->setCallBack(cmdCb :: setHash) ;
     cmdList.insert(make_pair("hset", hashLs)) ;   
 
     //设置hget命令相关信息
-    shared_ptr<redisCommand>hgetLs(new redisCommand("hget", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>hgetLs = make_shared<redisCommand>("hget", -3, "wm",  1, 1, 1, 0, 0) ;
     hgetLs->setCallBack(cmdCb :: setHget) ;
     cmdList.insert({"hget", hgetLs}) ;   
 
-    shared_ptr<redisCommand>bgSave(new redisCommand("bgsave", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>bgSave =make_shared<redisCommand>("bgsave", -3, "wm",  1, 1, 1, 0, 0) ;
     //和save一样调用相同的函数，操作文件
     bgSave->setCallBack(cmdCb :: save) ;
     cmdList.insert({"bgsave", bgSave}) ;   
 
-    shared_ptr<redisCommand>lpush(new redisCommand("lpush", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>lpush =make_shared<redisCommand>("lpush", -3, "wm",  1, 1, 1, 0, 0) ;
     lpush->setCallBack(cmdCb :: setLpush) ;
     cmdList.insert({"lpush", lpush}) ;   
 
     //从队列中弹出
-    shared_ptr<redisCommand>lpop(new redisCommand("lpop", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>lpop = make_shared<redisCommand>("lpop", -3, "wm",  1, 1, 1, 0, 0);
     lpop->setCallBack(cmdCb :: lPop) ;
     cmdList.insert({"lpop", lpop}) ;
     
-    shared_ptr<redisCommand>blpop(new redisCommand("blpop", -3, "wm",  1, 1, 1, 0, 0)) ;
+    shared_ptr<redisCommand>blpop=make_shared<redisCommand>("blpop", -3, "wm",  1, 1, 1, 0, 0) ;
     blpop->setCallBack(cmdCb :: blPop) ;
     cmdList.insert({"blpop", blpop}) ;
-}   
 
+    shared_ptr<redisCommand>zadd = make_shared<redisCommand>("zadd", -3, "wm",  1, 1, 1, 0, 0);
+    zadd->setCallBack(cmdCb :: sortSetAdd) ;
+    cmdList.insert({"zadd", zadd}) ;
+
+    //查询有序集合的
+    shared_ptr<redisCommand>zrange = make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
+    zrange->setCallBack(cmdCb :: sortSetGetMember) ;
+    cmdList.insert({"zrange", zrange}) ;
+}   
+/*
 void cmdSet::saveToFrozenRedis(int num) {
     for(auto s=frozenDbLs.begin(); s!=frozenDbLs.end(); s++) {
         if(s->first == num) {
@@ -71,25 +80,26 @@ void cmdSet::saveToFrozenRedis(int num) {
                 //清空日志内容
                 logRecord::clearLogFile(num) ;
             }
-            s->second = make_shared<>redisDb>(*dbLs[num]->second) ;
+           s->second = make_shared<redisDb>(*dbLs[num]->second) ;
             break ;
         }
     }
 }
-
-void cmdSet :: append(int num, int type, shared_ptr<dbObject>dob) {
+*/
+/*
+int cmdSet :: append(int num, int type, shared_ptr<dbObject>dob) {
     int size = dbLs.size() ;
     for(int i=0; i<size; i++) {
         //添加从日志中读出来的信息
         
     }
 }
-
+*/
 //打印数据苦衷当前信息
 void cmdSet :: print() {
     for(auto s : dbLs) {
         //数据库中的所有信息
-        s.second->print() ;
+       s.second->print() ;
     }
 }
 
@@ -148,7 +158,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
-    logRecord::changeCommand(cmd) ;
+    /*logRecord::changeCommand(cmd) ;*/
     shared_ptr<redisDb> wrdb = getDB(num) ;
    /* long size = logRecord::sizeMap[num] ;
     //判断
@@ -156,6 +166,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
        saveToFrozenRedis(num) ;
     }*/
     //检测forzendbls中数据量是否超过log中记录的阀值
+
     string cd = cmd->cmd() ;
     //不区分大小写a
     int a = 0 ;
@@ -186,6 +197,16 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         }
         else {
             response->set_reply("OK") ;
+        }
+    }
+
+    if(!strcasecmp(cd.c_str(), "zadd")) {
+        a = cmdList[cd]->cb(wrdb, cmd, response) ;
+        if(a > 0) {
+            response->set_reply("1") ;
+        }
+        else {
+            response->set_reply("SAVE FAIL") ;
         }
     }
     //哈希
@@ -219,6 +240,15 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
             return 0 ;
         }
     }
+    if(!strcasecmp(cd.c_str(), "zrange")) {
+        //给a设置一个特殊值
+        string aa = cd.c_str() ;
+        a = cmdList[aa]->cb(wrdb, cmd, response) ;
+        //接收a的值进行判断
+        if(a == 0) {
+            return 0 ;
+        }
+    }
 
     if(a < 0) {
         response->set_reply("FAIL") ;
@@ -228,6 +258,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
 }
 int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 
     if(callBack == nullptr) {
+        cout << "回电函数是空!" << endl ;
         return -1;
     }
     return callBack(db, wcmd, res) ; 

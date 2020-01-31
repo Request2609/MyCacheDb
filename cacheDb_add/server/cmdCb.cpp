@@ -144,11 +144,29 @@ int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd,
     return 1 ;
 }
 
+int cmdCb::sortSetAdd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) {
+    if(wcmd->isExist(tmp) > 0) {
+        return 1 ;
+    }
+    shared_ptr<dbObject>se = factory::getObject("zadd") ;
+    ListObject lob = tmp->lob(0) ;
+    se->setKey(lob.key()) ;
+    se->setValue(lob.vals(0).val(0), lob.vals(0).val(1).c_str()) ;
+    se->setNum(tmp->num());
+    se->setType(type::SORT_SET) ;
+    wcmd->append(tmp->num(), type::SORT_SET, se) ;
+    return 1 ;     
+}
+
+int cmdCb::sortSetGetMember(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) {
+    int ret = wcmd->queryDb(res, tmp) ;
+    return ret ;
+}
+
 //get命令处理函数
 int cmdCb :: getCmd(shared_ptr<redisDb>&db, 
                     shared_ptr<Command>&tmp, 
                     shared_ptr<Response>& res) {
-    cout << "执行get函数" << endl ;
     //在指定数据库中找相应的值
     db->queryDb(res, tmp) ;
     return 1 ;

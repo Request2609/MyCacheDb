@@ -304,9 +304,8 @@ int rdb :: initRedis(cmdSet* cmdset) {
 int rdb::getLogFileName(vector<string>&logName) {
     ifstream in("../logInfo/allLogFileName", ios::in) ;
     if(in.fail()) {
-        string error = __FILE__  ;
-        error+=strerror(errno);
-        logErr::record(error) ;
+        cout << __LINE__ << "  " << __FILE__ << endl ;
+        //logErr::record(error) ;
         return -1 ;   
     }
     while(!in.eof()) {

@@ -6,13 +6,11 @@
 #include <memory> 
 #include <sys/eventfd.h>
 #include "signalSet.h"
-#include "checkOperation.h"
 #include "timerHeap.h" 
 #include "aeEpoll.h"
 #include "aeEvent.h"
 #include "timeManagerFactory.h"
 #include "msg.pb.h"
-#include "logRecord.h"
 
 using namespace Messages ;
 using namespace std ;

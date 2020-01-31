@@ -14,6 +14,8 @@ void cmds :: build() {
     cmdList.insert({"lpush", -1}) ;
     cmdList.insert({"lpop", 2}) ;
     cmdList.insert({"blpop", -1}) ;
+    cmdList.insert({"zadd", 4}) ;
+    cmdList.insert({"zrange", 4}) ;
 }
 
 cmds :: cmds() {
@@ -108,6 +110,24 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "blpop")) {
         int ret = cd.cmdList[res[0]] ;
     }
+    else if(!strcasecmp(res[0].c_str(), "zadd")) {
+        int ret = cd.cmdList[res[0]] ;  
+        if(len < ret ) {
+            cout << "command error!" << endl ;
+            return -1 ;
+        }
+        cmdProcess::setZadd(res, com) ;
+    }
+
+    else if(!strcasecmp(res[0].c_str(), "zrange")) {
+        int ret = cd.cmdList[res[0]] ;  
+        if(len < ret ) {
+            cout << "command error!" << endl ;
+            return -1 ;
+        }
+        cmdProcess::setZRange(res, com) ;
+    }
+
     else {
         cout << "command not found" << endl ;
         return -1 ;

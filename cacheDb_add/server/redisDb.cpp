@@ -58,6 +58,19 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         num = res->second->objectSize() ;
         return num ;   
     }
+    if(cmd == "zadd") {
+        ListObject lob = cmds->lob(0) ;
+        string keys = lob.key() ;
+        key ke(num, type::SORT_SET, keys) ;
+        auto res = db.find(ke) ;
+        if(res == db.end()) {
+            return -1 ;
+        }
+        Value val = lob.vals(0) ;
+        string score = val.val(0);
+        string value = val.val(1) ;
+        res->second->setValue(score, value.c_str()) ;
+    }
     return 1 ;
 }
 
@@ -77,13 +90,11 @@ shared_ptr<dbObject> redisDb :: getNextDb() {
     static auto res = db.begin();
     if(res == db.end() || !db.size()) { 
         res = db.begin() ;
-        cout << "获取结束！"<< endl ;
         return nullptr ;
     }
     auto re = res ;
     shared_ptr<dbObject>dob = re->second ;
     res ++ ;
-    cout << "获取成功！"  << endl ;
     int flag = 0 ;
     //判断当前超时
     long time = timer :: getCurTime() ;
@@ -141,7 +152,6 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     }
     int flag = 0;
     if(!strcasecmp(md.c_str(), "lpop") || !strcasecmp(md.c_str(), "blpop")) {
-        string value ;
         string key = cmd->lob(0).key() ;
         string val = findListRequest(key, num) ;
         if(!strcasecmp(md.c_str(), "blpop")) {
@@ -158,7 +168,40 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         }
         res->set_reply(val) ;
     }
+    if(!strcasecmp(md.c_str(), "zrange")) {
+        string key = cmd->lob(0).key() ;
+        string val = findSortSetValue(cmd) ;
+        if(val.empty()) {
+           return -1 ; 
+        }
+        res->set_reply(val) ;
+    }
     return 1 ;
+}
+
+string redisDb :: findSortSetValue(const shared_ptr<Command>& cmd) {
+    key  ke ;
+    ListObject lob = cmd->lob(0) ;
+    ke.cmd = lob.key() ;
+    string s = lob.vals(0).val(0) ;
+    string e = lob.vals(0).val(1) ;
+    string val = s+" "+e ;
+    ke.num = cmd->num() ;
+    ke.type = type::SORT_SET ;
+    auto ret = db.find(ke) ;
+    if(ret == db.end()) {
+        cout << "没找到" << endl ;
+        return "" ;
+    }
+    vector<string> res = ret->second->getValues(val) ;
+    //将结果集合打包
+    string ss = "" ;
+    for(auto a : res) {
+        ss+=a ;
+        ss+='\n' ;
+    }
+    ss[ss.size()-1] = ' ';
+    return ss ;
 }
 
 void redisDb :: processBlpop() {

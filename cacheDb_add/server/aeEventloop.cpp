@@ -15,7 +15,7 @@ aeEventloop :: aeEventloop() {
 
 int aeEventloop:: init() {
     //初始化检查的规则
-    auto check = checkOperation::getCheckObject();
+    //auto check = checkOperation::getCheckObject();
     //check->getSaveRule() ;
     //初始化记录日志
     //从工厂中直接获取

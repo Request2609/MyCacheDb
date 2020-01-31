@@ -83,6 +83,32 @@ void cmdProcess :: setHset(vector<string>&res,Command& com) {
     }
 }
 
+void cmdProcess :: setZadd(vector<string>&res, Command& com) {
+    com.set_cmd(res[0]) ;
+    ListObject* lob = com.add_lob() ;
+    lob->set_key(res[1]) ;
+    Value* val = lob->add_vals() ;
+    string*s = val->add_val() ;
+    *s = res[2] ;
+    string*s1 = val->add_val() ;
+    *s1 = res[3] ;
+    return  ;
+}
+
+
+void cmdProcess::setZRange(vector<string>&res, Command& com) {
+    com.set_type(0) ;
+    com.set_cmd(res[0]) ;
+    ListObject*lob = com.add_lob() ;
+    lob->set_key(res[1]) ;
+    Value* val = lob->add_vals() ;
+    string * s = val->add_val() ;
+    *s = res[2] ;
+    string* s1 = val->add_val() ;
+    *s1 = res[3] ;
+    return ;
+}
+
 void cmdProcess :: getListObject(vector<string>& res, Command& com) {
     com.set_type(0) ;
     ListObject *lob = com.add_lob() ;

@@ -22,6 +22,8 @@ public:
     static void getBlpop(vector<string>& res, Command& com) ;
     static void getListObject(vector<string>& res, Command& com) ;
     static void setLPopObject(vector<string>&res, Command& com) ;
+    static void setZadd(vector<string>&res, Command& com) ;
+    static void setZRange(vector<string>&res, Command& com) ;
 private:
     
 };

@@ -24,6 +24,7 @@ namespace type {
     const int DB_STRING = 3 ;
     const int DB_HASH = 4 ;
     const int DB_LIST = 5 ;
+    const int SORT_SET = 6 ;
 } 
 
 class redisDb ;
@@ -87,6 +88,7 @@ public :
     string findGetRequest(const string name, const int num) ;
     string findHgetRequest(const string key, const string field) ;
     string findListRequest(const string key, const int num) ;
+    string findSortSetValue(const shared_ptr<Command>&cmd) ;
     void processBlpop() ;
     int queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
     void append(shared_ptr<dbObject>rdb) ;

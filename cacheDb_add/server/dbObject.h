@@ -7,9 +7,11 @@
 #include<stdarg.h>
 #include <string.h>
 #include <list>
+#include "rbTree.h"
 using namespace std ;
 
 class lsObject ;
+class rb_tree ;
 
 class dbObject {
 public:
@@ -147,16 +149,79 @@ public :
     map<string, string>values ;
 } ;
 
-//有序集合元素
-class zSetObject:public dbObject {
+//有序set对象
+class setSet : public dbObject {
 public :
-
-};
-
-//集合元素
-class setObject :public dbObject{
+    setSet() {
+        timeout = -1 ;
+    }
+    ~setSet() {}
 public :
-       
+    vector<string> getValues(const string s) ;
+    void print() {}
+    long long getEndTime() { return timeout ; }
+    void setEndTime(long long e) {this->timeout = e ;}
+    int getType() { return type ; }
+    void setType(int type) { this->type = type ; }
+    void setKey(string k) { this->key = k ; }
+    void setValue(string value, ...)  ;
+    void setName(string name) { this->name = name ; }
+    void setNum(int num) { this->num = num ; }
+    string  getName() { return name ; }
+    string getKey() { return key ; }
+    int getNum() { return num ; }
+    string getValue() { value = ""; return value ; }
+    int objectSize() { return 1 ;}
+public :
+    shared_ptr<rb_tree>rbt ;
+    //类型
+    int type ;
+    string name ;
+    long long timeout ;
+    //当前设置的超时时间
+    //所在数据库编号
+    int num ;
+    //命令键值
+    string key ;
+    string value ;
+} ;
+
+
+//有序set对象
+class sortSet : public dbObject {
+public :
+    sortSet() {
+        timeout = -1 ;
+    }
+    ~sortSet() {}
+public :
+    vector<string> getValues(const string s) ;
+    void print() {}
+    long long getEndTime() { return timeout ; }
+    void setEndTime(long long e) {this->timeout = e ;}
+    int getType() { return type ; }
+    void setType(int type) { this->type = type ; }
+    void setKey(string k) { this->key = k ; }
+    void setValue(string value, ...)  ;
+    void setName(string name) { this->name = name ; }
+    void setNum(int num) { this->num = num ; }
+    string  getName() { return name ; }
+    string getKey() { return key ; }
+    int getNum() { return num ; }
+    string getValue() { value = ""; return value ; }
+    int objectSize() { return 1 ;}
+public :
+    
+    //类型
+    int type ;
+    string name ;
+    long long timeout ;
+    //当前设置的超时时间
+    //所在数据库编号
+    int num ;
+    //命令键值
+    string key ;
+    string value ;
 } ;
 
 
@@ -173,6 +238,14 @@ public :
         }
         if(!strcasecmp(cmd.c_str(), "lpush")) {
             shared_ptr<lsObject> tmp = make_shared<lsObject>() ;
+            return tmp ;
+        }
+        if(!strcasecmp(cmd.c_str(), "zadd")) {
+            shared_ptr<sortSet>tmp = make_shared<sortSet>() ;
+            return tmp ;
+        }
+        if(!strcasecmp(cmd.c_str(), "sadd")) {
+            shared_ptr<setSet>tmp = make_shared<setSet>() ;
             return tmp ;
         }
         else {
