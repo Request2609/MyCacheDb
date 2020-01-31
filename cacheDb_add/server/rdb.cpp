@@ -290,14 +290,14 @@ int rdb :: initRedis(cmdSet* cmdset) {
             return -1 ;
         } 
         shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
-    }
+    }/*
     vector<string>logName ;
     getLogFileName(logName);
     int len = logName.size() ;
     //恢复数据库
     for(int i=0; i<len; i++) {
            
-    }
+    }*/
     return 1 ;
 }
 

@@ -148,14 +148,13 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
-    //logRecord::setcmdSet(this) ;
     logRecord::changeCommand(cmd) ;
     shared_ptr<redisDb> wrdb = getDB(num) ;
-    long size = logRecord::sizeMap[num] ;
+   /* long size = logRecord::sizeMap[num] ;
     //判断
     if(size > logRecord::MAX_FILE_SIZE) {
        saveToFrozenRedis(num) ;
-    }
+    }*/
     //检测forzendbls中数据量是否超过log中记录的阀值
     string cd = cmd->cmd() ;
     //不区分大小写a

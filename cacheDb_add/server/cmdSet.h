@@ -15,7 +15,7 @@
 #include "msg.pb.h"
 #include "rdb.h"
 #include "cmdCb.h"
-#include "logRecord.h"
+//#include "logRecord.h"
 
 
 class rdb ;
