@@ -26,6 +26,7 @@ void cmdProcess :: initCmdCb() {
 
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
+    long seq = 0 ;
     int flag = 0 ;
     buffer* bf = tmp->getBuf() ;
     //获取到对端序列化的结果
@@ -33,6 +34,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     //获取对端序列化到结果
     //反序列化,弱引用
     shared_ptr<Command>wcmd = rc->getParseString(buff) ;
+    seq = wcmd->seq() ;
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
     //记录日志
@@ -56,6 +58,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     } 
 
     if(flag != 1) {
+        res->set_seq(seq) ;
         rc->response(res, tmp->getConnFd()) ;
         bf->clear() ;
     }

@@ -5,7 +5,6 @@ vector<string> clientLoop :: split(const string &s, const string &seperator){
     vector<string> result;
     typedef string::size_type string_size;
     string_size i = 0;
-
     while(i != s.size()){
         //找到字符串中首个不等于分隔符的字母；
         int flag = 0;
@@ -18,7 +17,6 @@ vector<string> clientLoop :: split(const string &s, const string &seperator){
                     break;
                 }
         }
-
         //找到又一个分隔符，将两个分隔符之间的字符串取出；
         flag = 0;
         string_size j = i;
@@ -39,11 +37,62 @@ vector<string> clientLoop :: split(const string &s, const string &seperator){
     return result;
 }
 
-void clientLoop :: start(string ip, string port) {
+void clientLoop::init(string ip, string port) {
+    client = make_shared<clientSock>() ;
+    cmd = make_shared<cmds>() ;
+    this->ip = ip ;
+    this->port = port ;
+    rc = make_shared<rpc>() ;
+    rc->init() ;
+    rc->setAddress(ip, port) ;
+    rc->setCallMethod(request::sendReq) ;
+}
+
+void clientLoop :: sendRequest(string md, ...) {
+    va_list va ;
+    int num = cmd->isCmdExist(md) ;
+    if(num < 0) {
+        cout << "命令不存在" << endl ;
+        return ;
+    }
+    va_start(va, md) ;
+    char* val = va_arg(va, char*) ;
+    vector<string>ls ;
+    ls.push_back(md) ;
+    while(strcasecmp(val, END)) {
+        ls.push_back(val) ;
+        val = va_arg(va, char*) ;
+        cout << val << endl ;
+    }
+    cout << "退出"<< endl ;
+    if(ls.empty())  {
+        cout << "kongde" << endl ;
+        return  ;
+    } 
+    va_end(va) ;
+    if(servFd < 0) {
+        int ret = rc->Connect() ;
+        if(ret < 0) { 
+            cout << "连不上服务器" << endl ;
+            return  ;
+        }
+    }
+    int res = rc->sendRequest(ls, num) ;
+    if(res == -5 || res == -1) {
+        cout << "没有发送成功" << endl ;
+        return ;
+    }
+    if(res != 1) {
+        servFd = res ;
+    }
+    int ret = rc->getResponse() ;
+}
+
+void clientLoop :: start() {
 
     rc->setAddress(ip, port) ;
     //连接服务器
-    int ret = rc->Connect() ;
+    int ret = rc->Connect(servFd) ;
     if(ret < 0) {
         cout << "服务器找不到！" << endl ;
         return ;
@@ -77,7 +126,7 @@ void clientLoop :: start(string ip, string port) {
             continue ;
         }
         //返回结果并打印
-        string a = rc->getResponse() ;
+        rc->getResponse() ;
        //序列化
     }
 }

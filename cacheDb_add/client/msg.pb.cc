@@ -180,6 +180,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_msg_2eproto::offsets[] PROTOBU
   PROTOBUF_FIELD_OFFSET(::Messages::Command, num_),
   PROTOBUF_FIELD_OFFSET(::Messages::Command, time_),
   PROTOBUF_FIELD_OFFSET(::Messages::Command, lob_),
+  PROTOBUF_FIELD_OFFSET(::Messages::Command, seq_),
   1,
   0,
   2,
@@ -189,21 +190,24 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_msg_2eproto::offsets[] PROTOBU
   4,
   5,
   ~0u,
+  6,
   PROTOBUF_FIELD_OFFSET(::Messages::Response, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::Messages::Response, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::Messages::Response, reply_),
+  PROTOBUF_FIELD_OFFSET(::Messages::Response, seq_),
   0,
+  1,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 6, sizeof(::Messages::Value)},
   { 7, 13, sizeof(::Messages::Key)},
   { 14, 20, sizeof(::Messages::Time)},
   { 21, 28, sizeof(::Messages::ListObject)},
-  { 30, 44, sizeof(::Messages::Command)},
-  { 53, 59, sizeof(::Messages::Response)},
+  { 30, 45, sizeof(::Messages::Command)},
+  { 55, 62, sizeof(::Messages::Response)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -219,12 +223,13 @@ const char descriptor_table_protodef_msg_2eproto[] PROTOBUF_SECTION_VARIABLE(pro
   "\n\tmsg.proto\022\010Messages\"\024\n\005Value\022\013\n\003val\030\001 "
   "\003(\t\"\022\n\003Key\022\013\n\003key\030\001 \003(\t\"\024\n\004Time\022\014\n\004time\030"
   "\001 \001(\001\"8\n\nListObject\022\013\n\003key\030\001 \001(\t\022\035\n\004vals"
-  "\030\002 \003(\0132\017.Messages.Value\"\273\001\n\007Command\022\016\n\006s"
+  "\030\002 \003(\0132\017.Messages.Value\"\310\001\n\007Command\022\016\n\006s"
   "tatus\030\001 \001(\005\022\013\n\003cmd\030\002 \002(\t\022\013\n\003len\030\003 \001(\005\022\033\n"
   "\004keys\030\004 \003(\0132\r.Messages.Key\022\035\n\004vals\030\005 \003(\013"
   "2\017.Messages.Value\022\014\n\004type\030\006 \001(\010\022\013\n\003num\030\007"
   " \001(\005\022\014\n\004time\030\010 \001(\001\022!\n\003lob\030\t \003(\0132\024.Messag"
-  "es.ListObject\"\031\n\010Response\022\r\n\005reply\030\001 \002(\t"
+  "es.ListObject\022\013\n\003seq\030\n \002(\004\"&\n\010Response\022\r"
+  "\n\005reply\030\001 \002(\t\022\013\n\003seq\030\002 \002(\003"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_msg_2eproto_deps[1] = {
 };
@@ -239,7 +244,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_msg
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_msg_2eproto_once;
 static bool descriptor_table_msg_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_msg_2eproto = {
-  &descriptor_table_msg_2eproto_initialized, descriptor_table_protodef_msg_2eproto, "msg.proto", 360,
+  &descriptor_table_msg_2eproto_initialized, descriptor_table_protodef_msg_2eproto, "msg.proto", 386,
   &descriptor_table_msg_2eproto_once, descriptor_table_msg_2eproto_sccs, descriptor_table_msg_2eproto_deps, 6, 0,
   schemas, file_default_instances, TableStruct_msg_2eproto::offsets,
   file_level_metadata_msg_2eproto, 6, file_level_enum_descriptors_msg_2eproto, file_level_service_descriptors_msg_2eproto,
@@ -1309,6 +1314,9 @@ class Command::_Internal {
   static void set_has_time(HasBits* has_bits) {
     (*has_bits)[0] |= 32u;
   }
+  static void set_has_seq(HasBits* has_bits) {
+    (*has_bits)[0] |= 64u;
+  }
 };
 
 Command::Command()
@@ -1329,8 +1337,8 @@ Command::Command(const Command& from)
     cmd_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.cmd_);
   }
   ::memcpy(&status_, &from.status_,
-    static_cast<size_t>(reinterpret_cast<char*>(&time_) -
-    reinterpret_cast<char*>(&status_)) + sizeof(time_));
+    static_cast<size_t>(reinterpret_cast<char*>(&seq_) -
+    reinterpret_cast<char*>(&status_)) + sizeof(seq_));
   // @@protoc_insertion_point(copy_constructor:Messages.Command)
 }
 
@@ -1338,8 +1346,8 @@ void Command::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Command_msg_2eproto.base);
   cmd_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(&status_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&time_) -
-      reinterpret_cast<char*>(&status_)) + sizeof(time_));
+      reinterpret_cast<char*>(&seq_) -
+      reinterpret_cast<char*>(&status_)) + sizeof(seq_));
 }
 
 Command::~Command() {
@@ -1373,10 +1381,10 @@ void Command::Clear() {
   if (cached_has_bits & 0x00000001u) {
     cmd_.ClearNonDefaultToEmptyNoArena();
   }
-  if (cached_has_bits & 0x0000003eu) {
+  if (cached_has_bits & 0x0000007eu) {
     ::memset(&status_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&time_) -
-        reinterpret_cast<char*>(&status_)) + sizeof(time_));
+        reinterpret_cast<char*>(&seq_) -
+        reinterpret_cast<char*>(&status_)) + sizeof(seq_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
@@ -1472,6 +1480,14 @@ const char* Command::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::in
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // required uint64 seq = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 80)) {
+          _Internal::set_has_seq(&has_bits);
+          seq_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
         } else goto handle_unusual;
         continue;
       default: {
@@ -1618,6 +1634,19 @@ bool Command::MergePartialFromCodedStream(
         break;
       }
 
+      // required uint64 seq = 10;
+      case 10: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (80 & 0xFF)) {
+          _Internal::set_has_seq(&_has_bits_);
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::uint64, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &seq_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -1710,6 +1739,12 @@ failure:
       InternalWriteMessageToArray(9, **it, target, stream);
   }
 
+  // required uint64 seq = 10;
+  if (cached_has_bits & 0x00000040u) {
+    stream->EnsureSpace(&target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(10, this->seq(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -1718,15 +1753,43 @@ failure:
   return target;
 }
 
+size_t Command::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:Messages.Command)
+  size_t total_size = 0;
+
+  if (has_cmd()) {
+    // required string cmd = 2;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_cmd());
+  }
+
+  if (has_seq()) {
+    // required uint64 seq = 10;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->seq());
+  }
+
+  return total_size;
+}
 size_t Command::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:Messages.Command)
   size_t total_size = 0;
 
-  // required string cmd = 2;
-  if (has_cmd()) {
+  if (((_has_bits_[0] & 0x00000041) ^ 0x00000041) == 0) {  // All required fields are present.
+    // required string cmd = 2;
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_cmd());
+
+    // required uint64 seq = 10;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->seq());
+
+  } else {
+    total_size += RequiredFieldsByteSizeFallback();
   }
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -1822,7 +1885,7 @@ void Command::MergeFrom(const Command& from) {
   vals_.MergeFrom(from.vals_);
   lob_.MergeFrom(from.lob_);
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x0000003fu) {
+  if (cached_has_bits & 0x0000007fu) {
     if (cached_has_bits & 0x00000001u) {
       _has_bits_[0] |= 0x00000001u;
       cmd_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.cmd_);
@@ -1841,6 +1904,9 @@ void Command::MergeFrom(const Command& from) {
     }
     if (cached_has_bits & 0x00000020u) {
       time_ = from.time_;
+    }
+    if (cached_has_bits & 0x00000040u) {
+      seq_ = from.seq_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -1861,7 +1927,7 @@ void Command::CopyFrom(const Command& from) {
 }
 
 bool Command::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  if ((_has_bits_[0] & 0x00000041) != 0x00000041) return false;
   return true;
 }
 
@@ -1879,6 +1945,7 @@ void Command::InternalSwap(Command* other) {
   swap(type_, other->type_);
   swap(num_, other->num_);
   swap(time_, other->time_);
+  swap(seq_, other->seq_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Command::GetMetadata() const {
@@ -1896,6 +1963,9 @@ class Response::_Internal {
   static void set_has_reply(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
+  static void set_has_seq(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
 };
 
 Response::Response()
@@ -1912,12 +1982,14 @@ Response::Response(const Response& from)
   if (from._internal_has_reply()) {
     reply_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.reply_);
   }
+  seq_ = from.seq_;
   // @@protoc_insertion_point(copy_constructor:Messages.Response)
 }
 
 void Response::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_Response_msg_2eproto.base);
   reply_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  seq_ = PROTOBUF_LONGLONG(0);
 }
 
 Response::~Response() {
@@ -1948,6 +2020,7 @@ void Response::Clear() {
   if (cached_has_bits & 0x00000001u) {
     reply_.ClearNonDefaultToEmptyNoArena();
   }
+  seq_ = PROTOBUF_LONGLONG(0);
   _has_bits_.Clear();
   _internal_metadata_.Clear();
 }
@@ -1965,6 +2038,14 @@ const char* Response::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParserUTF8Verify(_internal_mutable_reply(), ptr, ctx, "Messages.Response.reply");
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // required int64 seq = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          _Internal::set_has_seq(&has_bits);
+          seq_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -2014,6 +2095,19 @@ bool Response::MergePartialFromCodedStream(
         break;
       }
 
+      // required int64 seq = 2;
+      case 2: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (16 & 0xFF)) {
+          _Internal::set_has_seq(&_has_bits_);
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int64, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT64>(
+                 input, &seq_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -2052,6 +2146,12 @@ failure:
         1, this->_internal_reply(), target);
   }
 
+  // required int64 seq = 2;
+  if (cached_has_bits & 0x00000002u) {
+    stream->EnsureSpace(&target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(2, this->seq(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -2060,15 +2160,43 @@ failure:
   return target;
 }
 
+size_t Response::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:Messages.Response)
+  size_t total_size = 0;
+
+  if (has_reply()) {
+    // required string reply = 1;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_reply());
+  }
+
+  if (has_seq()) {
+    // required int64 seq = 2;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
+        this->seq());
+  }
+
+  return total_size;
+}
 size_t Response::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:Messages.Response)
   size_t total_size = 0;
 
-  // required string reply = 1;
-  if (has_reply()) {
+  if (((_has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
+    // required string reply = 1;
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_reply());
+
+    // required int64 seq = 2;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64Size(
+        this->seq());
+
+  } else {
+    total_size += RequiredFieldsByteSizeFallback();
   }
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -2105,9 +2233,16 @@ void Response::MergeFrom(const Response& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.has_reply()) {
-    _has_bits_[0] |= 0x00000001u;
-    reply_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.reply_);
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _has_bits_[0] |= 0x00000001u;
+      reply_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.reply_);
+    }
+    if (cached_has_bits & 0x00000002u) {
+      seq_ = from.seq_;
+    }
+    _has_bits_[0] |= cached_has_bits;
   }
 }
 
@@ -2126,7 +2261,7 @@ void Response::CopyFrom(const Response& from) {
 }
 
 bool Response::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
   return true;
 }
 
@@ -2136,6 +2271,7 @@ void Response::InternalSwap(Response* other) {
   swap(_has_bits_[0], other->_has_bits_[0]);
   reply_.Swap(&other->reply_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
+  swap(seq_, other->seq_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Response::GetMetadata() const {

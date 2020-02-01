@@ -37,9 +37,11 @@ message Command {
     optional int32 num = 7 ;
     optional double time = 8 ; 
     repeated ListObject lob = 9 ;
+    required uint64 seq = 10;
 }   
 
 message Response {
     required string reply = 1 ;
+    required int64 seq = 2 ;
 }
 

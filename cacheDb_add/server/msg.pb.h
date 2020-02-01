@@ -823,6 +823,7 @@ class Command :
     kTypeFieldNumber = 6,
     kNumFieldNumber = 7,
     kTimeFieldNumber = 8,
+    kSeqFieldNumber = 10,
   };
   // repeated .Messages.Key keys = 4;
   int keys_size() const;
@@ -922,9 +923,21 @@ class Command :
   double time() const;
   void set_time(double value);
 
+  // required uint64 seq = 10;
+  bool has_seq() const;
+  private:
+  bool _internal_has_seq() const;
+  public:
+  void clear_seq();
+  ::PROTOBUF_NAMESPACE_ID::uint64 seq() const;
+  void set_seq(::PROTOBUF_NAMESPACE_ID::uint64 value);
+
   // @@protoc_insertion_point(class_scope:Messages.Command)
  private:
   class _Internal;
+
+  // helper for ByteSizeLong()
+  size_t RequiredFieldsByteSizeFallback() const;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
@@ -938,6 +951,7 @@ class Command :
   bool type_;
   ::PROTOBUF_NAMESPACE_ID::int32 num_;
   double time_;
+  ::PROTOBUF_NAMESPACE_ID::uint64 seq_;
   friend struct ::TableStruct_msg_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1061,6 +1075,7 @@ class Response :
 
   enum : int {
     kReplyFieldNumber = 1,
+    kSeqFieldNumber = 2,
   };
   // required string reply = 1;
   bool has_reply() const;
@@ -1082,14 +1097,27 @@ class Response :
   std::string* _internal_mutable_reply();
   public:
 
+  // required int64 seq = 2;
+  bool has_seq() const;
+  private:
+  bool _internal_has_seq() const;
+  public:
+  void clear_seq();
+  ::PROTOBUF_NAMESPACE_ID::int64 seq() const;
+  void set_seq(::PROTOBUF_NAMESPACE_ID::int64 value);
+
   // @@protoc_insertion_point(class_scope:Messages.Response)
  private:
   class _Internal;
+
+  // helper for ByteSizeLong()
+  size_t RequiredFieldsByteSizeFallback() const;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr reply_;
+  ::PROTOBUF_NAMESPACE_ID::int64 seq_;
   friend struct ::TableStruct_msg_2eproto;
 };
 // ===================================================================
@@ -1641,6 +1669,27 @@ Command::lob() const {
   return lob_;
 }
 
+// required uint64 seq = 10;
+inline bool Command::_internal_has_seq() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline bool Command::has_seq() const {
+  return _internal_has_seq();
+}
+inline void Command::clear_seq() {
+  seq_ = PROTOBUF_ULONGLONG(0);
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint64 Command::seq() const {
+  // @@protoc_insertion_point(field_get:Messages.Command.seq)
+  return seq_;
+}
+inline void Command::set_seq(::PROTOBUF_NAMESPACE_ID::uint64 value) {
+  _has_bits_[0] |= 0x00000040u;
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Command.seq)
+}
+
 // -------------------------------------------------------------------
 
 // Response
@@ -1713,6 +1762,27 @@ inline void Response::set_allocated_reply(std::string* reply) {
   }
   reply_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), reply);
   // @@protoc_insertion_point(field_set_allocated:Messages.Response.reply)
+}
+
+// required int64 seq = 2;
+inline bool Response::_internal_has_seq() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline bool Response::has_seq() const {
+  return _internal_has_seq();
+}
+inline void Response::clear_seq() {
+  seq_ = PROTOBUF_LONGLONG(0);
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int64 Response::seq() const {
+  // @@protoc_insertion_point(field_get:Messages.Response.seq)
+  return seq_;
+}
+inline void Response::set_seq(::PROTOBUF_NAMESPACE_ID::int64 value) {
+  _has_bits_[0] |= 0x00000002u;
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:Messages.Response.seq)
 }
 
 #ifdef __GNUC__

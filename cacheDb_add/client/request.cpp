@@ -1,6 +1,5 @@
 #include "request.h"
 
-class cmds ;
 void cmds :: build() {
  
     cmdList.insert(make_pair("set", 3)) ;
@@ -25,13 +24,13 @@ cmds :: cmds() {
 
 cmds :: ~cmds() {}
 
-bool cmds ::isCmdExist(string cmd) {
+int cmds ::isCmdExist(string cmd) {
     for(auto s : cmdList) {
         if(s.first == cmd) {
-            return true ;
+            return s.second ;
         }
     }
-    return false ;
+    return 0 ;
 }
 
 //匹配键值对
@@ -65,7 +64,6 @@ int request :: processCmd(vector<string>&res, Command& com) {
         }   
         cmdProcess :: setGet(res, com) ;
     }
-
     else if(!strcasecmp(res[0].c_str(), "save")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {
@@ -182,7 +180,6 @@ int request :: isConnect(int conFd) {
     int len = sizeof(info) ;
     int ret = getsockopt(conFd, IPPROTO_TCP, TCP_INFO, &info, (socklen_t*)&len) ;
     if(ret < 0) {
-        cout << __FILE__ << "     " <<__LINE__ <<"     "<< strerror(errno)<< endl ; 
         return -1 ;
     }
     //连接正常返回
@@ -198,6 +195,9 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
     char buff[REQ_SIZE] ;
     bzero(buff, sizeof(buff)) ;
     string a ;
+    auto que = syncQueue::getQueue() ;
+    long seq = que->addToQueue() ;
+    cmd.set_seq(seq) ;
     //序列化的结果
     cmd.SerializeToArray(buff, REQ_SIZE) ;
     //检验是否与服务器器建立了
@@ -205,10 +205,12 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
     if(ret == 0) {
         return 5 ;
     }
+
     if(send(fd, buff, sizeof(buff), 0) < 0) {
         cout << "errno connect" << endl ;
         return -1;
     }
+    
     cmd.clear_cmd() ;
     return 1 ;
 }

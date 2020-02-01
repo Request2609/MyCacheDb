@@ -15,7 +15,7 @@
 #include "msg.pb.h"
 #include "rdb.h"
 #include "cmdCb.h"
-//#include "logRecord.h"
+#include "logRecord.h"
 
 class rdb ;
 using namespace std  ;
@@ -38,7 +38,8 @@ class factory ;
 class redisCommand ;
 class cmdCb ;
 class Flag ;
-//class logRecord ; 
+class threadPool ;
+class logRecord ; 
 
 class redisCommand {
     //该命令的的处理函数
@@ -123,6 +124,6 @@ private:
     vector<pair<int, shared_ptr<redisDb>>>frozenDbLs ;
     //命令名称，命令类型
     map<string, shared_ptr<redisCommand>> cmdList ;  
-    ///shared_ptr<threadPool> pool ;
+    shared_ptr<threadPool> pool ;
 };
 

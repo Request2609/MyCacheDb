@@ -290,22 +290,43 @@ int rdb :: initRedis(cmdSet* cmdset) {
             return -1 ;
         } 
         shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
-    }/*
+    }
+
     vector<string>logName ;
     getLogFileName(logName);
     int len = logName.size() ;
     //恢复数据库
     for(int i=0; i<len; i++) {
-           
-    }*/
+        string res = readLogFile(logName[i]);   
+        //分析日志,留
+    }
     return 1 ;
+}
+
+string rdb::readLogFile(const string& file) {
+    int fd = open(file.c_str(), O_RDONLY);
+    if(fd < 0) {
+        cout << __LINE__ << "  " << __FILE__ << endl ;
+        return "" ;
+    }
+    struct stat st ;
+    fstat(fd, &st) ;
+    char* buf = (char*)mmap(buf, st.st_size, PROT_READ, 0, fd, 0) ;
+    if(buf == NULL) {
+        close(fd) ;
+        munmap(buf, st.st_size) ;
+        return "" ;
+    }
+    string ss = buf ;
+    munmap(buf, st.st_size) ;
+    close(fd) ;
+    return ss ;
 }
 
 int rdb::getLogFileName(vector<string>&logName) {
     ifstream in("../logInfo/allLogFileName", ios::in) ;
     if(in.fail()) {
         cout << __LINE__ << "  " << __FILE__ << endl ;
-        //logErr::record(error) ;
         return -1 ;   
     }
     while(!in.eof()) {

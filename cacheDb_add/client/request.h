@@ -8,12 +8,15 @@
 #include <memory>
 #include "cmdProcess.h"
 #include "msg.pb.h"
+#include "syncQueue.h"
 
 #define REQ_SIZE 4096 
 using namespace std ;
 using namespace Messages ;
 class cmds ;
 class cmdProcess ;
+class syncQueue ;
+
 
 class cmds {
 public:
@@ -24,7 +27,7 @@ public :
     map<string, int>cmdList ;
 public :
     void build() ;
-    bool isCmdExist(string cmd) ;
+    int isCmdExist(string cmd) ;
 };
 
 class request {

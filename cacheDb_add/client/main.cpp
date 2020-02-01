@@ -1,31 +1,38 @@
 #include <iostream>
+#include <gtest/gtest.h>
 #include "clientLoop.h"
-#include "rpc.h"
-#include "request.h"
 using namespace std ;
+/*
+class stringTest : public testing::Test{
 
-Response parseMethod(string* s) {
-    Response res ;
-    res.ParseFromString(*s) ;
-    return res ;
-}
+protected:
 
-int main(int argc, char** argv) {
-    
-    //初始化令表
-//    cmds::build() ;
-    rpc rc ;
-    if(argc != 3) {
-        cout << __FILE__ << "        " << __LINE__ << endl ;
-        return 1 ;
+    virtual void SetUp()
+    {
+        rc = make_shared<rpc>() ;
+        rc->setCallMethod(request::sendReq) ;
     }
 
-    rc.setCallMethod(request :: sendReq) ;
-    clientLoop clp(&rc) ;
-    //设置反序列化回调
-    rc.setCallMethod(parseMethod) ;
-    
-    clp.start(argv[1], argv[2]) ;
+    virtual void TearDown()
+    {
+
+    }
+    shared_ptr<rpc> rc ;
+} ;
+
+TEST_F(stringtest, HandleNoneZeroInput) {
+    vector<string>ss{"set", "name", "haha"} ;
+    EXPECT_EQ(1, rc->sendRequest(ss, num)) ;
+    EXPECT_EQ("OK", rc->getResponse()) ;
+}
+*/
+
+int main(int argc, char** argv) {
+    //初始化令表
+    clientLoop clp ;
+    //传入IP 和地址
+    clp.init("127.0.0.1", "8888") ;
+    clp.sendRequest("set", "name", "wc", END) ;
     return 0;
 }
 

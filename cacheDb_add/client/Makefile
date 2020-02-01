@@ -3,7 +3,7 @@
 #
 CC = g++
 
-CFLAGS = -lpthread -g -std=c++11 -w -lprotobuf -lreadline `pkg-config --cflags --libs protobuf`
+CFLAGS = -lpthread -g -std=c++11 -w -lprotobuf -lgtest -lreadline `pkg-config --cflags --libs protobuf`
 
 TARGET = client
 

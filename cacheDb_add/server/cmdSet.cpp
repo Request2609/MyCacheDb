@@ -14,7 +14,7 @@ cmdSet :: cmdSet() {
 
 //初始化命令表
 int cmdSet :: initCmdCb() {
-    //pool = make_shared<threadPool>(8) ;
+    pool = make_shared<threadPool>(8) ;
     //初始化set命令
     shared_ptr<redisCommand>tset = make_shared<redisCommand>("set", -3, "wm",  1, 1, 1, 0, 0) ;
     //函数指针不能作为构造函数参数
@@ -77,8 +77,6 @@ int cmdSet :: initCmdCb() {
     cmdList.insert({"spop", spop}) ;
 }   
 
-
-/*
 void cmdSet::saveToFrozenRedis(int num) {
     for(auto s=frozenDbLs.begin(); s!=frozenDbLs.end(); s++) {
         if(s->first == num) {
@@ -92,14 +90,14 @@ void cmdSet::saveToFrozenRedis(int num) {
                 //清空日志内容
                 logRecord::clearLogFile(num) ;
             }
-           s->second = make_shared<redisDb>(*dbLs[num]->second) ;
+            //重新将新的数据考到不可变的数据库中
+            s->second = make_shared<redisDb>(*(dbLs[num].second)) ;
             break ;
         }
     }
 }
-*/
 /*
-int cmdSet :: append(int num, int type, shared_ptr<dbObject>dob) {
+int redisCommand :: append(int num, int type, shared_ptr<dbObject>dob) {
     int size = dbLs.size() ;
     for(int i=0; i<size; i++) {
         //添加从日志中读出来的信息
@@ -170,13 +168,13 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
-    /*logRecord::changeCommand(cmd) ;*/
+    logRecord::changeCommand(cmd) ;
     shared_ptr<redisDb> wrdb = getDB(num) ;
-   /* long size = logRecord::sizeMap[num] ;
+    long size = logRecord::sizeMap[num] ;
     //判断
     if(size > logRecord::MAX_FILE_SIZE) {
        saveToFrozenRedis(num) ;
-    }*/
+    }
     //检测forzendbls中数据量是否超过log中记录的阀值
 
     string cd = cmd->cmd() ;
@@ -282,7 +280,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         if(a == 0) {
             return 0 ;
         }
-        
     }
 
     if(a < 0) {
