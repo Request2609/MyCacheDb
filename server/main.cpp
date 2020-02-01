@@ -19,18 +19,21 @@ int readOnMessage(shared_ptr<aeEvent>tmp) {
     int ret = cmdPro.processMsg(tmp) ;
     return ret ;
 }
-
 int main(int argc, char** argv) {
-    
-    if(argc != 3) {
-        cout << "usage:<./a.out><ip><port>" << endl ;
-        return 1 ;
+    string ip ;
+    string port ; 
+    if(argc < 3) {
+        getIpPort(ip, port) ;
+    } 
+    else {
+        ip = argv[1] ;
+        port = argv[2] ;
     }
     aeEventloop aeLoop ;
     aeLoop.init() ;
     //设置读回调函数
     aeLoop.setReadCallBack(readOnMessage) ;
-    aeLoop.addServerEvent(argv[1], argv[2]) ;
+    aeLoop.addServerEvent(ip, port) ;
     aeLoop.start() ;
     return 0;
 }

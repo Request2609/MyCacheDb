@@ -7,6 +7,7 @@
 #include <iostream>
 #include <functional>
 #include <memory>
+#include <fstream>
 #include "readWrite.h"
 #include "clientSock.h"
 #include "aeEpoll.h"
@@ -45,7 +46,9 @@ public :
     int processMsg(Command& cmd, string& res) ;
     int sendRequest(string& res) ;
     int setEndSig() ;
-    void init(string ip, string port) ;
+    int getIpPort() ;
+    int init() ;
+    int init(string ip, string port) ;
     int sendRequest(string type, ...) ;
     int getResult() ;
     static int mode ;

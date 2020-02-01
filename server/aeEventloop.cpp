@@ -26,6 +26,21 @@ int aeEventloop:: init() {
     aep->epCreate(SIZE) ;
 }
 
+int getIpPort(string& ip, string&port) {
+    ifstream in("../conf/IP_PORT.conf", ios::in|ios::out) ;   
+    if(in.fail()) {
+        cout << __FILE__ << "     " << __LINE__ << endl ;
+        return -1 ;
+    }   
+    string info;
+    while(!in.eof()) {
+        in>> info >> ip ;
+        in>> info >> port ;
+    }   
+    in.close() ;                                                                                                                                
+}
+
+
 //添加监听套接字，及注册相应的读回调函数
 int aeEventloop :: addServerEvent(string addr, string port) {
     //将相应套接字加入到epoll中

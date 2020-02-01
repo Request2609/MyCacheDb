@@ -38,7 +38,21 @@ vector<string> clientLoop :: split(const string &s, const string &seperator){
     return result;
 }
 
-void clientLoop::init(string ip, string port) {
+int clientLoop :: getIpPort() {
+    ifstream in("../conf/IP_PORT.conf", ios::in|ios::out) ;   
+    if(in.fail()) {
+        cout << __FILE__ << "     " << __LINE__ << endl ;
+        return -1 ;
+    }
+    string info;
+    while(!in.eof()) {
+        in>> info >> ip ;
+        in>> info >> port ;
+    }
+    in.close() ;
+}
+
+int clientLoop::init(string ip, string port) {
     client = make_shared<clientSock>() ;
     cmd = make_shared<cmds>() ;
     this->ip = ip ;
@@ -47,6 +61,22 @@ void clientLoop::init(string ip, string port) {
     rc->init() ;
     rc->setAddress(ip, port) ;
     rc->setCallMethod(request::sendReq) ;
+    return 1 ;
+}
+
+int clientLoop::init() {
+    int ret = getIpPort() ;
+    if(ret < 0 || ip.empty()||port.empty()) {
+        return -1;
+    }
+    cout << ip << "     " << port<< endl ; 
+    client = make_shared<clientSock>() ;
+    cmd = make_shared<cmds>() ;
+    rc = make_shared<rpc>() ;
+    rc->init() ;
+    rc->setAddress(ip, port) ;
+    rc->setCallMethod(request::sendReq) ;
+    return 1 ;
 }
 
 int clientLoop :: sendRequest(string md, ...) {

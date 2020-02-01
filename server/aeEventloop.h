@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <memory> 
 #include <sys/eventfd.h>
+#include <fstream>
 #include "signalSet.h"
 #include "timerHeap.h" 
 #include "aeEpoll.h"
@@ -93,3 +94,4 @@ public :
     int aeProcessEvent(int fd) ;
 } ;
 
+int getIpPort(string& ip, string& port) ;

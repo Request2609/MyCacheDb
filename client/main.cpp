@@ -32,7 +32,9 @@ int main(int argc, char** argv) {
     //初始化令表
     clientLoop clp ;
     //传入IP 和地址
-    clp.init("127.0.0.1", "8888") ;
+   /// clp.init("127.0.0.1", "8888") ;
+   //在配置文件中找
+    clp.init() ;
 //////////////////////////////程序中使用
     clp.sendRequest("set", "name", "wc", END) ;
     clp.sendRequest("get", "name", END) ;
