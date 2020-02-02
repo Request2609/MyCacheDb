@@ -32,7 +32,6 @@ MyCacheDB一个基于C/S架构的小型缓存数据库，支持和redis相同的
 
 ### 目录说明
 
-
 |名称|作用|
 |:---:|:--:|
 |client|客户端源代码实现|
@@ -41,6 +40,9 @@ MyCacheDB一个基于C/S架构的小型缓存数据库，支持和redis相同的
 |image|一些截图信息|
 |logInfo|日志记录文件|
 |start.sh|编译程序的shell命令脚本|
+|test|客户端测试文件|
+|example|例子程序|
+
 ### 使用与安装
 
 （1）修改配置文件，进入conf文件，进入配置文件填写IP和端口信息，格式为冒号+空格+IP/端口
@@ -48,7 +50,9 @@ MyCacheDB一个基于C/S架构的小型缓存数据库，支持和redis相同的
 （2）修改start.sh文件的权限
 
 ```
+
 chmod a+x start.sh   //当前目录中必须有start.sh文件
+
 ```
 （3）进入server目录，运行服务器
 
@@ -62,6 +66,133 @@ chmod a+x start.sh   //当前目录中必须有start.sh文件
 sudo cp -R MyCacheDB /usr/include
 sudo mv DBClient /usr/sbin
 ```
-（5）编写自定义的程序
+将client下的lib目录中的静态库文件移动到你自定义程序的目录下，需要在编译时链接
+（5）编写自定义的程序如下
+
+`main.cpp`
+
+
+```c
+#include <iostream>
+#include <MyCacheDB/clientLoop.h>
+using namespace std ;
+int main(int argc, char** argv) {
+    clientLoop clp ;
+    //传入IP 和地址
+    clp.init("127.0.0.1", "8888") ;
+   //在配置文件中找
+    //clp.init() ;
+//////////////////////////////程序中使用
+    clp.sendRequest("set", "name", "wc", END) ;
+    clp.sendRequest("get", "name", END) ;
+    clp.sendRequest("hset", "student", "name","ck", "age", "18", END) ;
+    clp.sendRequest("hget", "student", "name", END) ;
+    clp.sendRequest("hget", "student", "age", END) ;
+    //........   
+
+    //////////////////////////获取结果
+    cout << "获取的返回结果：" << endl ;
+    clp.getResult() ;
+    clp.getResult() ;
+    clp.getResult() ;
+    clp.getResult() ;
+    clp.getResult() ;
+
+///////////////////////////////////////////////终端使用
+//    clp.start() ;
+    return 0;
+}
+```
+
+编译
+```
+g++ main.cpp libclient.a -lpthread -g -std=c++11 -w -lprotobuf -lreadline `pkg-config --cflags --libs protobuf` -o test_exe
+```
+运行：
+
+```
+./test_exe
+```
+
+运行截图：
+
+![haha](image/jiekou.png)
+
+运行client目录下DBClient，终端用户C/S交互截图：
+
+![term](image/zhongduan.png)
+
+
+### 测试
+
+- 编写的测试程序：
+
+`test.cpp`
+
+```c
+
+#include <iostream>
+#include <sys/time.h>
+#include <MyCacheDB/clientLoop.h>
+using namespace std ;
+int main(int argc, char** argv) {
+    struct timeval tv, tend;
+    clientLoop clp ;
+    clp.init("127.0.0.1", "8888") ;
+    gettimeofday(&tv,NULL);
+    int a = 10000 ;
+    while(a--) {
+        clp.sendRequest("get", "name", END) ;
+        clp.getResult() ;
+    }
+
+    gettimeofday(&tend,NULL);
+    cout << "读取测试" << endl ;
+    cout << "==================================================" << endl ;
+    cout <<"开始时间戳:"<< tv.tv_sec<<"." << tv.tv_usec<<"s"<< endl;
+    cout <<"结束时间戳:"<< tend.tv_sec<<"." << tend.tv_usec<<"s"<< endl;
+    int s = (tend.tv_sec-tv.tv_sec)*1000000 ;
+    int us = tend.tv_usec - tv.tv_usec ;
+    double h = 10000;
+    int end = s + us ;
+    cout <<h*1000000/end<< endl ;
+    cout << "speed:" << h*1000000/end <<"cmd/s"<< endl ;
+    struct timeval tv1, tend1;
+    gettimeofday(&tv1,NULL);
+    a = 10000 ;
+    while(a--) {
+        clp.sendRequest("hset", "student", "name","ck", "age", "18", END) ;
+        clp.getResult() ;
+    }
+    gettimeofday(&tend1,NULL);
+    cout << "修改测试" << endl ;
+    cout << "==================================================" << endl ;
+    cout <<"开始时间戳:"<< tv1.tv_sec<<"." << tv1.tv_usec<<"s"<< endl;
+    cout <<"结束时间戳:"<< tend1.tv_sec<<"." << tend1.tv_usec<<"s"<< endl;
+    s = (tend1.tv_sec-tv1.tv_sec)*1000000 ;
+    us = tend1.tv_usec - tv1.tv_usec ;
+    h = 10000;
+    end = s + us ;
+    cout <<"speed:" << h*1000000/end<<"cmd/s"<< endl ;
+    return 0;
+}
+
+```
+
+- 事件精确微妙，编译
+
+```
+g++ test.cpp libclient.a -lpthread -g -std=c++11 -w -lprotobuf -lreadline `pkg-config --cflags --libs protobuf` -o test_exe
+```
+
+运行结果：
+
+- 第一次客户端发送命令，服务器以也是刚启动，先不进行初始化。在接收到命令后，会进行一系列初始化，显示结果，第一次执行get命令和第二次执行结果相比较慢
+
+![haha](image/test1.png)
+
+- 第二次运行客户端发送命令，服务器不需要初始化了，相比第一次执行较快
+
+![lala](image/test2.png)
 
 
