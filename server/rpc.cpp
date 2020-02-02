@@ -22,7 +22,7 @@ int rpc :: response(shared_ptr<Response>res, int fd) {
     //向客户端发送消息
     int ret = send(fd, buf, sizeof(buf), 0) ;
     if(ret < 0) {
-        cout << __FILE__ << "      " << __LINE__ << endl ;
+        cout << __FILE__ << "      " << __LINE__ << "  " << strerror(errno)<< endl ;
         return -1 ;
     }
     return ret ;

@@ -84,6 +84,7 @@ int aeEventloop :: start() {
     while(!stop) {
         int ret = aep->wait(fireList) ;
         if(ret < 0 && errno != EINTR) {
+            cout << strerror(errno) << endl ;
             return -1 ;
         }
         vector<epoll_event>ls  = fireList ;

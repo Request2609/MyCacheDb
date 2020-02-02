@@ -69,7 +69,6 @@ int clientLoop::init() {
     if(ret < 0 || ip.empty()||port.empty()) {
         return -1;
     }
-    cout << ip << "     " << port<< endl ; 
     client = make_shared<clientSock>() ;
     cmd = make_shared<cmds>() ;
     rc = make_shared<rpc>() ;
@@ -115,6 +114,7 @@ int clientLoop :: sendRequest(string md, ...) {
     if(res != 1) {
         servFd = res ;
     }
+    return 1 ;
 }
 
 int clientLoop::getResult() {

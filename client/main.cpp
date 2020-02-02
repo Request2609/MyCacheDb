@@ -1,40 +1,12 @@
 #include <iostream>
-#include <gtest/gtest.h>
-#include "clientLoop.h"
+#include <libclient/clientLoop.h>
 using namespace std ;
-/*
-class stringTest : public testing::Test{
-
-protected:
-
-    virtual void SetUp()
-    {
-        //传入IP 和地址
-        clp.init("127.0.0.1", "8888") ;
-    }
-    virtual void TearDown()
-    {
-    }
-    clientLoop clp ;
-} ;
-
-TEST_F(stringTest, HandleNoneZeroInput) {
-    EXPECT_EQ(1, clp.sendRequest("set", "name", "wc", END)) ;
-    EXPECT_EQ(1,  clp.getResult()) ;
-}
-*/
-
 int main(int argc, char** argv) {
-    /*   ::testing::InitGoogleTest(&argc, argv);
-         return RUN_ALL_TESTS();
-         */
-    ///////////////////////////////必须初始化
-    //初始化令表
     clientLoop clp ;
     //传入IP 和地址
-   /// clp.init("127.0.0.1", "8888") ;
+    clp.init("127.0.0.1", "8888") ;
    //在配置文件中找
-    clp.init() ;
+    //clp.init() ;
 //////////////////////////////程序中使用
     clp.sendRequest("set", "name", "wc", END) ;
     clp.sendRequest("get", "name", END) ;
@@ -50,7 +22,6 @@ int main(int argc, char** argv) {
     clp.getResult() ;
     clp.getResult() ;
     clp.getResult() ;
-
 
 ///////////////////////////////////////////////终端使用
 //    clp.start() ;

@@ -1,3 +1,4 @@
+#include <signal.h>
 #include "aeEventloop.h"
 #include "aeEvent.h"
 #include "cmdProcess.h"
@@ -22,6 +23,7 @@ int readOnMessage(shared_ptr<aeEvent>tmp) {
 int main(int argc, char** argv) {
     string ip ;
     string port ; 
+    signal(SIGPIPE, SIG_IGN) ;
     if(argc < 3) {
         getIpPort(ip, port) ;
     } 

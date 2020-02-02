@@ -39,7 +39,7 @@ int syncQueue::getResponse(long num) {
         return -1 ;
     }
     else {
-        cout << ret->second << endl ;
+        //cout << ret->second << endl ;
         response.erase(ret) ;
         return 1 ;
     }

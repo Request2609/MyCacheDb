@@ -29,8 +29,6 @@ int aeEvent :: processRead() {
         return 0 ;
     } 
     //根据返回值，将数据读到buf
-    cout << "-------->"<<buf.getBuf() << endl ;
-    //收到数据
     //将数据返回给事件循环/*
     //调用相应的回调处理可读事件
     ret = readFunc(shared_from_this()) ;

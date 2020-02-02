@@ -39,15 +39,11 @@ int cmdCb :: setLpush(shared_ptr<redisDb>&wcmd,
 int cmdCb :: setHash(shared_ptr<redisDb>&wcmd, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {               
-    cout << "执行hash函数" << endl ;
     int ret = isKeyExist(wcmd, tmp) ;
     if(ret == 1) {
-        cout<< "设置完成" <<endl ;
-
         res->set_reply("OK") ;
         return 1 ;
     }
-    cout << "没找到对象" << endl ;
     shared_ptr<dbObject>se = factory::getObject("hset");
     if(se == nullptr) {
         return -1 ;
@@ -83,7 +79,6 @@ int cmdCb :: lPop(shared_ptr<redisDb>& db,
 int cmdCb :: setHget(shared_ptr<redisDb>&db, 
                      shared_ptr<Command>&tmp, 
                      shared_ptr<Response>& res) {
-    cout << "执行hget函数" << endl ;
     db->queryDb(res, tmp) ;
     return 1 ;
 }
@@ -123,16 +118,13 @@ int cmdCb :: save(vector<pair<int, shared_ptr<redisDb>>>& dls) {
 int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd, 
                     shared_ptr<Command>&cmd, 
                     shared_ptr<Response>& res) {
-    cout << "执行set函数" << endl ;
     int n = cmd->keys_size() ;
-    cout << n << endl ;
     if(n == 0) {
         res->set_reply("FAIL") ;
         return -1 ;
     }
 
     int len = cmd->keys(0).key_size() ;
-    cout << "长度:" << len << endl ;
     //键的数量不是1,错误的
     int num = cmd->num() ;
     //键存不存在,存在的话,就地修改,返回1, 不存在返回0
@@ -144,9 +136,7 @@ int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd,
         se->setName("set") ;
         se->setNum(num) ;
         se->setKey(cmd->keys(0).key(0)) ;
-        cout << "获取键值:" << se->getKey() << endl ;
         se->setValue(cmd->vals(0).val(0)) ;
-        cout << cmd->vals(0).val(0) << endl ;
         //将数据存在相应的数据库中
         wcmd->append(se) ;     
     }
@@ -175,7 +165,6 @@ int cmdCb :: setSetValue(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shar
     if(wcmd->isExist(tmp)>0) {
         return 1 ;
     }
-    cout << "执行sadd命令" << endl ;
     auto se = factory::getObject("sadd") ;
     ListObject lob = tmp->lob(0) ;
     se->setKey(lob.key()) ;

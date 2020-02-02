@@ -196,7 +196,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
 
     if(!strcasecmp(cd.c_str(), "get")) {
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
-        cout << response->reply() << endl ;
     }
 
     if(!strcasecmp(cd.c_str(), "save")) {
@@ -260,7 +259,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         }
     }
     if(!strcasecmp(cd.c_str(), "sadd")) {
-        cout << "sadd 命令"<< endl ;
          //给a设置一个特殊值
         string aa = cd.c_str() ;
         a = cmdList[aa]->cb(wrdb, cmd, response) ;
@@ -291,7 +289,6 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
 }
 int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 
     if(callBack == nullptr) {
-        cout << "回电函数是空!" << endl ;
         return -1;
     }
     return callBack(db, wcmd, res) ; 

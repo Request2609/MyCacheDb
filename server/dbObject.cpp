@@ -10,8 +10,6 @@ vector<string> sortSet::getValues(const string s) {
     int len = s.size() ;
     string end = s.substr(index+1, len-index) ;
     int ee = atoi(end.c_str()) ;
-    cout << ss << "  " << ee << endl ;
-    cout <<"节点数量:" << rbt->getNum() << endl ;
     auto ls = rbt->getByScore(ss, ee) ;
     string value = "" ;
     vector<string>res ;
@@ -53,7 +51,6 @@ void strings :: print() {
 }
 
 void lsObject :: print() {
-    cout << "list对象的键值:" << key << endl ;
     for(auto s : ls) {
         cout << s << "    " << endl ; 
     }
@@ -94,7 +91,6 @@ void hashSet :: setValue(string value, ...) {
     va_start(va, value) ;
     char* val = va_arg(va, char*) ;
     values[key] = val ;
-    cout << key << "     " << val << endl ;
     va_end(va) ;
 }
 

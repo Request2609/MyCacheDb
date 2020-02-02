@@ -5,7 +5,7 @@ CC = g++
 
 CFLAGS = -lpthread -g -std=c++11 -w -lprotobuf -lgtest -lreadline `pkg-config --cflags --libs protobuf`
 
-TARGET = client
+TARGET = DBClient
 
 SrcFile = $(wildcard *.cpp)
 
