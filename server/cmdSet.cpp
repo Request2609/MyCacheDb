@@ -197,26 +197,33 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
             response->set_reply("FAIL") ;
         }
     }
+
     //fork进程
     //异步持久化
     if(!strcasecmp(cd.c_str(), "bgsave")) {
-        aeEventloop::canSave = 0 ;    
-        saveFd = aeSocket::getWriteFd() ;      
-        pid_t pid = fork() ;
-        if(pid < 0) {
-            exit(1) ;
-        }
-        if(pid == 0) {
-            a = 1 ;
+        a = 1 ;
+        if(aeEventloop::canSave == 0) {
             response->set_reply("OK") ;
         }
         else {
-            int ret = cmdCb::save(dbLs) ;
-            //将持久化调用结果返回
-            write(saveFd, &ret, sizeof(ret)) ;
-            exit(0) ;
+            aeEventloop::canSave = 0 ;    
+            saveFd = aeSocket::getWriteFd() ;      
+            pid_t pid = fork() ;
+            if(pid < 0) {
+                exit(1) ;
+            }
+            if(pid == 0) {
+                response->set_reply("OK") ;
+            }
+            else {
+                int ret = cmdCb::save(dbLs) ;
+                //将持久化调用结果返回
+                write(saveFd, &ret, sizeof(ret)) ;
+                exit(0) ;
+            }
         }
     }
+
     if(!strcasecmp(cd.c_str(), "blpop")) {
         string aa = "blpop" ;
         //给a设置一个特殊值
