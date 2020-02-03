@@ -30,7 +30,6 @@ class aeEventloop {
     typedef function<int(shared_ptr<aeEvent>)> callBack ;
     
 public :
-    int readFd, writeFd ;
     //数据库数组
     //vector<shared_ptr<redisDb>>db ;
     //客户端的读写回调
@@ -68,7 +67,9 @@ public :
     shared_ptr<TimerManager> wakeblpop ;
     int evfd ;
     int signalFd ;
+    int saveFd ;
 public :
+    static int canSave ;
     static int wakeBlpopFd  ;
     static int efd ;
     static int kickClient(map<int, shared_ptr<aeEvent>>&eventData, int kickFd, shared_ptr<aeEpoll>&aep) ;

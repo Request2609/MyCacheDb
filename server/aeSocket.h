@@ -23,6 +23,12 @@ public :
     int anetCreateSocket() ;
     int setReuseAddr() ;
     int tcpServer(string port, string addr, int backLog) ;
+    int getWritePairFd() {
+        return fdPair[0] ;
+    }
+    int getReadPairFd() {
+        return fdPair[1] ;
+    }
     int acceptClient() ;
 public :
     static int setNoBlocking(int fd) ;

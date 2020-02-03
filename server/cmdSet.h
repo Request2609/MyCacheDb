@@ -15,7 +15,6 @@
 #include "msg.pb.h"
 #include "rdb.h"
 #include "cmdCb.h"
-#include "logRecord.h"
 
 class rdb ;
 using namespace std  ;
@@ -39,7 +38,6 @@ class redisCommand ;
 class cmdCb ;
 class Flag ;
 class threadPool ;
-class logRecord ; 
 
 class redisCommand {
     //该命令的的处理函数
@@ -116,14 +114,13 @@ public :
     void saveToFrozenRedis(int num) ;
     void sigintProcess() ;
 private:
+    int saveFd  ;   
     shared_ptr<rdb> save ;
     //回复，响应
     shared_ptr<Response> response ;
     //数据库,键值是数据库编号码,之后数据库对象
     vector<pair<int, shared_ptr<redisDb>>>dbLs ;
-    vector<pair<int, shared_ptr<redisDb>>>frozenDbLs ;
     //命令名称，命令类型
     map<string, shared_ptr<redisCommand>> cmdList ;  
-    shared_ptr<threadPool> pool ;
 };
 

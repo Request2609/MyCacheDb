@@ -9,13 +9,13 @@
 #include <cstdarg>
 #include <map>
 
+#include "aofRecord.h"
 #include "dbObject.h"
 #include "timer.h"
 #include "msg.pb.h"
 #include "timer.h"
 
 using namespace Messages ;
-using namespace google ;
 using namespace std ;
 
 
@@ -38,6 +38,7 @@ class equalFunc ;
 class key ; 
 class hashFunc ;
 class equalFunc ;
+class aofRecord ;
 
 class key {
 public :

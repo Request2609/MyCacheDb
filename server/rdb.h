@@ -17,10 +17,7 @@
 #include "cmdSet.h"
 #include "timer.h"
 #include "recoverDb.h"
-//#include "easylogging++.h"
-//#include "logErr.h"
 
-class logErr ;
 class cmdSet ;
 class rdb ;
 const int version = 1 ;

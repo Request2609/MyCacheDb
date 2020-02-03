@@ -14,8 +14,8 @@
 #include "serializeParse.h"
 #include "readWrite.h"
 #include "rpc.h"
-#include "listWaitQueue.h"
 #include "msg.pb.h"
+#include "aofRecord.h"
 
 #define SIZE 4096
 using namespace Messages ;
@@ -32,6 +32,7 @@ class aeEvent ;
 class listWaitQueue ;
 class TimerManager ;
 class MyTimer ;
+class aofRecord ;
 
 //错误类型
 enum {

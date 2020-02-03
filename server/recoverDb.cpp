@@ -78,7 +78,6 @@ string recoverDb:: getListValues(string& s) {
 int recoverDb :: getListObject(string& s, shared_ptr<dbObject>& ob) {
     //获取键值
     string key = getHashKey(s) ;    
-    cout << "键值:" << key << endl ;
     ob->setKey(key) ;
     //找值
     while(1) {

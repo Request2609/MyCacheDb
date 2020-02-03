@@ -11,6 +11,7 @@
 #include "rdb.h"
 #include "redisDb.h"
 #include "msg.pb.h"
+#include "aofRecord.h"
 
 using namespace Messages ;
 using namespace std ;
@@ -27,7 +28,7 @@ using namespace std ;
 class dbObject ;
 class factory ;
 class redisDb ;
-
+class aofRecord ;
 
 class cmdCb {
 public:
@@ -41,7 +42,6 @@ public:
     static int getCmd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
     static int bgSave(vector<pair<int, shared_ptr<redisDb>>>&dbLs) ;
     static int setHget(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
-    //static string lPop() ;
     static int lPop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>& res) ;
     static vector<string>getList() ;
     static int  blPop(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_ptr<Response>&res) ;

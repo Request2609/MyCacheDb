@@ -5,8 +5,59 @@ string rdb :: tmpFileName(const char* fileName) {
     tmp += ".tmp" ;
     return tmp ;
 }
-
-
+//保存到文件
+int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
+    //获取数据库文件
+    string ss = tmpFileName(fileName) ;  
+    ofstream out(ss, ios::out|ios::binary|ios::trunc) ;
+    if(out.fail()) {
+       cout << __FILE__ << "    " << __LINE__ << endl ;
+        return -1;
+    }
+    int num = db->getId() ;
+    //数据库编号
+    string head = makeHeader() ;
+    //将头部写入文件
+    const char* h =head.c_str() ;
+    out << h ;
+    out << "id:" << num <<"\r\n" ;
+    //获取数据库中的对象元素
+    shared_ptr<dbObject> rd = db->getNextDb() ;
+    while(rd != nullptr) {
+        string value ;
+        int type = rd->getType() ;
+        //字符串类别是string
+        out << "e:" ;
+        out << rd->getEndTime() << "\r\n" ;
+        if(type == DB_STRING) {
+            string value = rd->getValue() ; 
+            string key = rd->getKey() ;
+            out << "ctp:" << DB_STRING << "\r\n" ;
+            processString(key, out, value) ;
+        }
+        //hash的保存
+        if(type == DB_HASH) {
+            string key = rd->getKey() ;
+        //    out << rd->getEndTime()<<"\r\n" ;
+            out << "ctp:" << DB_HASH << "\r\n" ;
+            processHash(out, rd) ;         
+        }
+        //是链表
+        if(type == DB_LIST) {
+          //  out << rd->getEndTime() << "\r\n" ;
+            out  <<"ctp:" << DB_LIST << "\r\n" ;
+            processList(out, rd) ;
+        }   
+        rd = db->getNextDb() ;
+    }
+    out << "\r\n" ;  
+    out.close() ;
+    cout << ss << "     " << fileName << endl ;
+    remove(fileName) ;
+    rename(ss.data(), fileName) ;
+    return 1 ;
+}
+/*
 //保存到文件
 int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
     //获取数据库文件
@@ -56,7 +107,7 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
     out.close() ;
     return 1 ;
 }
-
+*/
 void rdb :: processList(ofstream& aa, const shared_ptr<dbObject>rd) {
     string key = rd->getKey() ;
     aa << key << "\r\n" ;
@@ -290,18 +341,6 @@ int rdb :: initRedis(cmdSet* cmdset) {
             return -1 ;
         } 
         shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
-    }
-
-    vector<string>logName ;
-    int ret = getLogFileName(logName);
-    if(ret < 0) {
-        return 1 ;
-    }
-    int len = logName.size() ;
-    //恢复数据库
-    for(int i=0; i<len; i++) {
-        string res = readLogFile(logName[i]);   
-        //分析日志,留
     }
     return 1 ;
 }

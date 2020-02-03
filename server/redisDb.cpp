@@ -3,25 +3,31 @@ using namespace type ;
 
 //判断当前操作键值存在不存在,找到并修改
 int redisDb :: isExist(shared_ptr<Command>&cmds) {
+    auto ptr = aofRecord::getLogObject() ;
+    string s = "" ; 
     string cmd = cmds->cmd() ;
     //如果是set 命令
     int num = cmds->num() ;
     if(cmd == "set") {
+        s=to_string(cmds->num())+" set" ;
         string k = cmds->keys(0).key(0) ;
         key ke(num, type::DB_STRING, k) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
             return 0 ;
         }
+        s= " "+cmds->vals(0).val(0) ;
         res->second->setNum(cmds->num()) ;
         res->second->setValue(cmds->vals(0).val(0)) ;
+        ptr->record(s.c_str()) ;
         return 1 ;
     }
-
     if(cmd == "hset") {
+        s += to_string(num)+" "+"hset" ;
         string k = cmds->keys(0).key(0) ;
         string kk = cmds->keys(1).key(0) ;
         string vv = cmds->vals(0).val(0) ;
+        s+=" "+k+" "+kk+" "+vv ;
         key ke(num, type::DB_HASH, k) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
@@ -38,14 +44,18 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
                 string kk = cmds->keys(i).key(j) ;
                 string vv = cmds->vals(i-1).val(j) ;
                 res->second->setValue(kk, vv.c_str()) ;
+                s+=" "+kk+" "+vv ;
             }
         }
         res->second->setNum(cmds->num()) ;
+        ptr->record(s.c_str()) ;
         return 1 ;
     }
     ListObject lob = cmds->lob(0) ;
     if(cmd == "lpush") {
+        s+=" "+to_string(num)+" "+"lpush" ;
         string keys = lob.key() ;
+        s+=" "+keys ;
         key ke(num, type::DB_LIST, keys) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
@@ -56,13 +66,16 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
             int size = lob.vals(i).val_size() ;
             for(int j=0; j<size; j++) {
                 res->second->setValue(lob.vals(i).val(j)) ;
+                s+=" "+lob.vals(i).val(j) ;
             }
         }
         num = res->second->objectSize() ;
+        ptr->record(s.c_str()) ;
         return num ;   
     }
     if(cmd == "zadd") {
         string keys = lob.key() ;
+        s+=" "+to_string(num)+" "+"zadd"+" "+keys ;
         key ke(num, type::SORT_SET, keys) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
@@ -71,11 +84,14 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         Value val = lob.vals(0) ;
         string score = val.val(0);
         string value = val.val(1) ;
+        s+=" "+score+" "+value ;
         res->second->setValue(score, value.c_str()) ;
+        ptr->record(s.c_str()) ;
     }
 
     if(cmd == "sadd") {
         string keys = lob.key() ;
+        s+=" "+to_string(num)+" "+keys ;
         key ke(num, type::SET_SET, keys) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
@@ -85,7 +101,9 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         int size = val.val_size() ;
         for(int i=0; i<size; i++) {
             res->second->setValue(val.val(i)) ;
+            s+=" "+val.val(i) ;
         }
+        ptr->record(s.c_str()) ;
     }
     return 1 ;
 }

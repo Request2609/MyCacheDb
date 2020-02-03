@@ -26,6 +26,9 @@ void cmdProcess :: initCmdCb() {
 
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
+    if(ptr == nullptr) {
+        ptr = aofRecord::getLogObject() ;
+    }
     string seq = "" ;
     int flag = 0 ;
     buffer* bf = tmp->getBuf() ;
@@ -34,8 +37,7 @@ int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
     //获取对端序列化到结果
     //反序列化,弱引用
     shared_ptr<Command>wcmd = rc->getParseString(buff) ;
-    seq = wcmd->seq() ;
-        
+    //是修改类型的命令
     //获取到相应的智能指针后，进行解析
     int ret = findCmd(wcmd) ;
     //记录日志

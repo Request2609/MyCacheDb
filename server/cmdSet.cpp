@@ -14,7 +14,6 @@ cmdSet :: cmdSet() {
 
 //初始化命令表
 int cmdSet :: initCmdCb() {
-    pool = make_shared<threadPool>(8) ;
     //初始化set命令
     shared_ptr<redisCommand>tset = make_shared<redisCommand>("set", -3, "wm",  1, 1, 1, 0, 0) ;
     //函数指针不能作为构造函数参数
@@ -75,36 +74,8 @@ int cmdSet :: initCmdCb() {
     shared_ptr<redisCommand>spop = make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
     spop->setCallBack(cmdCb :: sPop) ;
     cmdList.insert({"spop", spop}) ;
-}   
+} 
 
-void cmdSet::saveToFrozenRedis(int num) {
-    for(auto s=frozenDbLs.begin(); s!=frozenDbLs.end(); s++) {
-        if(s->first == num) {
-            //当前的unmodify cache中不存在元素
-            if(s->second != nullptr) {
-                //将当前的unmodify数据持久化，并清空日志文件中的信息
-                char file[4096] ;
-                sprintf(file, ".db_%d", num) ;
-                //使用线程进行持久化
-                pool->commit(rdb::save, s->second, file) ;
-                //清空日志内容
-                logRecord::clearLogFile(num) ;
-            }
-            //重新将新的数据考到不可变的数据库中
-            s->second = make_shared<redisDb>(*(dbLs[num].second)) ;
-            break ;
-        }
-    }
-}
-/*
-int redisCommand :: append(int num, int type, shared_ptr<dbObject>dob) {
-    int size = dbLs.size() ;
-    for(int i=0; i<size; i++) {
-        //添加从日志中读出来的信息
-        
-    }
-}
-*/
 //打印数据苦衷当前信息
 void cmdSet :: print() {
     for(auto s : dbLs) {
@@ -168,15 +139,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //创建一个响应
     response = make_shared<Response>() ;
     //根据数据库编号找到数据库
-    //logRecord::changeCommand(cmd) ;
     shared_ptr<redisDb> wrdb = getDB(num) ;
-/*    long size = logRecord::sizeMap[num] ;
-    //判断
-    if(size > logRecord::MAX_FILE_SIZE) {
-       saveToFrozenRedis(num) ;
-    }*/
-    //检测forzendbls中数据量是否超过log中记录的阀值
-
     string cd = cmd->cmd() ;
     //不区分大小写a
     int a = 0 ;
@@ -235,10 +198,24 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         }
     }
     //fork进程
+    //异步持久化
     if(!strcasecmp(cd.c_str(), "bgsave")) {
-        string aa = "bgsave" ;
-        a = cmdList[aa]->saveCb(dbLs) ;
-        response->set_reply("OK") ;
+        aeEventloop::canSave = 0 ;    
+        saveFd = aeSocket::getWriteFd() ;      
+        pid_t pid = fork() ;
+        if(pid < 0) {
+            exit(1) ;
+        }
+        if(pid == 0) {
+            a = 1 ;
+            response->set_reply("OK") ;
+        }
+        else {
+            int ret = cmdCb::save(dbLs) ;
+            //将持久化调用结果返回
+            write(saveFd, &ret, sizeof(ret)) ;
+            exit(0) ;
+        }
     }
     if(!strcasecmp(cd.c_str(), "blpop")) {
         string aa = "blpop" ;

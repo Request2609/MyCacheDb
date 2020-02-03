@@ -2,6 +2,7 @@
 
 int aeEventloop :: efd ;
 int aeEventloop ::  wakeBlpopFd ;
+int aeEventloop:: canSave ;
 //初始化事件
 //创建epoll句柄等工作
 aeEventloop :: aeEventloop() {
@@ -15,12 +16,12 @@ aeEventloop :: aeEventloop() {
 
 int aeEventloop:: init() {
     //初始化检查的规则
-    //auto check = checkOperation::getCheckObject();
-    //check->getSaveRule() ;
-    //初始化记录日志
     //从工厂中直接获取
     tman = timeManagerFactory::getManager(1) ;
     wakeblpop = timeManagerFactory::getManager(2) ;
+    aeSocket::createSocketPair() ;
+    saveFd = aeSocket::getReadFd() ;
+    canSave = 1 ;
     //创建一个epoll对象
     aep = make_shared<aeEpoll>() ;
     aep->epCreate(SIZE) ;
@@ -71,11 +72,14 @@ void aeEventloop :: initDataInfo() {
 
 //开始监听事件
 int aeEventloop :: start() {
+    int ret = 0 ;
     //初始化数据信息
     initDataInfo() ;
     signalSet :: efd = signalSet  :: createEventFd() ;
     efd = signalSet :: efd ;
     aep->add(efd, READ) ;
+    //将备份通知句柄加到epoll
+    aep->add(saveFd, READ) ;
     //创建eventFd，内部已经设置了非阻塞
     //设置信号
     signalSet :: addSig(SIGALRM) ;
@@ -92,6 +96,11 @@ int aeEventloop :: start() {
         for(int i=0; i<len; i++) {
             eventfd_t count ;
             int fd = ls[i].data.fd ;
+            if(fd == saveFd) {
+                read(saveFd, &ret, sizeof(ret)) ;
+                canSave = 1 ;
+                continue ;
+            }
             //是唤醒等待阻塞链表的fd
             if(efd == fd) {
                 //同时唤醒
