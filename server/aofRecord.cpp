@@ -10,7 +10,7 @@ std::shared_ptr<aofRecord>aofRecord::getLogObject(){
 }
 
 void aofRecord::fullCall(const char* filename, std::size_t size) {
-    rename(filename, "backuplog.log") ;
+    rename(filename, "../logInfo/backuplog.log") ;
 }   
 
 //设置滚动日志
