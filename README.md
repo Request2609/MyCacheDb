@@ -1,7 +1,6 @@
 ### MyCacheDB介绍
 MyCacheDB一个基于C/S架构的小型缓存数据库，支持和redis相同的string，hash，list，set，sortset对象的基本操作，
-提供用户编程和终端输入request-response两种模式，
-使用方法简单方便。
+提供用户编程接口，以及终端readline接收输入，正则表达式进行验证的request-response模式，使用方法简单方便。
 
 ### 运行环境
 
