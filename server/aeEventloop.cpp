@@ -74,6 +74,8 @@ void aeEventloop :: initDataInfo() {
 //开始监听事件
 int aeEventloop :: start() {
     auto sth = saveTimerHandle::getSaveTimerObject() ;
+    //启动定时器
+    sth->startDetect() ;
     //初始化数据信息
     initDataInfo() ;
     signalSet :: efd = signalSet  :: createEventFd() ;
