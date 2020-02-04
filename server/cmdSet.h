@@ -8,7 +8,7 @@
 #include <signal.h>
 #include <vector>
 #include <sys/mman.h>
-
+#include "saveTimerHandle.h"
 #include "redisDb.h"
 #include "ThreadPool.h"
 #include "aeEvent.h"
@@ -38,6 +38,7 @@ class redisCommand ;
 class cmdCb ;
 class Flag ;
 class threadPool ;
+class saveTimerHandle ;
 
 class redisCommand {
     //该命令的的处理函数
@@ -90,7 +91,6 @@ private :
 
 //命令集合
 class cmdSet {
-    friend class logRecord ;
 public:
     //设置命令的回调函数
     cmdSet() ;
@@ -111,10 +111,12 @@ public :
     shared_ptr<Response> getResponse() { return response ; }
     int append(shared_ptr<redisDb> db) ;
     void print() ;
+    static int backUp() ;
     void saveToFrozenRedis(int num) ;
     void sigintProcess() ;
 private:
-    int saveFd  ;   
+    static void asyncSave();
+    static vector<pair<int, shared_ptr<redisDb>>>*db ;
     shared_ptr<rdb> save ;
     //回复，响应
     shared_ptr<Response> response ;

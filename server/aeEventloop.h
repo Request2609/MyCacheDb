@@ -8,20 +8,19 @@
 #include <fstream>
 #include "signalSet.h"
 #include "timerHeap.h" 
+#include "timerFactory.cpp"
 #include "aeEpoll.h"
 #include "aeEvent.h"
-#include "timeManagerFactory.h"
 #include "msg.pb.h"
 
 using namespace Messages ;
 using namespace std ;
 class logRecord ;
-class timeManagerFactory ;
 enum {
     READ= EPOLLIN, 
     WRITE= EPOLLOUT,
 } ;
-
+class timeManagerFactory ;
 class TimerManager ;
 class signalSet ;
 

@@ -15,4 +15,3 @@ public :
     static shared_ptr<TimerManager> wakeBlpop ;
     static shared_ptr<TimerManager> getManager(int tip) ;
 };
-

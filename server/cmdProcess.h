@@ -4,7 +4,6 @@
 #include <memory>   
 #include <vector>
 #include <string> 
-#include "timeManagerFactory.h" 
 #include "timerHeap.h"
 #include "aeEvent.h"
 #include "buffer.h"
@@ -21,7 +20,6 @@
 using namespace Messages ;
 using namespace std ;
 
-class timeManagerFactory ;
 class rpc ;
 class cmdSet ;
 class redisCommand ;
@@ -30,8 +28,6 @@ class backInfo ;
 class listWaitQueue ;
 class aeEvent ;
 class listWaitQueue ;
-class TimerManager ;
-class MyTimer ;
 class aofRecord ;
 
 //错误类型
@@ -59,7 +55,6 @@ public :
 public :
     void initCmdCb() ;
     //时间事件回调
-    void timeCb() ;
 public :
     int initRedis() ;
     void setRpc(shared_ptr<rpc>rc) { this->rc = rc ; }
@@ -73,7 +68,6 @@ private :
     //键值以后的部分成员
     shared_ptr<cmdSet> cmdSet_ ;
     vector<string> lastKey ;   
-    task timeCall ;
     //rpc,主要进行序列化和反序列化
     shared_ptr<rpc> rc ;
 };

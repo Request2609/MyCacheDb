@@ -1,8 +1,7 @@
 #include "cmdSet.h"
-#include "enum.h"
-#include "rdb.h"
 
 int cmdSet :: REDIS_NUM = 16 ;
+vector<pair<int, shared_ptr<redisDb>>>cmdSet::*db = NULL;
 //初始化命令集
 cmdSet :: cmdSet() {
     //申请16个数据库
@@ -10,7 +9,33 @@ cmdSet :: cmdSet() {
     for(int i=0; i<16; i++) {
         dbLs.push_back({i ,shared_ptr<redisDb>(new redisDb(i))}) ;
     }
+    db = &dbLs ;
 } 
+
+int cmdSet :: backUp() {
+    if(aeEventloop::canSave == 1&& db!=NULL) {
+        asyncSave() ;
+    }
+}
+
+void cmdSet:: asyncSave() {
+
+    int fd = aeSocket::getWriteFd() ;
+    aeEventloop::canSave = 0 ;    
+    pid_t pid = fork() ;
+    if(pid < 0) {
+        return ;
+    }
+    if(pid == 0) {
+        return ;
+    }
+    else {
+        int ret = cmdCb::save(db) ;
+        //将持久化调用结果返回
+        write(fd, &ret, sizeof(ret)) ;
+        exit(0) ;
+    }
+}
 
 //初始化命令表
 int cmdSet :: initCmdCb() {
@@ -144,16 +169,19 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     //不区分大小写a
     int a = 0 ;
     if(!strcasecmp(cd.c_str(), "set")) {
+        saveTimerHandle::countModify() ;
         //调用命令对应的函数
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         //处理失败
     }
     if(!strcasecmp(cd.c_str(), "lpop")) {
+        saveTimerHandle::countModify() ;
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
     }
 
     //lpush命令
     if(!strcasecmp(cd.c_str(), "lpush")) {
+        saveTimerHandle::countModify() ;
         a = cmdList[cd]->cb(wrdb, cmd, response) ;   
     }
 
@@ -173,6 +201,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     }
 
     if(!strcasecmp(cd.c_str(), "zadd")) {
+        saveTimerHandle::countModify() ;
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         if(a > 0) {
             response->set_reply("1") ;
@@ -183,6 +212,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     }
     //哈希
     if(!strcasecmp(cd.c_str(), "hset")) {
+        saveTimerHandle::countModify() ;
         //hash表操作
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         if(a < 0) {
@@ -205,23 +235,8 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         if(aeEventloop::canSave == 0) {
             response->set_reply("OK") ;
         }
-        else {
-            aeEventloop::canSave = 0 ;    
-            saveFd = aeSocket::getWriteFd() ;      
-            pid_t pid = fork() ;
-            if(pid < 0) {
-                exit(1) ;
-            }
-            if(pid == 0) {
-                response->set_reply("OK") ;
-            }
-            else {
-                int ret = cmdCb::save(dbLs) ;
-                //将持久化调用结果返回
-                write(saveFd, &ret, sizeof(ret)) ;
-                exit(0) ;
-            }
-        }
+        //异步持久化
+        cmdSet::asyncSave() ;
     }
 
     if(!strcasecmp(cd.c_str(), "blpop")) {
@@ -243,6 +258,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
         }
     }
     if(!strcasecmp(cd.c_str(), "sadd")) {
+        saveTimerHandle::countModify() ;
          //给a设置一个特殊值
         string aa = cd.c_str() ;
         a = cmdList[aa]->cb(wrdb, cmd, response) ;
@@ -256,6 +272,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     }
 
     if(!strcasecmp(cd.c_str(), "spop")) {
+        saveTimerHandle::countModify() ;
         //给a设置一个特殊值
         string aa = cd.c_str() ;
         a = cmdList[aa]->cb(wrdb, cmd, response) ;

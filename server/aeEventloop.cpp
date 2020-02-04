@@ -17,14 +17,15 @@ aeEventloop :: aeEventloop() {
 int aeEventloop:: init() {
     //初始化检查的规则
     //从工厂中直接获取
+    auto save = saveTimerHandle::getSaveTimerObject() ;
     tman = timeManagerFactory::getManager(1) ;
-    wakeblpop = timeManagerFactory::getManager(2) ;
     aeSocket::createSocketPair() ;
     saveFd = aeSocket::getReadFd() ;
     canSave = 1 ;
     //创建一个epoll对象
     aep = make_shared<aeEpoll>() ;
     aep->epCreate(SIZE) ;
+    save->setEpoll(aep) ;
 }
 
 int getIpPort(string& ip, string&port) {
@@ -72,7 +73,7 @@ void aeEventloop :: initDataInfo() {
 
 //开始监听事件
 int aeEventloop :: start() {
-    int ret = 0 ;
+    auto sth = saveTimerHandle::getSaveTimerObject() ;
     //初始化数据信息
     initDataInfo() ;
     signalSet :: efd = signalSet  :: createEventFd() ;
@@ -96,6 +97,10 @@ int aeEventloop :: start() {
         for(int i=0; i<len; i++) {
             eventfd_t count ;
             int fd = ls[i].data.fd ;
+            int ret = sth->isSaveHandle(fd) ;
+            if(ret != -1) {
+                continue ;
+            }
             if(fd == saveFd) {
                 read(saveFd, &ret, sizeof(ret)) ;
                 canSave = 1 ;

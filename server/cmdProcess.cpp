@@ -16,9 +16,6 @@ int cmdProcess :: initRedis() {
     cmdSet_->initRedis() ;
 }
 //消息回调
-void cmdProcess :: timeCb() {
-    //保存当前数据中的所有数据
-}
 
 void cmdProcess :: initCmdCb() {
     cmdSet_->initCmdCb() ;
@@ -26,9 +23,6 @@ void cmdProcess :: initCmdCb() {
 
 //处理消息
 int cmdProcess :: processMsg(shared_ptr<aeEvent>&tmp) {
-    if(ptr == nullptr) {
-        ptr = aofRecord::getLogObject() ;
-    }
     string seq = "" ;
     int flag = 0 ;
     buffer* bf = tmp->getBuf() ;

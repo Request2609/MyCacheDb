@@ -1,5 +1,19 @@
-#include<iostream>
 #include"readWrite.h"
+
+void  getInfo(std::map<int,int>&ls) {
+    std::ifstream in(SAVE_FILE, std::ios::in) ;
+    if(in.fail()) {
+        std::cout << __LINE__ <<"    " << __FILE__ << std::endl ;
+        return ;
+    }
+    std::string s, other ;
+    int sec , num ;
+    while(!in.eof()) {
+        in>>sec>>num ;
+        ls.insert({sec, num}) ;
+    }
+    in.close() ;
+}
 
 int readn(int fd, void *buf, int n) {
     int nleft = n; //还需要读取的字节数
