@@ -20,6 +20,7 @@ int cmdSet :: backUp() {
 
 void cmdSet:: asyncSave() {
 
+    int status = -1 ;
     int fd = aeSocket::getWriteFd() ;
     aeEventloop::canSave = 0 ;    
     pid_t pid = fork() ;
@@ -33,8 +34,10 @@ void cmdSet:: asyncSave() {
         int ret = cmdCb::save(db) ;
         //将持久化调用结果返回
         write(fd, &ret, sizeof(ret)) ;
-        exit(0) ;
+        return ;
     }
+    //回收子进程资源
+    wait(&status) ;
 }
 
 //初始化命令表
