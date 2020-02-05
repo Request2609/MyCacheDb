@@ -1,5 +1,5 @@
 ### MyCacheDB介绍
-MyCacheDB一个基于C/S架构的小型缓存数据库，支持和redis相同的string，hash，list，set，sortset对象的基本操作，
+MyCacheDB一个基于C/S架构的小型缓存数据库，支持string，hash，list，set，sortset对象的基本操作，
 提供用户编程接口，以及终端readline接收输入，正则表达式进行验证的request-response模式，使用方法简单方便。
 
 ### 运行环境
@@ -8,7 +8,7 @@ MyCacheDB一个基于C/S架构的小型缓存数据库，支持和redis相同的
 - 处理器：Intel® Core™ i5-7300HQ CPU @ 2.50GHz × 4
 - 内存：7.7 GiB
 - 依赖：[Google Protocol Buffers](https://github.com/protocolbuffers/protobuf)，支持proto命令
-- 编译器：gcc编译器，vim+vimplus编写实现
+- 编译器：Gcc编译器，Vim+Vimplus编写实现
 
 ### 特性
 
