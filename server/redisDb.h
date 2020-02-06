@@ -47,7 +47,14 @@ public :
     bool operator==(const key&k) {
         return num==k.num&&cmd==k.cmd&&type==k.type ;
     }
+    bool operator>(const key&k) {
+        return timer>k.timer?1:0 ;
+    }
+    bool operator<(const key&k) {
+        return timer>k.timer?1:0 ;
+    }
 public :
+    int timer ;
     int num ;
     int type ;
     string cmd ;

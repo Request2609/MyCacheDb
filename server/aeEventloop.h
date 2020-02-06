@@ -14,7 +14,7 @@
 
 using namespace Messages ;
 using namespace std ;
-const int timeSlot = 30000;
+const int timeSlot = 10000;
 
 enum {
     READ= EPOLLIN, 

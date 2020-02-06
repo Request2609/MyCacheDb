@@ -79,11 +79,8 @@ int aeEventloop :: start() {
     //初始化数据信息
     initDataInfo() ;
     //将备份通知句柄加到epoll
-   // aep->add(saveFd, READ) ;
     while(!stop) {
         int ret = aep->wait(fireList, timeSlot) ;
-        //cout << "ret :" << fireList[0].data.fd<< endl ;
-        //getchar() ;
         if(ret < 0 && errno != EINTR) {
             cout << strerror(errno) << endl ;
             return -1 ;
@@ -94,6 +91,7 @@ int aeEventloop :: start() {
             tman->detect_timers(1) ;
             continue ;
         }
+        
         vector<epoll_event>ls  = fireList ;
         int len = fireList.size() ;
         for(int i=0; i<len; i++) {
@@ -105,6 +103,9 @@ int aeEventloop :: start() {
             if(fd == saveFd) {
                 read(saveFd, &ret, sizeof(ret)) ;
                 canSave = 1 ;
+                continue ;
+            }
+            if(eventData.find(fd) == eventData.end()) {
                 continue ;
             }
             eventData[fd]->setEvent(&ls[i]) ;
@@ -227,6 +228,7 @@ int aeEventloop :: kickClient(map<int, shared_ptr<aeEvent>>&eventData,
     if(res == eventData.end()) {
         return -1 ;
     }
+    cout << "删除了套接字为:" <<kickFd << endl ;
     eventData.erase(res) ;
     //epoll中移除该描述符
     aep->del(kickFd) ;
