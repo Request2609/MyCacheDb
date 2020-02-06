@@ -1,11 +1,22 @@
 #pragma once
 #include <iostream>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <string>
+#include <string.h>
 #include "rdb.h"
 #include "redisDb.h"
 #include "cmdSet.h"
-using namespace std ;
+#include "dbObject.h"
+#include "msg.pb.h"
+#include "cmdCb.h" 
 
+using namespace std ;
+using namespace Messages ;
 class cmdSet ;
+class redisDb ;
+class dbObject ;
+class cmdCb ;
 //字符串的两种编码
 namespace STRING_ {
     //string 保存的是长度不超过32的整数
@@ -43,5 +54,16 @@ public:
     static string getHashKey(string& s) ;
     static pair<string, string> getAttrKV(string& s) ;
     static bool isOk(long index)  ;
+    static void recoverByLog(vector<pair<int, shared_ptr<redisDb>>>* dbLs) ;
+    static void parseAndExecAofCmd(const char*, vector<pair<int, shared_ptr<redisDb>>>&) ;
+    static vector<string> split(const string &s, 
+                                const string &seperator) ;
+    static int aofString(shared_ptr<Command>&cmd, const vector<string>& str) ;
+    static int aofHash(shared_ptr<Command>&cmd, const vector<string>& str) ;
+    static int aofList(shared_ptr<Command>&cmd, const vector<string>& str) ;
+    static int aofSortSet(shared_ptr<Command>&cmd, const vector<string>& str ) ;
+    static int aofSet(shared_ptr<Command>&cmd, const vector<string>& str ) ;
+    static shared_ptr<redisDb> getDb(int num, const vector<pair<int, shared_ptr<redisDb>>>&) ;
+    static int getTime() ;
 };
 

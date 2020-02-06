@@ -18,7 +18,7 @@ int aeEventloop:: init() {
     //初始化检查的规则
     //从工厂中直接获取
     auto save = saveTimerHandle::getSaveTimerObject() ;
-    tman = timeManagerFactory::getManager(1) ;
+    tman = make_shared<TimerManager>() ;
     aeSocket::createSocketPair() ;
     saveFd = aeSocket::getReadFd() ;
     canSave = 1 ;
@@ -78,13 +78,12 @@ int aeEventloop :: start() {
     sth->startDetect() ;
     //初始化数据信息
     initDataInfo() ;
-    signalSet :: efd = signalSet  :: createEventFd() ;
-    efd = signalSet :: efd ;
-    aep->add(efd, READ) ;
     //将备份通知句柄加到epoll
-    aep->add(saveFd, READ) ;
+   // aep->add(saveFd, READ) ;
     while(!stop) {
         int ret = aep->wait(fireList, timeSlot) ;
+        //cout << "ret :" << fireList[0].data.fd<< endl ;
+        //getchar() ;
         if(ret < 0 && errno != EINTR) {
             cout << strerror(errno) << endl ;
             return -1 ;
@@ -219,7 +218,6 @@ int aeEventloop :: acceptNewConnect(int fd) {
 int aeEventloop :: kickClient(map<int, shared_ptr<aeEvent>>&eventData, 
                               int kickFd, 
                               shared_ptr<aeEpoll>&aep) {
-    cout << "是否为空：" << eventData.empty() << endl ;
     if(eventData.empty())
         cout << "找不到了！"<< endl ;
     else {
@@ -227,7 +225,6 @@ int aeEventloop :: kickClient(map<int, shared_ptr<aeEvent>>&eventData,
     }
     auto res = eventData.find(kickFd) ; 
     if(res == eventData.end()) {
-        cout << __FILE__ << "          " << __LINE__ << endl ;
         return -1 ;
     }
     eventData.erase(res) ;

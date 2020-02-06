@@ -15,17 +15,17 @@
 #include "lzfP.h"
 #include "redisDb.h"
 #include "cmdSet.h"
-#include "timer.h"
 #include "recoverDb.h"
-
+#include "dbObject.h"
+class dbObject ;
 class cmdSet ;
 class rdb ;
+class redisDb ;
 const int version = 1 ;
 //selected 条目
 const char flag = 0 ;
 
 using namespace std ;
-using namespace type ;
 //创建rdb持久化机制
 
 //字符串的两种编码

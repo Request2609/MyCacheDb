@@ -29,23 +29,23 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
         //字符串类别是string
         out << "e:" ;
         out << rd->getEndTime() << "\r\n" ;
-        if(type == DB_STRING) {
+        if(type == type::DB_STRING) {
             string value = rd->getValue() ; 
             string key = rd->getKey() ;
-            out << "ctp:" << DB_STRING << "\r\n" ;
+            out << "ctp:" << type::DB_STRING << "\r\n" ;
             processString(key, out, value) ;
         }
         //hash的保存
-        if(type == DB_HASH) {
+        if(type == type::DB_HASH) {
             string key = rd->getKey() ;
         //    out << rd->getEndTime()<<"\r\n" ;
-            out << "ctp:" << DB_HASH << "\r\n" ;
+            out << "ctp:" <<type:: DB_HASH << "\r\n" ;
             processHash(out, rd) ;         
         }
         //是链表
-        if(type == DB_LIST) {
+        if(type == type::DB_LIST) {
           //  out << rd->getEndTime() << "\r\n" ;
-            out  <<"ctp:" << DB_LIST << "\r\n" ;
+            out  <<"ctp:" << type::DB_LIST << "\r\n" ;
             processList(out, rd) ;
         }   
         rd = db->getNextDb() ;

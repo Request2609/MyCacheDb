@@ -1,5 +1,6 @@
 #include"readWrite.h"
 
+const char* SAVE_FILE = "../conf/persist_strategy.conf";
 void  getInfo(std::map<int,int>&ls) {
     std::ifstream in(SAVE_FILE, std::ios::in) ;
     if(in.fail()) {

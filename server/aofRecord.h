@@ -1,17 +1,10 @@
 #pragma once
 #include <iostream>
 #include <memory>
-#include "easylog.h"
 #include "ThreadPool.h"
-
-INITIALIZE_EASYLOGGINGPP
-const char* LOG_CONF= "../conf/aofLog.conf" ;
-
 class aofRecord {
 public:
-    ~aofRecord() {
-      el::Helpers::uninstallPreRollOutCallback();
-    }
+    ~aofRecord() ;
     static std::shared_ptr<aofRecord>getLogObject() ;
     int init() ;
     static std::shared_ptr<aofRecord> rcd ;

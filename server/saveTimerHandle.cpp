@@ -16,7 +16,7 @@ void saveTimerHandle::getStrategy() {
         return ;
     }
     for(auto s : strategy) {
-        std::count[s->first] = 0;
+        counts[s.first] = 0;
     }
 }
 

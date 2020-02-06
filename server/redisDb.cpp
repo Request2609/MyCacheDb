@@ -16,7 +16,7 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         if(res == db.end()) {
             return 0 ;
         }
-        s= " "+cmds->vals(0).val(0) ;
+        s+=" "+k+" "+cmds->vals(0).val(0) ;
         res->second->setNum(cmds->num()) ;
         res->second->setValue(cmds->vals(0).val(0)) ;
         ptr->record(s.c_str()) ;
@@ -131,7 +131,7 @@ shared_ptr<dbObject> redisDb :: getNextDb() {
     res ++ ;
     int flag = 0 ;
     //判断当前超时
-    long time = timer :: getCurTime() ;
+    long time = recoverDb :: getTime() ;
     int end = dob->getEndTime() ;
     //超时值大于０的时候，判断超时,小于０表示是永久保存
     if(end > 0 && time > end) {
@@ -305,7 +305,7 @@ string redisDb :: findHgetRequest(const string k,
     }
     //获取过期时间
     long endTime = res->second->getEndTime() ;
-    if(endTime != -1 && endTime < timer::getCurTime()) {
+    if(endTime != -1 && endTime < recoverDb::getTime()) {
         db.erase(res) ;
         return "" ;
     }
@@ -327,7 +327,7 @@ string redisDb :: findGetRequest(const string k, const int num) {
     }
     else {
         long ti = res->second->getEndTime() ;
-        if(ti != -1 && ti < timer::getCurTime()) {
+        if(ti != -1 && ti < recoverDb::getTime()) {
             return "" ;
         } 
         return res->second->getValue() ; 

@@ -114,8 +114,9 @@ public :
     static int backUp() ;
     void saveToFrozenRedis(int num) ;
     void sigintProcess() ;
-private:
+    void checkAof() ;
     static void asyncSave();
+private:
     static vector<pair<int, shared_ptr<redisDb>>>*db ;
     shared_ptr<rdb> save ;
     //回复，响应

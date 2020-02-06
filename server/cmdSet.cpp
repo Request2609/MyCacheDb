@@ -1,13 +1,13 @@
 #include "cmdSet.h"
 
+vector<pair<int, shared_ptr<redisDb>>>*cmdSet::db = NULL;
 int cmdSet :: REDIS_NUM = 16 ;
-vector<pair<int, shared_ptr<redisDb>>>cmdSet::*db = NULL;
 //初始化命令集
 cmdSet :: cmdSet() {
     //申请16个数据库
     dbLs.reserve(REDIS_NUM) ;
     for(int i=0; i<16; i++) {
-        dbLs.push_back({i ,shared_ptr<redisDb>(new redisDb(i))}) ;
+        dbLs.push_back({i ,make_shared<redisDb>(i)}) ;
     }
     db = &dbLs ;
 } 
@@ -33,7 +33,7 @@ void cmdSet:: asyncSave() {
         exit(0) ;
     }
     else {
-        int ret = cmdCb::save(db) ;
+        int ret = cmdCb::save(*db) ;
         //将持久化调用结果返回
         write(fd, &ret, sizeof(ret)) ;
         return ;
@@ -156,6 +156,9 @@ shared_ptr<redisDb> cmdSet :: getDB(int num) {
     return nullptr ;
 }
 
+void cmdSet::checkAof() {
+    recoverDb::recoverByLog(&dbLs) ;
+}
 
 int cmdSet :: append(shared_ptr<redisDb> db) {
     int num = db->getId() ;
@@ -173,6 +176,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     int a = 0 ;
     if(!strcasecmp(cd.c_str(), "set")) {
         saveTimerHandle::countModify() ;
+        cout << "完成" << endl ;
         //调用命令对应的函数
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         //处理失败

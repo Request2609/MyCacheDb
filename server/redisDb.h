@@ -9,15 +9,15 @@
 #include <cstdarg>
 #include <map>
 
+#include "recoverDb.h"
 #include "aofRecord.h"
 #include "dbObject.h"
-#include "timer.h"
 #include "msg.pb.h"
-#include "timer.h"
 
 using namespace Messages ;
 using namespace std ;
 
+class recoverDb ;
 
 namespace type {
     //该键值是string 使用get　set 方法获取

@@ -142,7 +142,7 @@ int cmdCb :: setCmd(shared_ptr<redisDb>&wcmd,
     int ret = isKeyExist(wcmd, cmd) ;
     //没找到键
     if(ret == 0) {
-        s+=" "+cmd->num()+" " +"set" ;
+        s+=" "+to_string(cmd->num())+" " +"set" ;
         shared_ptr<dbObject>se = factory::getObject("set");
         se->setType(type::DB_STRING) ;
         se->setName("set") ;
@@ -169,7 +169,7 @@ int cmdCb::sortSetAdd(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shared_
     string s ="" ;
     shared_ptr<dbObject>se = factory::getObject("zadd") ;
     ListObject lob = tmp->lob(0) ;
-    s+=" "+tmp->num() <<" " <<"sadd "+lob.key()+" "+lob.vals(0).val(0)+" "+lob.vals(0).val(1);
+    s+=" "+to_string(tmp->num())+ "sadd "+lob.key()+" "+lob.vals(0).val(0)+" "+lob.vals(0).val(1);
     se->setKey(lob.key()) ;
     se->setValue(lob.vals(0).val(0), lob.vals(0).val(1).c_str()) ;
     se->setNum(tmp->num());
@@ -188,7 +188,7 @@ int cmdCb :: setSetValue(shared_ptr<redisDb>&wcmd, shared_ptr<Command>&tmp, shar
     auto se = factory::getObject("sadd") ;
     ListObject lob = tmp->lob(0) ;
     se->setKey(lob.key()) ;
-    s+=" "+tmp->num()+" "+lob.key() ;
+    s+=" "+to_string(tmp->num())+" "+lob.key() ;
     Value val = lob.vals(0) ;
     int size = val.val_size() ;
     for(int i=0; i<size;i++) {

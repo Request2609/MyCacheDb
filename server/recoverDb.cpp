@@ -1,5 +1,13 @@
 #include "recoverDb.h"
 
+
+int recoverDb :: getTime() {
+    time_t t ;
+    t = time(NULL) ;
+    int ii = time(&t) ;
+    return ii ;
+}
+
 shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
     if(!isRedis(s)) {
         return nullptr ;
@@ -18,7 +26,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
             break ;
         }
         //超时的话，就找下一个
-        if(times > 0 && times < timer :: getCurTime()) {
+        if(times > 0 && times < getTime()) {
             //每个对象元素结束的标识
             long index = s.find("\r$\n") ;
             s = s.c_str() + index + 3;
@@ -34,7 +42,7 @@ shared_ptr<redisDb> recoverDb :: recover(string& s, cmdSet* cmdset) {
         }
         if(type == CMDTYPE_::DB_HASH) {
             shared_ptr<dbObject> ob = factory :: getObject("hset") ;
-            ob->setType(DB_HASH) ;
+            ob->setType(type::DB_HASH) ;
             ob->setNum(num) ;
             ob->setEndTime(times) ;
             int ret = hashGet(s, ob) ; 
@@ -187,11 +195,208 @@ void recoverDb :: stringGet(string& s, shared_ptr<dbObject>&ob) {
             }
         }
     }
-    ob->setType(DB_STRING) ; 
+    ob->setType(type::DB_STRING) ; 
     ob->setKey(key) ;
     ob->setValue(value) ;
 }
 
+void recoverDb::recoverByLog(vector<pair<int, shared_ptr<redisDb>>>*dbLs) {
+    struct stat st ;
+    //查看备份文件
+    int fd = open("../logInfo/backuplog.log", O_RDONLY) ;
+    if(fd > 0) {
+        fstat(fd, &st) ;
+        char* buf = (char*)mmap(buf, st.st_size, PROT_READ, fd, MAP_SHARED,0) ;
+        parseAndExecAofCmd(buf, *dbLs) ;
+    }
+    fd = open("../logInfo/aoflog.log", O_RDONLY) ;
+    if(fd > 0) {
+        fstat(fd, &st) ;
+        char* buf = (char*)mmap(buf, st.st_size, PROT_READ, fd, MAP_SHARED,0) ;
+        parseAndExecAofCmd(buf, *dbLs) ;
+    }
+}
+
+shared_ptr<redisDb>recoverDb::getDb(int num, const vector<pair<int, shared_ptr<redisDb>>>&ls) {
+    for(auto s=ls.begin(); s!=ls.end(); s++) {
+        if(s->first == num) {
+            return s->second ;
+        }
+    }
+    return nullptr ;
+}
+
+void recoverDb :: parseAndExecAofCmd(const char* buf, vector<pair<int, shared_ptr<redisDb>>>&dbls) {
+    string s = buf ;
+    string tmp ;
+    int index = 0 ;
+    shared_ptr<Command>cmd = make_shared<Command>();
+    shared_ptr<redisDb>wcmd ; 
+    shared_ptr<Response>rs ;
+    vector<string>ls ;
+    while(s.size() != 0) {
+        if(s.find('\n') == string::npos) {
+            break ;
+        }
+        else {
+            int num = 0 ;
+            index = s.find('\n') ;
+            tmp=s.substr(0, index) ;
+            ls = split(tmp," ") ;
+            if(ls.size() > 2) {
+                if(ls[2] == "set") {
+                     num = aofString(cmd, ls) ;
+                     wcmd = getDb(num, dbls) ;
+                     cmdCb::setCmd(wcmd, cmd, rs) ;
+                }
+                else if(ls[2] == "hset") {
+                    num = aofHash(cmd, ls) ;
+                    wcmd = getDb(num, dbls) ;
+                    cmdCb::setHash(wcmd, cmd, rs) ;
+                }
+                else if(ls[2] == "sadd") {
+                    wcmd = getDb(num, dbls) ;
+                    num =aofSet(cmd, ls) ;
+                    cmdCb::setSetValue(wcmd, cmd, rs) ;
+                } 
+                else if(ls[2] == "zadd"){
+                    num = aofSortSet(cmd, ls) ;
+                    wcmd = getDb(num, dbls) ;
+                    cmdCb::sortSetAdd(wcmd, cmd, rs) ;
+                }
+                else if(ls[2] == "lpush") {
+                    num = aofList(cmd, ls) ;
+                    wcmd = getDb(num, dbls) ;
+                    cmdCb::setLpush(wcmd, cmd, rs) ;
+                }
+            }
+            else {
+                break ;
+            }
+            s = s.c_str()+index+1 ;
+        }
+    }
+}
+
+int recoverDb::aofString(shared_ptr<Command>&cmd, const vector<string>& str) {
+    int num = atoi(str[1].c_str()) ;
+    cmd->set_num(num) ;
+    cmd->set_cmd(str[2]) ;   
+    cmd->set_type(type::DB_STRING);
+    Key* key = cmd->add_keys() ;
+    string* k = key->add_key() ;
+    *k = str[3] ;
+    Value* val = cmd->add_vals() ;
+    string* v = val->add_val() ;
+    //设置数据库编号
+    *v = str[4] ;
+    return num ;
+}
+
+
+int recoverDb::aofHash(shared_ptr<Command>&cmd, const vector<string>& str) {
+    int num = atoi(str[1].c_str()) ;
+    cmd->set_num(num) ;
+    cmd->set_type(type::DB_HASH) ;
+    int len = str.size() ;
+    cmd->set_cmd(str[2]) ;
+    Key* key = cmd->add_keys() ;
+    string* k = key->add_key() ;
+    *k = str[3] ;
+    Value* val = cmd->add_vals() ;
+    Key* keyk = cmd->add_keys() ;
+    for(int i=3; i<len; i+=2) {
+        string* v = val->add_val() ;
+        *v = str[i+1] ;
+        string* k = keyk->add_key() ;
+        *k = str[i] ;
+    }
+    return num ;
+}
+
+int recoverDb::aofList(shared_ptr<Command>&cmd, const vector<string>& str) {
+    int num = atoi(str[1].c_str()) ;
+    cmd->set_num(num) ;
+    cmd->set_type(type::DB_LIST) ;
+    ListObject *lob = cmd->add_lob() ;
+    cmd->set_cmd(str[2]) ;
+    lob->set_key(str[3]) ;
+    int len = str.size() ;
+    Value* val = lob->add_vals() ;
+    for(int i=4; i<len; i++) {
+        string*v = val->add_val() ;
+        *v = str[i] ;
+    }
+    cmd->set_num(atoi(str[1].c_str()));
+    return num ;
+}
+
+int recoverDb::aofSet(shared_ptr<Command>&cmd, const vector<string>& str) {
+    int num = atoi(str[1].c_str()) ;
+    cmd->set_type(type::SET_SET) ;
+    cmd->set_num(num);
+    ListObject *lob = cmd->add_lob() ;
+    cmd->set_cmd(str[2]) ;
+    lob->set_key(str[3]) ;
+    int len = str.size() ;
+    Value* val = lob->add_vals() ;
+    for(int i=4; i<len; i++) {
+        string*v = val->add_val() ;
+        *v = str[i] ;
+    }
+    return num ;
+}
+
+int recoverDb::aofSortSet(shared_ptr<Command>&cmd, const vector<string>& str) {
+    int num = atoi(str[1].c_str()) ;
+    cmd->set_num(num) ;
+    cmd->set_type(type::SET_SET) ;
+    cmd->set_cmd(str[2]) ;
+    ListObject* lob = cmd->add_lob() ;
+    lob->set_key(str[3]) ;
+    Value* val = lob->add_vals() ;
+    string*s = val->add_val() ;
+    *s = str[4] ;
+    string*s1 = val->add_val() ;
+    *s1 = str[5] ;
+    return num ;
+}
+//使用gpb命名空间
+vector<string> recoverDb::split(const string &s, const string &seperator){
+    vector<string> result;
+    typedef string::size_type string_size;
+    string_size i = 0;
+    while(i != s.size()){
+        //找到字符串中首个不等于分隔符的字母；
+        int flag = 0;
+        while(i != s.size() && flag == 0){ 
+            flag = 1;
+            for(string_size x = 0; x < seperator.size(); ++x)
+                if(s[i] == seperator[x]){
+                    ++i;
+                    flag = 0;
+                    break;
+                }
+        }
+        //找到又一个分隔符，将两个分隔符之间的字符串取出；
+        flag = 0;
+        string_size j = i;
+        while(j != s.size() && flag == 0){ 
+            for(string_size x = 0; x < seperator.size(); ++x)
+                if(s[j] == seperator[x]){
+                    flag = 1;
+                    break;
+                }
+            if(flag == 0)                                                                                                                                                                                                                                                     
+                ++j;
+        }
+        if(i != j){ 
+            result.push_back(s.substr(i, j-i));
+            i = j;
+        }
+    }   
+    return result;
+}      
 //获取键值
 string recoverDb :: getKey(string& s) {
     long index = s.find("\r\n") ;

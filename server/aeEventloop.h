@@ -8,24 +8,21 @@
 #include <fstream>
 #include "signalSet.h"
 #include "timerHeap.h" 
-#include "timerFactory.cpp"
 #include "aeEpoll.h"
 #include "aeEvent.h"
 #include "msg.pb.h"
 
 using namespace Messages ;
 using namespace std ;
-const int timeSlot = 10 ;
+const int timeSlot = 30000;
 
-class logRecord ;
 enum {
     READ= EPOLLIN, 
     WRITE= EPOLLOUT,
 } ;
-class timeManagerFactory ;
-class TimerManager ;
-class signalSet ;
 
+class TimerManager ;
+class aeEvent ;
 //创建事件循环
 class aeEventloop {
     typedef function<int(shared_ptr<aeEvent>)> callBack ;
