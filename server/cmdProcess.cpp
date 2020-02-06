@@ -14,6 +14,7 @@ int cmdProcess :: findCmd(shared_ptr<Command>tmp) {
 int cmdProcess :: initRedis() {
     //导入数据库中的数据
     cmdSet_->initRedis() ;
+    //从aof文件中获取之前没有执行的命令执行
 }
 //消息回调
 

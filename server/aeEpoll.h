@@ -19,7 +19,7 @@ public :
     int epCreate(int size) ;   
     int modify(int fd, int event) ;
     int del(int fd) ;
-    int wait(vector<epoll_event>&ls) ;
+    int wait(vector<epoll_event>&ls, int t) ;
     int getEpFd() { return epFd ; }
 private :
     int epFd ;

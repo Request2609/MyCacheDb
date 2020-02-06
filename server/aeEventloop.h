@@ -15,6 +15,8 @@
 
 using namespace Messages ;
 using namespace std ;
+const int timeSlot = 10 ;
+
 class logRecord ;
 enum {
     READ= EPOLLIN, 

@@ -4,6 +4,7 @@ int signalSet :: timeSlot = 10000 ;
 int signalSet :: pipeFd[2] ;
 int signalSet :: efd ;
 int signalSet:: wakeBlpopFd ;
+/*
 //int signalSet :: efd ;
 //等待被触发的时钟信号
 void signalSet :: addSig(int sig) {
@@ -14,7 +15,7 @@ void signalSet :: addSig(int sig) {
     sigfillset(&sa.sa_mask) ;
     assert(sigaction(sig, &sa, NULL) != -1) ;
 }
-
+*/
 void signalSet :: addWakeBlpopSig() {
     
 }
@@ -45,7 +46,7 @@ int signalSet :: setAlarm(int slot) {
     alarm(slot) ;      
     return 1 ;
 }
-
+/*
 //向eventfd写数据，触发定时器任务
 void signalSet :: sigHandle(int sig) {
     int save_errno = errno ;
@@ -53,4 +54,4 @@ void signalSet :: sigHandle(int sig) {
     write(efd, &data, sizeof(data)) ;
     errno = save_errno ;
 }
-
+*/

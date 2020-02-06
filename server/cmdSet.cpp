@@ -19,8 +19,10 @@ int cmdSet :: backUp() {
 }
 
 void cmdSet:: asyncSave() {
-
-    int status = -1 ;
+    int stat ;
+    pid_t wpid ;
+    //非阻塞wait
+    wpid = waitpid(-1, &stat, WNOHANG) ;
     int fd = aeSocket::getWriteFd() ;
     aeEventloop::canSave = 0 ;    
     pid_t pid = fork() ;
@@ -28,7 +30,7 @@ void cmdSet:: asyncSave() {
         return ;
     }
     if(pid == 0) {
-        return ;
+        exit(0) ;
     }
     else {
         int ret = cmdCb::save(db) ;
@@ -36,8 +38,6 @@ void cmdSet:: asyncSave() {
         write(fd, &ret, sizeof(ret)) ;
         return ;
     }
-    //回收子进程资源
-    wait(&status) ;
 }
 
 //初始化命令表

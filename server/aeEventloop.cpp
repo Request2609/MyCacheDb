@@ -83,21 +83,21 @@ int aeEventloop :: start() {
     aep->add(efd, READ) ;
     //将备份通知句柄加到epoll
     aep->add(saveFd, READ) ;
-    //创建eventFd，内部已经设置了非阻塞
-    //设置信号
-    signalSet :: addSig(SIGALRM) ;
-    //设置时钟信号
-    signalSet :: setAlarm(signalSet :: timeSlot) ;
     while(!stop) {
-        int ret = aep->wait(fireList) ;
+        int ret = aep->wait(fireList, timeSlot) ;
         if(ret < 0 && errno != EINTR) {
             cout << strerror(errno) << endl ;
             return -1 ;
         }
+        //定时器是事件
+        if(ret == 0) {
+            //探测以便事件堆
+            tman->detect_timers(1) ;
+            continue ;
+        }
         vector<epoll_event>ls  = fireList ;
         int len = fireList.size() ;
         for(int i=0; i<len; i++) {
-            eventfd_t count ;
             int fd = ls[i].data.fd ;
             int ret = sth->isSaveHandle(fd) ;
             if(ret != -1) {
@@ -108,23 +108,6 @@ int aeEventloop :: start() {
                 canSave = 1 ;
                 continue ;
             }
-            //是唤醒等待阻塞链表的fd
-            if(efd == fd) {
-                //同时唤醒
-                int ret = read(efd, &count, sizeof(count)) ;
-                if(ret < 0) {
-                    cout << __LINE__ << "       " << __FILE__ << endl ;
-                    return -1 ;
-                }
-                //检查时间堆
-                tman->detect_timers(1) ;
-                //检测是否有阻塞的客户端
-                wakeblpop->detect_timers(2) ;
-                //继续添加超时时间
-                signalSet :: setAlarm(signalSet :: timeSlot) ;
-                continue ;
-            }
-            //设置epoll_event
             eventData[fd]->setEvent(&ls[i]) ;
             //处理完成以后
             aeProcessEvent(fd) ;

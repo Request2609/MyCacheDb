@@ -44,8 +44,8 @@ int aeEpoll :: del(int fd) {
 }
 
 //将所有活跃事件收起来ls
-int aeEpoll :: wait(vector<epoll_event>&ls) {
-    int eventNum = epoll_wait(epFd, &eventFds[0], eventFds.capacity(), -1) ;
+int aeEpoll :: wait(vector<epoll_event>&ls, int t) {
+    int eventNum = epoll_wait(epFd, &eventFds[0], eventFds.capacity(), t) ;
     if(eventNum < 0 && errno != EINTR) {
         cout << errno << "     " << strerror(errno) << "      " << __FILE__ << "         " << __LINE__ <<  endl ;
         return -1 ;
