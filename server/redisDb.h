@@ -8,7 +8,9 @@
 #include <unordered_map>
 #include <cstdarg>
 #include <map>
+#include <time.h>
 
+#include "lru.h"
 #include "recoverDb.h"
 #include "aofRecord.h"
 #include "dbObject.h"
@@ -27,7 +29,8 @@ namespace type {
     const int SORT_SET = 6 ;
     const int SET_SET = 7 ;
 } 
-
+class curTimer ;
+class simpleLru ;
 class redisDb ;
 class dbObject ;
 class strings;
@@ -77,9 +80,14 @@ public :
 //数据库对象
 class redisDb {
 public :
-    redisDb(int id) : num(id) {  }
+    redisDb(int id) : num(id)  { 
+        srand((int)time(0)) ;
+        MAX_SIZE = 1024*1024*1024 ;
+    }
     ~redisDb() {  } 
 private :
+    vector<key>kls ;
+    long MAX_SIZE ;
     //数据库编号
     int num ;
     unordered_map<key, shared_ptr<dbObject>, hashFunc, equalFunc> db ;
@@ -89,6 +97,8 @@ public :
     //获取当前数据库id
     //判断数据库是否为空
     int append(int num, int type, shared_ptr<dbObject>dob) ;
+    long getMaxMem() { return MAX_SIZE; }
+    bool isFull(long size) { return size>MAX_SIZE ; }
     int isEmpty() { return db.size() ; }
     void print() ;
     void setId(int id) { this->num = id ; }
@@ -97,6 +107,7 @@ public :
     string findGetRequest(const string name, const int num) ;
     string findHgetRequest(const string key, const string field) ;
     string findListRequest(const string key, const int num) ;
+    key getRandomKey() ;
     string findSortSetValue(const shared_ptr<Command>&cmd) ;
     string findSetRequest(const string key, const int num );
     void processBlpop() ;
@@ -110,3 +121,7 @@ public :
     void removeDataByKey(key k) ;
 } ;
 
+class curTimer{
+public:
+    static long curTime() ;
+} ;

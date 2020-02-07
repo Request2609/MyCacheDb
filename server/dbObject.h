@@ -18,6 +18,7 @@ public:
     dbObject() {}
     virtual ~dbObject() {}
 public :
+    long timer ;
     virtual void print() = 0;
     //set操作
     virtual long long  getEndTime() = 0 ;

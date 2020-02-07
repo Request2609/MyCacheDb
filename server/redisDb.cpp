@@ -12,10 +12,12 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         s=to_string(cmds->num())+" set" ;
         string k = cmds->keys(0).key(0) ;
         key ke(num, type::DB_STRING, k) ;
+
         auto res = db.find(ke) ;
         if(res == db.end()) {
             return 0 ;
         }
+        res->second->timer = curTimer::curTime() ;
         s+=" "+k+" "+cmds->vals(0).val(0) ;
         res->second->setNum(cmds->num()) ;
         res->second->setValue(cmds->vals(0).val(0)) ;
@@ -33,6 +35,7 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         if(res == db.end()) {
             return 0 ;
         }
+        res->second->timer = curTimer::curTime() ;
         int k_len = cmds->keys_size() ;
         for(int i=1; i<k_len; i++) {
             int lk = cmds->keys(i).key_size() ;
@@ -69,6 +72,7 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
                 s+=" "+lob.vals(i).val(j) ;
             }
         }
+        res->second->timer = curTimer::curTime() ;
         num = res->second->objectSize() ;
         ptr->record(s.c_str()) ;
         return num ;   
@@ -81,6 +85,7 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         if(res == db.end()) {
             return -1 ;
         }
+        res->second->timer = curTimer::curTime() ;
         Value val = lob.vals(0) ;
         string score = val.val(0);
         string value = val.val(1) ;
@@ -97,6 +102,7 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         if(res == db.end()) {
             return -1 ;
         }
+        res->second->timer = curTimer::curTime() ;
         Value val = lob.vals(0) ;
         int size = val.val_size() ;
         for(int i=0; i<size; i++) {
@@ -108,17 +114,49 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
     return 1 ;
 }
 
+long curTimer::curTime() {
+    time_t t ;
+    t = time(NULL) ;
+    long ii = time(&t) ;
+    return ii ;
+}
+
 int redisDb::append(int num, int type, shared_ptr<dbObject>dob) {
     key k ;
     k.num = num ;
     k.type = type ;
     k.cmd = dob->getKey() ;
+    k.timer = curTimer::curTime() ;
     auto s = db.find(k) ;
     if(s == db.end()) {
         db.insert({k, dob}) ;
+        auto ret = db.find(k) ;
+        ret->second->timer = curTimer::curTime() ;
+    }
+    //判断内存上限
+    if(isFull(simpleLru::getMem())) {
+        key k = getRandomKey() ;
+        k.timer = db[k]->timer;
+        simpleLru::statistic(k) ;
     }
 }
 
+//产生随机数
+key redisDb::getRandomKey() {
+    int num = db.bucket_count() ;
+    key k ;
+    while(1) {
+        int index = rand()%num ;
+        int flag = 0 ;
+        for(auto it=db.begin(index); it!=db.end(index); it++) {
+            flag = 1 ;
+            key k = it->first ;
+            break ;
+        }
+        if(flag == 1) break ;
+    }
+}
+    
 //遍历redis中的dbObject对象
 shared_ptr<dbObject> redisDb :: getNextDb() {
     static auto res = db.begin();
@@ -150,7 +188,14 @@ void redisDb :: append(shared_ptr<dbObject>rdb) {
     k.type = rdb->getType() ;
     //键值
     k.cmd = rdb->getKey() ;
+    k.timer = curTimer::curTime() ;
+    rdb->timer = curTimer::curTime() ;
     db.insert({k, rdb}); 
+    if(isFull(simpleLru::getMem())) {
+        key k = getRandomKey() ;
+        k.timer = db[k]->timer;
+        simpleLru::statistic(k);
+    }
 }
 
 //查询数据库,get命令等
@@ -231,6 +276,7 @@ string redisDb :: findSetRequest(const string k, const int num ){
         return "" ;
     }
     string ss = res->second->getValue() ;
+    res->second->timer = curTimer::curTime() ;
     return ss ;  
 }
 
@@ -249,6 +295,7 @@ string redisDb :: findSortSetValue(const shared_ptr<Command>& cmd) {
         return "" ;
     }
     vector<string> res = ret->second->getValues(val) ;
+    ret->second->timer = curTimer::curTime() ;
     //将结果集合打包
     string ss = "" ;
     for(auto a : res) {
@@ -278,6 +325,7 @@ string redisDb::findListRequest(const string k, const int num) {
         removeDataByKey(ke) ;
         return "" ;
     }
+    res->second->timer = curTimer::curTime() ;
     string t= res->second->getValue() ;
     int len = res->second->objectSize() ;   
     return t+" "+to_string(len) ;
@@ -309,6 +357,7 @@ string redisDb :: findHgetRequest(const string k,
         db.erase(res) ;
         return "" ;
     }
+    res->second->timer = curTimer::curTime() ;
     auto s = res->second->getValues(feild) ;
     return s[0] ;   
 }
@@ -326,6 +375,7 @@ string redisDb :: findGetRequest(const string k, const int num) {
         return "" ;
     }
     else {
+        res->second->timer = curTimer::curTime() ;
         long ti = res->second->getEndTime() ;
         if(ti != -1 && ti < recoverDb::getTime()) {
             return "" ;
