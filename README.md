@@ -70,6 +70,7 @@ sudo cp -R MyCacheDB /usr/include
 sudo mv DBClient /usr/sbin
 ```
 将client下的lib目录中的静态库文件移动到你自定义程序的目录下，需要在编译时链接
+
 （5）编写自定义的程序如下
 
 `main.cpp`
