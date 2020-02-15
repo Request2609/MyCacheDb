@@ -1,37 +1,31 @@
 ### MyCacheDB介绍
-MyCacheDB一个基于C/S架构的小型缓存数据库，支持string，hash，list，set，sortset对象的基本操作，
-提供用户编程接口，以及终端readline接收输入，正则表达式进行验证的request-response模式，使用方法简单方便。
+MyCacheDB是一个基于C/S架构的小型缓存数据库，支持string，hash，list，set，sortset对象的基本操作，提供易用的用户编程和终端输入接口
 
 ### 运行环境
 
 - 系统：ubuntu19.10
 - 处理器：Intel® Core™ i5-7300HQ CPU @ 2.50GHz × 4
 - 内存：7.7 GiB
-- 依赖：[Google Protocol Buffers](https://github.com/protocolbuffers/protobuf)，支持proto命令
-- 编译器：Gcc编译器，Vim+Vimplus编写实现
+- 依赖：[Google Protocol Buffers](https://github.com/protocolbuffers/protobuf)，机器需支持proto命令
+- 编译器：Gcc编译器，Vim+Vimplus开发环境
 
 ### 特性
 
 - 双端协议都是使用[Google Protocol Buffers](https://developers.google.cn/protocol-buffers/),程序中都设计了序列化和反序列化模块
-- 所有对象使用只能指针进行管理，少内存泄漏
+- 使用智能指针管理对像，避免内存泄漏
 
 **服务端**
-- 分模块实现，主要包含IO处理模块、命令及其回调函数模块、数据局对象模块、日志记录模块和持久化及数据库恢复模块
-- IO处理模块中，采用事件驱动IO设计思想，Epoll IO多路复用机制，每个被监听事件的类型都为Epoll LT+EPOLLIN+非阻塞，有事件到时，通过回调函数处理
-- 使用最小堆定时器对超时连接进行检测，使用eventfd对定时器事件进行通知
-- 定时持久化使用timerfd，加到epoll中检测，有可读事件，检测修改次数，并开辟进程进行持久化
-- 设计模式，项目中使用到了工厂模式和单实例懒汉模式
-- 日志模块参考Redis Append-On-File的思想，使用Easyloging++进行日志文件滚动记录
-- 有序集合对象通过[自己实现红黑树数据结构](https://blog.csdn.net/qq_41681241/article/details/103552988)进行管理
-- 持久化模块，写保存数据库快照，防止之前的数据丢失，分为阻塞持久化和异步持久化。异步持久化，fork子进程进行，给客户端直接返回OK，异步持久化完成后，向服务端通过socketpair发送消息
-- 设计分库管理机制，1号数据库存储在.db\_1文件中依次类推，所有数据库名称保存在另一个文件中，开机时通过mmap对.db\_\*文件进行读取
-- 当缓存不够用的时候，会先随机选一些键，然后模拟LRU设计二叉搜索树淘汰
-
-
+- 分模块实现，主要包含IO处理模块、命令及其回调函数模块、数据库对象模块、日志记录模块和持久化及数据库恢复模块
+- IO处理模块中，采用Epoll IO多路复用机制，每个被监听事件的类型都为Epoll LT+EPOLLIN+非阻塞，有事件到时，通过回调函数处理
+- 使用最小堆定时器检测并移除闲置客户端
+- 设计模式，项目中使用到了工厂模式降低代码的重复，单例模式创建特定对象，提供唯一实例的受控访问，节约系统资源
+- 使用Easyloging++进行日志文件滚动记录日志
+- 有序集合对象通过[自己实现红黑树数据结构](https://blog.csdn.net/qq_41681241/article/details/103552988)进行管理，查找时间效率高
+- 持久化模块，同步持久化和异步持久化。使用快照机制，保证数据不丢失。fork子进程进行异步持久化
+- 设计分库管理机制，1号数据库存储在.db_1文件中......依次类推，所有数据库名称保存在另一个文件中，开机时通过mmap对.db_\*文件进行读取
+- 当缓存不够用的时候，会随机选一些键进行淘汰
 **客户端**
-- 用户要是使用客户端编程接口，发送命令和接收命令是异步的，接收命令使用Epoll+线程池，套接字为非阻塞+EPOLLIN+EPOLLONESHOT LT触发模式
-- 使用队列机制管理发送的命令和接收的命令
-- 用户使用终端接口直接运行./MyCacheDB就能使用，使用方法和redis中的命令操作形式相同
+- 客户端实现异步发收命令功能
 
 ### 目录说明
 
@@ -48,7 +42,7 @@ MyCacheDB一个基于C/S架构的小型缓存数据库，支持string，hash，l
 
 ### 使用与安装
 
-（1）修改配置文件，进入conf文件，进入配置文件填写IP和端口信息，格式为冒号+空格+IP/端口
+（1）修改配置文件，进入conf文件，打开配置文件填写IP和端口信息，格式为冒号+空格+IP/端口
 
 （2）修改start.sh文件的权限
 
@@ -69,7 +63,7 @@ chmod a+x start.sh   //当前目录中必须有start.sh文件
 sudo cp -R MyCacheDB /usr/include
 sudo mv DBClient /usr/sbin
 ```
-将client下的lib目录中的静态库文件移动到你自定义程序的目录下，需要在编译时链接
+进入client下的lib目录，将其中的静态库文件移动到你自定义程序的目录下，需要在编译时链接
 
 （5）编写自定义的程序如下
 
@@ -183,7 +177,7 @@ int main(int argc, char** argv) {
 
 ```
 
-- 事件精确微妙，编译
+- 编译
 
 ```
 g++ test.cpp libclient.a -lpthread -g -std=c++11 -w -lprotobuf -lreadline `pkg-config --cflags --libs protobuf` -o test_exe
@@ -191,7 +185,7 @@ g++ test.cpp libclient.a -lpthread -g -std=c++11 -w -lprotobuf -lreadline `pkg-c
 
 运行结果：
 
-- 第一次客户端发送命令，服务器以也是刚启动，先不进行初始化。在接收到命令后，会进行一系列初始化，显示结果，第一次执行get命令和第二次执行结果相比较慢
+- 服务器刚启动，不会进行初始化。在接收到命令后，会进行一系列初始化，显示结果，第一次执行get命令和第二次执行结果相比较慢
 
 ![haha](image/test1.png)
 
