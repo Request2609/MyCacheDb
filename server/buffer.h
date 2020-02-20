@@ -2,7 +2,6 @@
 #include <string>
 #include <string.h>
 #include <vector>
-using namespace std ;
 
 class buffer {
 public:
@@ -32,7 +31,6 @@ public :
 
 private:
     char buf[4096] ;
-  //  string buf ;
     long readIndex ;
     long writeIndex ;
 };

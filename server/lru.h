@@ -2,7 +2,6 @@
 #include <list>
 #include <fstream>
 #include "redisDb.h"
-using namespace std ;
 
 class searchTree ;
 struct treeNode ;
@@ -16,17 +15,17 @@ private:
     simpleLru():size(0) {}
     void init() ;
     void updateAndEliminate(const key& k) ;
-    static shared_ptr<simpleLru>getSimpleLru() ;
+    static std::shared_ptr<simpleLru>getSimpleLru() ;
     int size ;
-    static shared_ptr<simpleLru>sl ;
-    shared_ptr<searchTree>st ;
+    static std::shared_ptr<simpleLru>sl ;
+    std::shared_ptr<searchTree>st ;
 };
 
 struct treeNode {
     treeNode(const key k) ;
-    shared_ptr<key> k ;
-    shared_ptr<treeNode>left ;
-    shared_ptr<treeNode>right ;
+    std::shared_ptr<key> k ;
+    std::shared_ptr<treeNode>left ;
+    std::shared_ptr<treeNode>right ;
 };
 
 class searchTree {
@@ -36,8 +35,8 @@ public :
     ~searchTree() {
     }
     void insert(const key& k) ;
-    shared_ptr<treeNode> deleteOne() ;
+    std::shared_ptr<treeNode> deleteOne() ;
 private:
     int size = 0 ;
-    shared_ptr<treeNode>root ;
+    std::shared_ptr<treeNode>root ;
 } ;

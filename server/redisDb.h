@@ -17,7 +17,6 @@
 #include "msg.pb.h"
 
 using namespace Messages ;
-using namespace std ;
 
 class recoverDb ;
 
@@ -46,7 +45,7 @@ class aofRecord ;
 class key {
 public :
     key() {}
-    key(int n, int t, string c) : num(n), type(t), cmd(c) {}
+    key(int n, int t, std::string c) : num(n), type(t), cmd(c) {}
     bool operator==(const key&k) {
         return num==k.num&&cmd==k.cmd&&type==k.type ;
     }
@@ -60,13 +59,13 @@ public :
     int timer ;
     int num ;
     int type ;
-    string cmd ;
+    std::string cmd ;
 } ;
 
 class hashFunc {
 public :
-    std :: size_t operator()(const key& k) const{
-        return (((hash<int>()(k.num)<<1)^(hash<string>()(k.cmd)<<1))>>1)^(hash<int>()(k.type) >> 1) ;
+    size_t operator()(const key& k) const{
+        return (((std::hash<int>()(k.num)<<1)^(std::hash<std::string>()(k.cmd)<<1))>>1)^(std::hash<int>()(k.type) >> 1) ;
     }   
 } ;
 
@@ -86,36 +85,36 @@ public :
     }
     ~redisDb() {  } 
 private :
-    vector<key>kls ;
+    std::vector<key>kls ;
     long MAX_SIZE ;
     //数据库编号
     int num ;
-    unordered_map<key, shared_ptr<dbObject>, hashFunc, equalFunc> db ;
+    std::unordered_map<key, std::shared_ptr<dbObject>, hashFunc, equalFunc> db ;
 public :
     //往数据库中写数据
     int initDb() ;
     //获取当前数据库id
     //判断数据库是否为空
-    int append(int num, int type, shared_ptr<dbObject>dob) ;
+    int append(int num, int type, std::shared_ptr<dbObject>dob) ;
     long getMaxMem() { return MAX_SIZE; }
     bool isFull(long size) { return size>MAX_SIZE ; }
     int isEmpty() { return db.size() ; }
     void print() ;
     void setId(int id) { this->num = id ; }
     int getId() { return num ; }
-    shared_ptr<dbObject>getNextDb() ;
-    string findGetRequest(const string name, const int num) ;
-    string findHgetRequest(const string key, const string field) ;
-    string findListRequest(const string key, const int num) ;
+    std::shared_ptr<dbObject>getNextDb() ;
+    std::string findGetRequest(const std::string name, const int num) ;
+    std::string findHgetRequest(const std::string key, const std::string field) ;
+    std::string findListRequest(const std::string key, const int num) ;
     key getRandomKey() ;
-    string findSortSetValue(const shared_ptr<Command>&cmd) ;
-    string findSetRequest(const string key, const int num );
+    std::string findSortSetValue(const std::shared_ptr<Command>&cmd) ;
+    std::string findSetRequest(const std::string key, const int num );
     void processBlpop() ;
-    int queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) ;
-    void append(shared_ptr<dbObject>rdb) ;
+    int queryDb(std::shared_ptr<Response>& res, std::shared_ptr<Command>& cmd) ;
+    void append(std::shared_ptr<dbObject>rdb) ;
     int getSize() { return db.size(); }
         //命令键
-    int isExist(shared_ptr<Command>&cmds) ;
+    int isExist(std::shared_ptr<Command>&cmds) ;
     //获取key
     //删除当前数据库中的一个对象
     void removeDataByKey(key k) ;

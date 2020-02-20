@@ -16,8 +16,6 @@
 #include "rdb.h"
 #include "cmdCb.h"
 
-class rdb ;
-using namespace std  ;
 using namespace Messages ;
 
 enum {
@@ -42,10 +40,11 @@ class saveTimerHandle ;
 
 class redisCommand {
     //该命令的的处理函数
-    typedef function<int(shared_ptr<redisDb>&, shared_ptr<Command>&, shared_ptr<Response>&)>call ;
-    typedef function<int(vector<pair<int, shared_ptr<redisDb>>>&db)> saveCall;
+    typedef std::function<int(std::shared_ptr<redisDb>&, 
+                              std::shared_ptr<Command>&, std::shared_ptr<Response>&)>call ;
+    typedef std::function<int(std::vector<pair<int, std::shared_ptr<redisDb>>>&db)> saveCall;
 public :
-    redisCommand(string name, int arity, string flag,  
+    redisCommand(std::string name, int arity, std::string flag,  
                  int fir, int last, int keyStep, long long msecond, long long calls) {
             this->name = name ;
             this->arity = arity ;
@@ -59,26 +58,26 @@ public :
 
     ~redisCommand() {}
 public :
-    int saveCb(vector<pair<int, shared_ptr<redisDb>>>&db) { return save(db) ; } 
-    int cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) ;
+    int saveCb(std::vector<pair<int, std::shared_ptr<redisDb>>>&db) { return save(db) ; } 
+    int cb(std::shared_ptr<redisDb>&db, std::shared_ptr<Command>&wcmd, 
+           std::shared_ptr<Response>& res) ;
     void setCallBack(saveCall save) { 
         this->save = save ;}
     void setCallBack(call cb) { 
         this->callBack = cb ; 
     }
-    int append(int num, int type, shared_ptr<dbObject>ptr) ;
-    string getName() { return name ; }
+    int append(int num, int type, std::shared_ptr<dbObject>ptr) ;
+    std::string getName() { return name ; }
     //函数指针，指向命令的具体实现
 private :
     call callBack ;
     saveCall save;
 private :
-    string stringRes ;
-    string name ;
+    std::string name ;
     //参数数量限制,用于验证参数是否正确
     int arity ;
     //命令的权限位，只读的r，不确定的输出R，在redis加载数据的时候使用l
-    string flags ;
+    std::string flags ;
     //只有在你要用复杂的逻辑去告诉Redis哪个参数才是真正的key的时候才需要。
     //命令的度量项，有数据库设置，初始化为０
     int firstKey ;
@@ -102,14 +101,14 @@ public :
     int expend(int num) ;
     int countRedis() ;
     int initRedis() ;
-    int redisCommandProc(int num, shared_ptr<Command>& cmd) ;
-    void addObjectToDb(int num, shared_ptr<dbObject>ob) ;
-    shared_ptr<redisDb> getDB(int num) ;
+    int redisCommandProc(int num, std::shared_ptr<Command>& cmd) ;
+    void addObjectToDb(int num, std::shared_ptr<dbObject>ob) ;
+    std::shared_ptr<redisDb> getDB(int num) ;
     //扩大数据库
     //返回命令集合
-    int findCmd(string cmd) ;  
-    shared_ptr<Response> getResponse() { return response ; }
-    int append(shared_ptr<redisDb> db) ;
+    int findCmd(std::string cmd) ;  
+    std::shared_ptr<Response> getResponse() { return response ; }
+    int append(std::shared_ptr<redisDb> db) ;
     void print() ;
     static int backUp() ;
     void saveToFrozenRedis(int num) ;
@@ -117,13 +116,13 @@ public :
     void checkAof() ;
     static void asyncSave();
 private:
-    static vector<pair<int, shared_ptr<redisDb>>>*db ;
-    shared_ptr<rdb> save ;
+    static std::vector<pair<int, std::shared_ptr<redisDb>>>*db ;
+    std::shared_ptr<rdb> save ;
     //回复，响应
-    shared_ptr<Response> response ;
+    std::shared_ptr<Response> response ;
     //数据库,键值是数据库编号码,之后数据库对象
-    vector<pair<int, shared_ptr<redisDb>>>dbLs ;
+    std::vector<pair<int, std::shared_ptr<redisDb>>>dbLs ;
     //命令名称，命令类型
-    map<string, shared_ptr<redisCommand>> cmdList ;  
+    map<std::string, std::shared_ptr<redisCommand>> cmdList ;  
 };
 

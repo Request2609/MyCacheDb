@@ -11,18 +11,17 @@
 #include <string.h>
 #include <string>
 #include <functional>
-using namespace std ;
-//封装redis ae socket
+
 
 class aeSocket {
-    typedef function<void()>callBack ;
+    typedef std::function<void()>callBack ;
 public:
     aeSocket() {sockFd = -1 ;}
     ~aeSocket() {close(sockFd) ;}
 public :
     int anetCreateSocket() ;
     int setReuseAddr() ;
-    int tcpServer(string port, string addr, int backLog) ;
+    int tcpServer(std::string port, std::string addr, int backLog) ;
     int getWritePairFd() {
         return fdPair[0] ;
     }

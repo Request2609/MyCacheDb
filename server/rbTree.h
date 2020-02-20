@@ -5,7 +5,6 @@
 #include <map>
 #include <queue>
 
-using namespace std ;
 //附加颜色没有用处
 const int INVALID = 0 ;
 //节点是黑色
@@ -19,7 +18,7 @@ class rb_tree ;
 class tree_node ;
 class rb_tree ;
 
-typedef shared_ptr<tree_node> NODE ;
+typedef std::shared_ptr<tree_node> NODE ;
 
 class tree_node {
     friend class rb_tree;
@@ -34,20 +33,20 @@ public :
         parent(nullptr) 
     {}
     ~tree_node() {}
-    set<string>getValue() {
+    std::set<std::string>getValue() {
         return value ;
     }
     void setScore(int sc) {
         data = sc ;
     }
-    void addValue(string s) {
+    void addValue(std::string s) {
         value.insert(s) ;
     }
 private :
     int data ;
     int own_color ;
     //对应分数所存储的字符串
-    set<string>value ;
+    std::set<std::string>value ;
     int original_color ;
     NODE root ;
     NODE left ;
@@ -61,9 +60,9 @@ public:
     rb_tree():num(0), root(nullptr) {}
     ~rb_tree() {}
 public :
-    map<int, set<string>> getByScore(int start, int end) ;
-    void travelAllTree(NODE root, vector<NODE>&) ;
-    void insert_tree(int info, const string& s) ;
+    std::map<int, std::set<std::string>> getByScore(int start, int end) ;
+    void travelAllTree(NODE root, std::vector<NODE>&) ;
+    void insert_tree(int info, const std::string& s) ;
     NODE find_node(int key) ;
     void delete_node(int num) ;
     void print_rb_tree() ;
@@ -78,7 +77,7 @@ private :
     void fix_up_insert(NODE cur) ;
     void insert_by_bst_way(NODE cur) ;
     void fix_delete_tree(NODE cur) ;
-    void getByScore(int start, int end, NODE root, map<int, set<string>>&) ;
+    void getByScore(int start, int end, NODE root, std::map<int, std::set<std::string>>&) ;
 private :
     int num ;
     NODE root ;

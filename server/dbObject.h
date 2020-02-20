@@ -1,14 +1,12 @@
 #pragma once
 #include <iostream>
-#include <strings.h>
 #include <vector>
 #include <map>
 #include <memory>
 #include<stdarg.h>
-#include <string.h>
+#include<string.h>
 #include <list>
 #include "rbTree.h"
-using namespace std ;
 
 class lsObject ;
 class rb_tree ;
@@ -25,15 +23,15 @@ public :
     virtual void setEndTime(long long e) = 0 ;
     virtual int getType() = 0 ;
     virtual void setType(int type) = 0;
-    virtual void setKey(string k) = 0;
-    virtual void setValue(string v, ...) = 0;
-    virtual void setName(string name) = 0;
+    virtual void setKey(std::string k) = 0;
+    virtual void setValue(std::string v, ...) = 0;
+    virtual void setName(std::string name) = 0;
     virtual void setNum(int num) = 0;
-    virtual string  getName() = 0;
-    virtual string getKey() = 0;
+    virtual std::string  getName() = 0;
+    virtual std::string getKey() = 0;
     virtual int getNum() = 0 ;
-    virtual string getValue() = 0;
-    virtual vector<string> getValues(const string s) = 0;
+    virtual std::string getValue() = 0;
+    virtual std::vector<std::string> getValues(const std::string s) = 0;
     virtual int objectSize() = 0 ;
 };
 
@@ -43,34 +41,34 @@ public :
     setContain();
     ~setContain() ; 
 public :
-    vector<string> getValues(const string s) {}
+    std::vector<std::string> getValues(const std::string s) {}
     void print() {}
     long long getEndTime() { return timeout ; }
     void setEndTime(long long e) {this->timeout = e ;}
     int getType() { return type ; }
     void setType(int type) { this->type = type ; }
-    void setKey(string k) { this->key = k ; }
-    void setValue(string value, ...)  ;
-    void setName(string name) { this->name = name ; }
+    void setKey(std::string k) { this->key = k ; }
+    void setValue(std::string value, ...)  ;
+    void setName(std::string name) { this->name = name ; }
     void setNum(int num) { this->num = num ; }
-    string  getName() { return name ; }
-    string getKey() { return key ; }
+    std::string  getName() { return name ; }
+    std::string getKey() { return key ; }
     int getNum() { return num ; }
-    string getValue() ;
+    std::string getValue() ;
     int objectSize() { return 1 ;}
 
 private :
     //类型
-    set<string> ls ;
+    std::set<std::string> ls ;
     int type ;
-    string name ;
+    std::string name ;
     long long timeout ;
     //当前设置的超时时间
     //所在数据库编号
     int num ;
     //命令键值
-    string key ;
-    string value ;
+    std::string key ;
+    std::string value ;
 } ;
 
 
@@ -82,34 +80,34 @@ public :
     }
     ~strings() {}
 public :
-    vector<string> getValues(const string s) {}
+    std::vector<std::string> getValues(const std::string s) {}
     void print() ;
     long long getEndTime() { return timeout ; }
     void setEndTime(long long e) {this->timeout = e ;} 
     int getType() { return type ; }
     void setType(int type) { this->type = type ; }
-    void setKey(string k) { this->key = k ; } 
-    void setValue(string value, ...)  { this->value =  value ; }
-    void setName(string name) { this->name = name ; }
+    void setKey(std::string k) { this->key = k ; } 
+    void setValue(std::string value, ...)  { this->value =  value ; }
+    void setName(std::string name) { this->name = name ; }
     void setNum(int num) { this->num = num ; }
-    string  getName() { return name ; }
-    string getKey() { return key ; }
+    std::string  getName() { return name ; }
+    std::string getKey() { return key ; }
     int getNum() { return num ; }
-    string getValue() { return value ; }
+    std::string getValue() { return value ; }
     int objectSize() { return 1 ;}
 public :
     //类型
     int type ;
     //命令名称
-    string name ;
+    std::string name ;
     long long timeout ;
     //当前设置的超时时间
-    map<string, long long> expire ;
+    map<std::string, long long> expire ;
     //所在数据库编号
     int num ;
     //命令键值
-    string key ;
-    string value ;
+    std::string key ;
+    std::string value ;
 } ;
 
 class lsObject : public dbObject{
@@ -126,26 +124,26 @@ public :
     void setEndTime(long long e) {}
     int getType()  { return type; }
     void setType(int type) { this->type = type ; }
-    void setKey(string k) {key = k ;}
-    void setValue(string v, ...) ;
-    void setName(string name) {
+    void setKey(std::string k) {key = k ;}
+    void setValue(std::string v, ...) ;
+    void setName(std::string name) {
         this->name =name ;
     }
     void setNum(int num) { this->num = num ; }
-    string  getName() { return "" ;}
-    string getKey() { return key ; }
+    std::string  getName() { return "" ;}
+    std::string getKey() { return key ; }
     int getNum() { return num ; }
-    string getValue() ;
-    vector<string> getValues(const string s) ;
+    std::string getValue() ;
+    std::vector<std::string> getValues(const std::string s) ;
     int objectSize() { return ls.size() ; }
 private :
     long long timeout ;
     int count ;
-    string key ;
-    list<string> ls ;
+    std::string key ;
+    std::list<std::string> ls ;
     int num ;
     int type ;
-    string name ;
+    std::string name ;
 } ; 
 
 class hashSet : public dbObject {
@@ -157,33 +155,33 @@ public :
     ~hashSet() {}
 public :
     void print() ;
-    vector<string> getValues(const string s) ;
+    std::vector<std::string> getValues(const std::string s) ;
     long long getEndTime() { return timeout ; }
     void setEndTime(long long e) {this->timeout = e ;} 
     int getType() { return type ; }
     void setType(int type) { this->type = type ; }
-    void setKey(string k) { this->key = k ; } 
-    void setValue(string key, ...) ;
-    void setName(string name) { this->name = name ; }
+    void setKey(std::string k) { this->key = k ; } 
+    void setValue(std::string key, ...) ;
+    void setName(std::string name) { this->name = name ; }
     void setNum(int num) { this->num = num ; }
-    string  getName() { return name ; }
-    string getKey() { return key ; }
+    std::string  getName() { return name ; }
+    std::string getKey() { return key ; }
     int getNum() { return num ; }
-    string getValue() ;
+    std::string getValue() ;
     int objectSize() { return values.size() ;}
 public :
     //类型
     int type ;
     //命令名称
-    string name ;
+    std::string name ;
     long long timeout ;
     //当前设置的超时时间
-    map<string, long long> expire ;
+    std::map<std::string, long long> expire ;
     //所在数据库编号
     int num ;
     //命令键值
-    string key ;
-    map<string, string>values ;
+    std::string key ;
+    std::map<std::string, std::string>values ;
 } ;
 
 //有序set对象
@@ -194,57 +192,57 @@ public :
     }
     ~sortSet() {}
 public :
-    vector<string> getValues(const string s) ;
+    std::vector<std::string> getValues(const std::string s) ;
     void print() {}
     long long getEndTime() { return timeout ; }
     void setEndTime(long long e) {this->timeout = e ;}
     int getType() { return type ; }
     void setType(int type) { this->type = type ; }
-    void setKey(string k) { this->key = k ; }
-    void setValue(string value, ...)  ;
-    void setName(string name) { this->name = name ; }
+    void setKey(std::string k) { this->key = k ; }
+    void setValue(std::string value, ...)  ;
+    void setName(std::string name) { this->name = name ; }
     void setNum(int num) { this->num = num ; }
-    string  getName() { return name ; }
-    string getKey() { return key ; }
+    std::string  getName() { return name ; }
+    std::string getKey() { return key ; }
     int getNum() { return num ; }
-    string getValue() { value = ""; return value ; }
+    std::string getValue() { value = ""; return value ; }
     int objectSize() { return 1 ;}
 public :
-    shared_ptr<rb_tree>rbt ;
+    std::shared_ptr<rb_tree>rbt ;
     //类型
     int type ;
-    string name ;
+    std::string name ;
     long long timeout ;
     //当前设置的超时时间
     //所在数据库编号
     int num ;
     //命令键值
-    string key ;
-    string value ;
+    std::string key ;
+    std::string value ;
 } ;
 
 
 class factory {
 public :
-    static shared_ptr<dbObject> getObject(string cmd) {
+    static std::shared_ptr<dbObject> getObject(std::string cmd) {
         if(!strcasecmp(cmd.c_str(), "set")) {
-            shared_ptr<strings> tmp(new strings) ;
+            std::shared_ptr<strings> tmp(new strings) ;
             return tmp ;
         }   
         if(!strcasecmp(cmd.c_str(), "hset")) {
-            shared_ptr<hashSet> tmp = make_shared<hashSet>(-1) ;
+            std::shared_ptr<hashSet> tmp = std::make_shared<hashSet>(-1) ;
             return tmp ;       
         }
         if(!strcasecmp(cmd.c_str(), "lpush")) {
-            shared_ptr<lsObject> tmp = make_shared<lsObject>() ;
+            std::shared_ptr<lsObject> tmp = std::make_shared<lsObject>() ;
             return tmp ;
         }
         if(!strcasecmp(cmd.c_str(), "zadd")) {
-            shared_ptr<sortSet>tmp = make_shared<sortSet>() ;
+            std::shared_ptr<sortSet>tmp = std::make_shared<sortSet>() ;
             return tmp ;
         }
         if(!strcasecmp(cmd.c_str(), "sadd")) {
-            shared_ptr<setContain>tmp = make_shared<setContain>() ;
+            std::shared_ptr<setContain>tmp = std::make_shared<setContain>() ;
             return tmp ;
         }
         else {

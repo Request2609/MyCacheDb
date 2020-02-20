@@ -18,7 +18,6 @@
 
 #define SIZE 4096
 using namespace Messages ;
-using namespace std ;
 
 class rpc ;
 class cmdSet ;
@@ -41,8 +40,8 @@ enum {
 
 //处理消息请求的函数
 class cmdProcess {
-    typedef function<void(shared_ptr<Response>res, int fd)> request ;
-    typedef function<void(void)> task ;
+    typedef std::function<void(std::shared_ptr<Response>res, int fd)> request ;
+    typedef std::function<void(void)> task ;
 public :
     //创建
     //消息处理
@@ -57,18 +56,18 @@ public :
     //时间事件回调
 public :
     int initRedis() ;
-    void setRpc(shared_ptr<rpc>rc) { this->rc = rc ; }
+    void setRpc(std::shared_ptr<rpc>rc) { this->rc = rc ; }
     void setRpcMethod() ;
-    int processMsg(shared_ptr<aeEvent>&tmp) ;
-    int sendMsg(shared_ptr<aeEvent>tmp) ;
+    int processMsg(std::shared_ptr<aeEvent>&tmp) ;
+    int sendMsg(std::shared_ptr<aeEvent>tmp) ;
     void getAfterKeyPart() ;
-    int findCmd(shared_ptr<::Command>tmp) ;
+    int findCmd(std::shared_ptr<::Command>tmp) ;
 private :
     //命令集
     //键值以后的部分成员
-    shared_ptr<cmdSet> cmdSet_ ;
-    vector<string> lastKey ;   
+    std::shared_ptr<cmdSet> cmdSet_ ;
+    std::vector<std::string> lastKey ;   
     //rpc,主要进行序列化和反序列化
-    shared_ptr<rpc> rc ;
+    std::shared_ptr<rpc> rc ;
 };
 

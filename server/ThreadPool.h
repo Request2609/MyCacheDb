@@ -39,16 +39,11 @@ private:
 template<class F, class... Args> 
 auto threadPool :: commit(F&& f, Args&&... args)-> std :: future<decltype(f(args...))> {
     
-    if(stop.load()) {
-        std::cout << "-----" << std::endl ;
-       throw std :: runtime_error("线程池已经停止工作")  ;
-    }
     //获取函数返回值类型
     using retType = decltype(f(args...)) ;
    //任意参数的函数/任务转化成同意的void()类型的函数，通过task接收
     auto task = std :: make_shared<std :: packaged_task<retType()>> (
-                                                                  std :: bind(std :: forward<F>(f), std :: forward<Args>(args)...)                                                             
-                                                                     ) ;
+                    std :: bind(std :: forward<F>(f), std :: forward<Args>(args)...)) ;
     //先获取future
     std :: future<retType> future  = task->get_future() ;
     {
@@ -58,8 +53,7 @@ auto threadPool :: commit(F&& f, Args&&... args)-> std :: future<decltype(f(args
         taskQueue.emplace(
                           [task](){
                           (*task)() ;
-                          }
-                          ) ;
+                          }) ;
     }
     cond.notify_one() ;
     return future ;

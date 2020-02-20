@@ -6,7 +6,7 @@ int aeEpoll :: add(int fd, int events) {
     ev.data.fd = fd ;
     ev.events = events ;
     if(epoll_ctl(epFd, EPOLL_CTL_ADD, fd, &ev) < 0) {
-        cout << __FILE__ << "         " << __LINE__ << endl ;
+        std::cout << __FILE__ << "         " << __LINE__ << std::endl  ;
         return -1 ;
     }
     return 1 ;
@@ -29,7 +29,7 @@ int aeEpoll :: modify(int fd, int event) {
     //设置事件监听类型
     ev.events = event ;
     if(epoll_ctl(epFd, EPOLL_CTL_MOD, fd, &ev) < 0) {
-        cout << __FILE__ << "      "<< __LINE__ << endl ;
+        std::cout << __FILE__ << "      "<< __LINE__ << std::endl ;
         return -1 ;
     }
     return 1 ;
@@ -37,17 +37,17 @@ int aeEpoll :: modify(int fd, int event) {
 
 int aeEpoll :: del(int fd) {
     if(epoll_ctl(epFd, EPOLL_CTL_DEL, fd, NULL) < 0) {
-        cout <<  __FILE__ << "       " << __LINE__ << endl ;
+        std::cout <<  __FILE__ << "       " << __LINE__ << std::endl ;
         return -1 ;
     }
     return 1 ;
 }
 
 //将所有活跃事件收起来ls
-int aeEpoll :: wait(vector<epoll_event>&ls, int t) {
+int aeEpoll :: wait(std::vector<epoll_event>&ls, int t) {
     int eventNum = epoll_wait(epFd, &eventFds[0], eventFds.capacity(), t) ;
     if(eventNum < 0 && errno != EINTR) {
-        cout << errno << "     " << strerror(errno) << "      " << __FILE__ << "         " << __LINE__ <<  endl ;
+        std::cout << errno << "     " << strerror(errno) << "      " << __FILE__ << "         " << __LINE__ <<  endl ;
         return -1 ;
     }
     else {

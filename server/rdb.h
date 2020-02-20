@@ -17,6 +17,7 @@
 #include "cmdSet.h"
 #include "recoverDb.h"
 #include "dbObject.h"
+
 class dbObject ;
 class cmdSet ;
 class rdb ;
@@ -25,7 +26,6 @@ const int version = 1 ;
 //selected 条目
 const char flag = 0 ;
 
-using namespace std ;
 //创建rdb持久化机制
 
 //字符串的两种编码
@@ -61,8 +61,8 @@ namespace STRING_ZIP {
 }
 
 namespace cmdName {
-    const string set = "set" ;
-    const string get = "get" ;
+    const std::string set = "set" ;
+    const std::string get = "get" ;
 }
 
 class rdb {
@@ -70,22 +70,22 @@ public:
     rdb() {}
     ~rdb() {}
     //判断字符串是否是数字
-    static string lzfCompress(const string value, int& len) ;
+    static std::string lzfCompress(const std::string value, int& len) ;
     static bool isNum(const char* num) ;
     //获取字符串的编码类型
-    static int getStringEncodingType(const string value) ;
-    static string makeHeader() ;
-    static shared_ptr<redisDb> processFileInfo(string& s) ;
-    static int save(const shared_ptr<redisDb> db, char* fileName) ;
+    static int getStringEncodingType(const std::string value) ;
+    static std::string makeHeader() ;
+    static std::shared_ptr<redisDb> processFileInfo(std::string& s) ;
+    static int save(const std::shared_ptr<redisDb> db, char* fileName) ;
     static int  initRedis(cmdSet* cmdset) ;
-    static string  getFileInfo(const string s) ;
-    static int getAllFileName(vector<string>& nameLs) ;
+    static std::string  getFileInfo(const std::string s) ;
+    static int getAllFileName(vector<std::string>& nameLs) ;
     static bool isRedis(const char* buffer) ;
-    static string tmpFileName(const char* fileName) ;
-    static int getLogFileName(vector<string>&logName) ;
-    static string readLogFile(const string& file) ; 
+    static std::string tmpFileName(const char* fileName) ;
+    static int getLogFileName(vector<std::string>&logName) ;
+    static std::string readLogFile(const std::string& file) ; 
 public :
-    static void processString(const string key, ofstream& aa, const string value) ;
-    static void processHash(ofstream& aa, const shared_ptr<dbObject>rd) ;
-    static void processList(ofstream& aa, const shared_ptr<dbObject>rd) ;
+    static void procesString(const std::string key, ofstream& aa, const std::string value) ;
+    static void processHash(std::ofstream& aa, const std::shared_ptr<dbObject>rd) ;
+    static void processList(std::ofstream& aa, const std::shared_ptr<dbObject>rd) ;
 } ;

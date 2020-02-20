@@ -10,7 +10,6 @@
 #include "aeSocket.h"
 #include "aeEpoll.h"
 
-using namespace std ;
 
 class signalSet {
 public:
@@ -27,7 +26,7 @@ public :
     static void addWakeBlpopSig() ;
     static void wakeSigHandle() ;
     static void sigHandle(int sig) ;
-    static int addToEpoll(shared_ptr<aeEpoll>ep) ;
+    static int addToEpoll(std::shared_ptr<aeEpoll>ep) ;
     static int createPipeFd() ;
     static int createEventFd() ;
     static int setAlarm(int slot) ;

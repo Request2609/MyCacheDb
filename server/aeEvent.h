@@ -11,7 +11,6 @@
 #include "aeEpoll.h"
 #include "timerHeap.h"
 
-using namespace std ;
 #define SIZE 4096
 
 class TimerManager ;
@@ -22,9 +21,9 @@ namespace event {
 }
 
 //创建连接事件信息
-class aeEvent :public enable_shared_from_this<aeEvent>{
+class aeEvent :public std::enable_shared_from_this<aeEvent>{
     //创建文件描述符
-    typedef function<int(shared_ptr<aeEvent>)> callBack ;
+    typedef std::function<int(std::shared_ptr<aeEvent>)> callBack ;
     
 public :
     aeEvent() {
@@ -36,7 +35,7 @@ public :
     ~aeEvent() {
     }
 private :
-    shared_ptr<TimerManager> tman ;
+    std::shared_ptr<TimerManager> tman ;
     //套接字对象
     aeSocket sock ;
     int connFd ;
@@ -51,7 +50,7 @@ private :
     //写回调函数
     callBack writeFunc ;
     //epoll事件
-    shared_ptr<aeEpoll> aep ;
+    std::shared_ptr<aeEpoll> aep ;
     int wakeFd ;
     int servFd ;
     epoll_event* ev ;

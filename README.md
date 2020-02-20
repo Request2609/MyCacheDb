@@ -3,11 +3,11 @@ MyCacheDB是一个基于C/S架构的小型缓存数据库，支持string，hash�
 
 ### 运行环境
 
-- 系统：ubuntu19.10
+- 系统：ubuntu18.10
 - 处理器：Intel® Core™ i5-7300HQ CPU @ 2.50GHz × 4
 - 内存：7.7 GiB
 - 依赖：[Google Protocol Buffers](https://github.com/protocolbuffers/protobuf)，机器需支持proto命令
-- 编译器：Gcc编译器，Vim+Vimplus开发环境
+- 编译器：Gcc编译器
 
 ### 特性
 
@@ -26,6 +26,7 @@ MyCacheDB是一个基于C/S架构的小型缓存数据库，支持string，hash�
 - 当缓存不够用的时候，会随机选一些键进行淘汰
 
 **客户端**
+
 - 客户端实现异步发收命令功能
 
 ### 目录说明

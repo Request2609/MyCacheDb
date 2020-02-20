@@ -3,9 +3,8 @@
 #include <string>
 #include <vector>
 #include "msg.pb.h"
-using namespace std ;
 using namespace Messages ;
 
 
-int  serializeToString(Command cmd, vector<string>ls, string* s) ;
-Command parseString(string& aa) ;
+int  serializeToString(Command cmd, std::vector<std::string>ls, std::string* s) ;
+Command parseString(std::string& aa) ;

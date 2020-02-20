@@ -11,7 +11,6 @@
 #include "msg.pb.h"
 #include "cmdCb.h" 
 
-using namespace std ;
 using namespace Messages ;
 class cmdSet ;
 class redisDb ;
@@ -35,35 +34,35 @@ class recoverDb {
 public:
     recoverDb() {}
     ~recoverDb() {}
-    static bool  isRedis(string& s) ;
-    static shared_ptr<redisDb> recover(string& s, cmdSet* cmdset) ;
-    static int getListObject(string& s, shared_ptr<dbObject>& ob) ;
-    static void getHead(string& s) ;
-    static int getNum(string& s) ;
-    static long getTime(string& buf) ;
-    static int getType(string& s) ;
-    static string getListValues(string& s) ;
-    static int getEncoding(string& s) ;
-    static string getKey(string& s, string& value) ;
-    static void stringGet(string& s, shared_ptr<dbObject>& ob) ;
-    static long getYC(string& buf) ;
-    static string  getValue(string& s) ;
-    static string getKey(string& s) ;
-    static int getXC(string& s) ;
-    static int  hashGet(string& s, shared_ptr<dbObject>&ob) ;
-    static string getHashKey(string& s) ;
-    static pair<string, string> getAttrKV(string& s) ;
+    static bool  isRedis(std::string& s) ;
+    static std::shared_ptr<redisDb> recover(std::string& s, cmdSet* cmdset) ;
+    static int getListObject(std::string& s, std::shared_ptr<dbObject>& ob) ;
+    static void getHead(std::string& s) ;
+    static int getNum(std::string& s) ;
+    static long getTime(std::string& buf) ;
+    static int getType(std::string& s) ;
+    static std::string getListValues(std::string& s) ;
+    static int getEncoding(std::string& s) ;
+    static std::string getKey(std::string& s, std::string& value) ;
+    static void stringGet(std::string& s, std::shared_ptr<dbObject>& ob) ;
+    static long getYC(std::string& buf) ;
+    static std::string  getValue(std::string& s) ;
+    static std::string getKey(std::string& s) ;
+    static int getXC(std::string& s) ;
+    static int  hashGet(std::string& s, std::shared_ptr<dbObject>&ob) ;
+    static std::string getHashKey(std::string& s) ;
+    static std::pair<std::string, std::string> getAttrKV(std::string& s) ;
     static bool isOk(long index)  ;
-    static void recoverByLog(vector<pair<int, shared_ptr<redisDb>>>* dbLs) ;
-    static void parseAndExecAofCmd(const char*, vector<pair<int, shared_ptr<redisDb>>>&) ;
-    static vector<string> split(const string &s, 
-                                const string &seperator) ;
-    static int aofString(shared_ptr<Command>&cmd, const vector<string>& str) ;
-    static int aofHash(shared_ptr<Command>&cmd, const vector<string>& str) ;
-    static int aofList(shared_ptr<Command>&cmd, const vector<string>& str) ;
-    static int aofSortSet(shared_ptr<Command>&cmd, const vector<string>& str ) ;
-    static int aofSet(shared_ptr<Command>&cmd, const vector<string>& str ) ;
-    static shared_ptr<redisDb> getDb(int num, const vector<pair<int, shared_ptr<redisDb>>>&) ;
+    static void recoverByLog(std::vector<std::pair<int, std::shared_ptr<redisDb>>>* dbLs) ;
+    static void parseAndExecAofCmd(const char*, std::vector<std::pair<int, std::shared_ptr<redisDb>>>&) ;
+    static std::vector<std::string> split(const std::string &s, 
+                                const std::string &seperator) ;
+    static int aofString(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str) ;
+    static int aofHash(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str) ;
+    static int aofList(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str) ;
+    static int aofSortSet(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str ) ;
+    static int aofSet(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str ) ;
+    static std::shared_ptr<redisDb> getDb(int num, const std::vector<std::pair<int, std::shared_ptr<redisDb>>>&) ;
     static int getTime() ;
 };
 

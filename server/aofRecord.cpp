@@ -34,7 +34,6 @@ int aofRecord::init() {
 
 void aofRecord::record(const char* s) {
     const std::string ss = s ;
-    std::cout << "记录日志:" << s << std::endl ;
     LOG(INFO) << s ;
 }  
 
