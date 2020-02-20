@@ -1,19 +1,18 @@
 #include "rbTree.h"
 
-void rb_tree:: insert_tree(int info, const string& s) {
+void rb_tree:: insert_tree(int info, const std::string& s) {
     num++ ;   
-    NODE cur = make_shared<tree_node>() ;
+    NODE cur = std::make_shared<tree_node>() ;
     //分数
     cur->data = info ;
-    string ss = s ;
+    std::string ss = s ;
     //分数段内的值
-    cout << "设置值:" << ss << endl ;
     cur->addValue(ss) ;
     //空树，将该节点给根
     if(root == nullptr) {
         root = cur ;
         root->own_color = BLACK ; 
-        null = make_shared<tree_node>() ;
+        null = std::make_shared<tree_node>() ;
         null->own_color = BLACK ;   
         //设置root的父亲节点指向null
         root->parent = null ;
@@ -28,15 +27,12 @@ void rb_tree:: insert_tree(int info, const string& s) {
     insert_by_bst_way(cur) ;
 }
 
-void rb_tree::getByScore(int start, int end, NODE cur, map<int, set<string>>& ls) {
+void rb_tree::getByScore(int start, int end, NODE cur, std::map<int, std::set<std::string>>& ls) {
 
      if(cur != null) {
         getByScore(start, end, cur->left, ls) ;
         if(cur->data >= start && cur->data <= end) {
             ls.insert({cur->data, cur->getValue()}) ;
-            for(auto s : cur->getValue()) {
-                cout << s << endl ;
-            }
         }
         if(cur->data > end){
             return  ;
@@ -45,16 +41,11 @@ void rb_tree::getByScore(int start, int end, NODE cur, map<int, set<string>>& ls
     }
 }
 
-map<int,set<string>> rb_tree :: getByScore(int start, int end) {
+std::map<int,std::set<std::string>> rb_tree :: getByScore(int start, int end) {
     NODE cur = root ;
-    map<int, set<string>> ls ;
-    cout << "在红黑树中查找" << endl ;
+    std::map<int, std::set<std::string>> ls ;
     getByScore(start, end, root, ls) ;
     return ls ;
-}
-
-void rb_tree::travelAllTree(NODE root, vector<NODE>& ls) {
-    
 }
 
 //插入后修正红黑树，保持性质不改变
@@ -67,7 +58,6 @@ void rb_tree :: fix_up_insert(NODE cur) {
     NODE uncle ;
     //当父亲节点的颜色是红色
     while(cur->parent != null && cur->parent->own_color == RED) {
-        //cout << "cur----->" << cur->data << "    颜色:"  << cur->own_color << endl ;
         //情况1父亲节点和叔叔节点都是红色，
         //则插入点违反了红黑树性质
         //并且要是爷爷节点左孩子
@@ -222,8 +212,6 @@ void rb_tree :: delete_node(int key) {
         else if(cur->right == null) {
             x = cur->left ;   
             rb_transform(cur, cur->left) ;
-            //cout << cur->data << "   " << cur->left->data << endl ;
-            //exit(1) ;
         }
         else {     
             //找右子树中的最小节点找到，插入到删除节点的位置
@@ -333,7 +321,6 @@ void rb_tree :: fix_delete_tree(NODE cur) {
         }
         //当前节点是右子树，参考上面步骤同样的道理
         else {
-            //cout << cur->parent->data <<"<+++++"<< endl ;
             auto brother = cur->parent->left ;
             //第一种情况
             //将父亲节点染成红色，将兄弟节点染成黑色
@@ -498,34 +485,4 @@ void rb_tree :: insert_by_bst_way(NODE cur) {
     fix_up_insert(cur) ;
 }
 
-
-void rb_tree :: print_rb_tree() {
-    queue<shared_ptr<tree_node>> que ;
-    que.push(root) ;
-    root->flag = -1 ;
-    while(!que.empty()) {
-        auto tmp = que.front() ;
-        if(tmp->left != null) {
-            tmp->left->flag = 1 ;
-            que.push(tmp->left) ;
-        }
-        if(tmp->right != null) {
-            tmp->right->flag = 0 ;
-            que.push(tmp->right) ;
-        } 
-        if(tmp->flag == -1) {
-            cout << "根节点 " ;
-        }
-        else if(tmp->flag == 0) {
-            cout << "右子树  " ;
-        }
-        else {
-            cout << "左子树  " ;
-        } 
-        cout << "数据:" << tmp->data << "  " << "颜色:"  ;
-        if(tmp->own_color == 1) cout << "黑色" << endl ;
-        else cout << "红色" << endl ;
-        que.pop() ;
-    }
-}
 

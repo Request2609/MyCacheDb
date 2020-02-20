@@ -2,17 +2,17 @@
 
 //传进来的字符串中含有分数范围
 //start end
-vector<string> sortSet::getValues(const string s) {
+std::vector<std::string> sortSet::getValues(const std::string s) {
     //解析分数范围
     int index = s.find(' ') ;
-    string start = s.substr(0, index) ;
+    std::string start = s.substr(0, index) ;
     int ss = atoi(start.c_str()) ;
     int len = s.size() ;
-    string end = s.substr(index+1, len-index) ;
+    std::string end = s.substr(index+1, len-index) ;
     int ee = atoi(end.c_str()) ;
     auto ls = rbt->getByScore(ss, ee) ;
-    string value = "" ;
-    vector<string>res ;
+    std::string value = "" ;
+    std::vector<std::string>res ;
     for(auto tmp : ls) {
         for(auto tmp1 : tmp.second) {
             res.push_back(tmp1) ;
@@ -23,11 +23,11 @@ vector<string> sortSet::getValues(const string s) {
 
 
 //intset集合中传值第一个从参数是分数，第二个参数是value
-void sortSet::setValue(string value, ...) {
+void sortSet::setValue(std::string value, ...) {
     if(rbt == nullptr) {
-        rbt = make_shared<rb_tree>() ;
+        rbt = std::make_shared<rb_tree>() ;
     }
-    string score = value ;
+    std::string score = value ;
     va_list va ;
     va_start(va, value) ;
     char* val = va_arg(va, char*) ;
@@ -40,24 +40,24 @@ void sortSet::setValue(string value, ...) {
 
 //测试用
 void hashSet :: print() {
-    cout << "hash对象键值" << endl ;
+    std::cout << "hash对象键值" << std::endl ;
     for(auto s : values) {
-        cout << s.first << "   " <<s.second << endl ;
+        std::cout << s.first << "   " <<s.second << std::endl ;
     }
 }
 //测试用
 void strings :: print() {
-    cout << type<< "    " << num<< "   "<< key << "    "<< value << endl ;
+    std::cout << type<< "    " << num<< "   "<< key << "    "<< value << std::endl ;
 }
 
 void lsObject :: print() {
     for(auto s : ls) {
-        cout << s << "    " << endl ; 
+        std::cout << s << "    " << std::endl ; 
     }
 }
 
-vector<string> hashSet :: getValues(const string s) {
-    vector<string>ls ;
+std::vector<std::string> hashSet :: getValues(const std::string s) {
+    std::vector<std::string>ls ;
     auto val = values.find(s) ;
     if(val == values.end()) {
         ls.push_back("hashset has no this feild!") ;
@@ -67,7 +67,7 @@ vector<string> hashSet :: getValues(const string s) {
     return ls ;
 }
 
-string hashSet :: getValue() {
+std::string hashSet :: getValue() {
     static int flag = 0 ;
     static auto iter = values.begin() ;
     if(flag == 0) {
@@ -79,14 +79,14 @@ string hashSet :: getValue() {
         return "" ;
     }
     flag = 1 ;
-    string vv = iter->first + "\r\n" + iter->second ;
+    std::string vv = iter->first + "\r\n" + iter->second ;
     iter++ ;
     return vv ;
 }
 
 //字符串的形式传进来
-void hashSet :: setValue(string value, ...) {
-    string key = value ;
+void hashSet :: setValue(std::string value, ...) {
+    std::string key = value ;
     va_list va ;
     va_start(va, value) ;
     char* val = va_arg(va, char*) ;
@@ -95,17 +95,17 @@ void hashSet :: setValue(string value, ...) {
 }
 
 
-void lsObject :: setValue(string value, ...) {
+void lsObject :: setValue(std::string value, ...) {
     ls.push_back(value) ;
 }   
 
-void setContain :: setValue(string value, ...) {
+void setContain :: setValue(std::string value, ...) {
     ls.insert(value) ;
 }   
 
 
-string setContain :: getValue() {
-    string sss = "";
+std::string setContain :: getValue() {
+    std::string sss = "";
     if(ls.empty()) {
         return "" ;
     }
@@ -124,8 +124,8 @@ setContain::setContain() {
 setContain::~setContain() {
 
 }
-string lsObject :: getValue() {
-    string sss = "";
+std::string lsObject :: getValue() {
+    std::string sss = "";
     if(ls.empty()) {
         return "" ;
     }
@@ -137,8 +137,8 @@ string lsObject :: getValue() {
     return sss ;
 }
 
-vector<string> lsObject :: getValues(string ss) {
-    vector<string> tmp ;
+std::vector<std::string> lsObject :: getValues(std::string ss) {
+    std::vector<std::string> tmp ;
     for(auto s : ls) {
         tmp.push_back(s) ;
     }

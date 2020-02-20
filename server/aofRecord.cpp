@@ -22,6 +22,11 @@ void aofRecord::fullCall(const char* filename, std::size_t size) {
     rename(filename, "../logInfo/backuplog.log") ;
 }   
 
+void aofRecord::errorCall(const char* filename, std::size_t size) {
+    rename(filename, "../logInfo/error_tmp.log") ;
+}   
+
+
 //设置滚动日志
 int aofRecord::init() {
     el::Configurations conf(LOG_CONF);     
@@ -37,3 +42,6 @@ void aofRecord::record(const char* s) {
     LOG(INFO) << s ;
 }  
 
+void aofRecord::log(const std::string& s) {
+    LOG(ERROR)<<s ;
+}

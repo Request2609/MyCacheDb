@@ -1,11 +1,11 @@
 #include "lru.h"
 
-shared_ptr<simpleLru>simpleLru::sl ;
+std::shared_ptr<simpleLru>simpleLru::sl ;
 const int FULL_SIZE = 10 ;
 
-shared_ptr<simpleLru>simpleLru::getSimpleLru() {
+std::shared_ptr<simpleLru>simpleLru::getSimpleLru() {
     if(sl == nullptr) {
-        sl = shared_ptr<simpleLru>(new simpleLru) ;
+        sl = std::shared_ptr<simpleLru>(new simpleLru) ;
     }
     return sl ;
 }
@@ -20,7 +20,7 @@ void simpleLru::statistic(const key& k) {
 }
 
 void simpleLru::init() {
-    st = make_shared<searchTree>() ;
+    st = std::make_shared<searchTree>() ;
 }
 
 void simpleLru:: updateAndEliminate(const key&k) {
@@ -29,18 +29,19 @@ void simpleLru:: updateAndEliminate(const key&k) {
 }
 
 long simpleLru::getMem() {
-    filebuf fb ;
+    std::filebuf fb ;
     pid_t pid =getpid();
-    string str = "/proc/"+to_string(pid) ;
+    std::string str = "/proc/"+std::to_string(pid) ;
     str+="/status" ;
     if(!fb.open(str.c_str(), ios::in)) {
-        cout << __LINE__ <<"   " << __FILE__ << "  " << strerror(errno) << endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return -1 ;
     }   
-    string ss ;
-    istream is(&fb) ;
+    std::string ss ;
+    std::istream is(&fb) ;
     while(getline(is, ss, '\n')) {
-        if(ss.find("VmRSS") !=string::npos) {
+        if(ss.find("VmRSS") !=std::string::npos) {
             int index = ss.find("VmRSS") ;
             ss = ss.data()+index ;
             int end = ss.find("kB") ;
@@ -54,7 +55,7 @@ long simpleLru::getMem() {
 }
 void searchTree::insert(const key& k) {
     if(root == nullptr) {
-        root = make_shared<treeNode>(k) ;
+        root = std::make_shared<treeNode>(k) ;
         root->left = nullptr ;
         root->right = nullptr ;
     }
@@ -62,9 +63,9 @@ void searchTree::insert(const key& k) {
         if(size == FULL_SIZE) {
             root = deleteOne() ;
         }
-        auto ptr = make_shared<treeNode>(k) ;
+        auto ptr = std::make_shared<treeNode>(k) ;
         auto tmp = root ;
-        shared_ptr<treeNode>pre ;
+        std::shared_ptr<treeNode>pre ;
         while(tmp != nullptr) {
             if(*(ptr->k)==*(tmp->k)) {
                 tmp->k->timer = ptr->k->timer ;
@@ -91,10 +92,10 @@ void searchTree::insert(const key& k) {
 }
 
 treeNode::treeNode(const key k) {
-    this->k = make_shared<key>(k) ;
+    this->k = std::make_shared<key>(k) ;
 }
 
-shared_ptr<treeNode>searchTree::deleteOne() {
+std::shared_ptr<treeNode>searchTree::deleteOne() {
     auto tmp = root->left ;
     auto pre = root ;
     //删除一个根

@@ -61,11 +61,9 @@ public:
     ~rb_tree() {}
 public :
     std::map<int, std::set<std::string>> getByScore(int start, int end) ;
-    void travelAllTree(NODE root, std::vector<NODE>&) ;
     void insert_tree(int info, const std::string& s) ;
     NODE find_node(int key) ;
     void delete_node(int num) ;
-    void print_rb_tree() ;
     int getNum() { return num ; }
 private :
     NODE get_minimum(NODE cur) ;

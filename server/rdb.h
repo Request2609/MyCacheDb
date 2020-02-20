@@ -85,7 +85,7 @@ public:
     static int getLogFileName(vector<std::string>&logName) ;
     static std::string readLogFile(const std::string& file) ; 
 public :
-    static void procesString(const std::string key, ofstream& aa, const std::string value) ;
+    static void processString(const std::string key, ofstream& aa, const std::string value) ;
     static void processHash(std::ofstream& aa, const std::shared_ptr<dbObject>rd) ;
     static void processList(std::ofstream& aa, const std::shared_ptr<dbObject>rd) ;
 } ;

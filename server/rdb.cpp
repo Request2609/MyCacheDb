@@ -1,44 +1,44 @@
 #include "rdb.h"
 
-string rdb :: tmpFileName(const char* fileName) {
-    string tmp = fileName ;
+std::string rdb :: tmpFileName(const char* fileName) {
+    std::string tmp = fileName ;
     tmp += ".tmp" ;
     return tmp ;
 }
 //保存到文件
-int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
+int rdb :: save(const std::shared_ptr<redisDb> db, char* fileName) {     
     //获取数据库文件
-    string ss = tmpFileName(fileName) ;  
+    std::string ss = tmpFileName(fileName) ;  
     ofstream out(ss, ios::out|ios::binary|ios::trunc) ;
     if(out.fail()) {
-       cout << __FILE__ << "    " << __LINE__ << endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return -1;
     }
     int num = db->getId() ;
     //数据库编号
-    string head = makeHeader() ;
+    std::string head = makeHeader() ;
     //将头部写入文件
     const char* h =head.c_str() ;
     out << h ;
     out << "id:" << num <<"\r\n" ;
     //获取数据库中的对象元素
-    shared_ptr<dbObject> rd = db->getNextDb() ;
+    std::shared_ptr<dbObject> rd = db->getNextDb() ;
     while(rd != nullptr) {
-        string value ;
+        std::string value ;
         int type = rd->getType() ;
         //字符串类别是string
         out << "e:" ;
         out << rd->getEndTime() << "\r\n" ;
         if(type == type::DB_STRING) {
-            string value = rd->getValue() ; 
-            string key = rd->getKey() ;
+            std::string value = rd->getValue() ; 
+            std::string key = rd->getKey() ;
             out << "ctp:" << type::DB_STRING << "\r\n" ;
             processString(key, out, value) ;
         }
         //hash的保存
         if(type == type::DB_HASH) {
-            string key = rd->getKey() ;
-        //    out << rd->getEndTime()<<"\r\n" ;
+            std::string key = rd->getKey() ;
             out << "ctp:" <<type:: DB_HASH << "\r\n" ;
             processHash(out, rd) ;         
         }
@@ -52,66 +52,15 @@ int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {
     }
     out << "\r\n" ;  
     out.close() ;
-    cout << ss << "     " << fileName << endl ;
     remove(fileName) ;
     rename(ss.data(), fileName) ;
     return 1 ;
 }
-/*
-//保存到文件
-int rdb :: save(const shared_ptr<redisDb> db, char* fileName) {     
-    //获取数据库文件
-    //string ss = tmpFileName(fileName) ;  
-    ofstream out(fileName, ios::out|ios::binary|ios::trunc|ios::app) ;
-    if(out.fail()) {
-       cout << __FILE__ << "    " << __LINE__ << endl ;
-        return -1;
-    }
-    int num = db->getId() ;
-    //数据库编号
-    string head = makeHeader() ;
-    //将头部写入文件
-    const char* h =head.c_str() ;
-    out << h ;
-    out << "id:" << num <<"\r\n" ;
-    //获取数据库中的对象元素
-    shared_ptr<dbObject> rd = db->getNextDb() ;
-    while(rd != nullptr) {
-        string value ;
-        int type = rd->getType() ;
-        //字符串类别是string
-        out << "e:" ;
-        out << rd->getEndTime() << "\r\n" ;
-        if(type == DB_STRING) {
-            string value = rd->getValue() ; 
-            string key = rd->getKey() ;
-            out << "ctp:" << DB_STRING << "\r\n" ;
-            processString(key, out, value) ;
-        }
-        //hash的保存
-        if(type == DB_HASH) {
-            string key = rd->getKey() ;
-        //    out << rd->getEndTime()<<"\r\n" ;
-            out << "ctp:" << DB_HASH << "\r\n" ;
-            processHash(out, rd) ;         
-        }
-        //是链表
-        if(type == DB_LIST) {
-          //  out << rd->getEndTime() << "\r\n" ;
-            out  <<"ctp:" << DB_LIST << "\r\n" ;
-            processList(out, rd) ;
-        }   
-        rd = db->getNextDb() ;
-    }
-    out << "\r\n" ;  
-    out.close() ;
-    return 1 ;
-}
-*/
-void rdb :: processList(ofstream& aa, const shared_ptr<dbObject>rd) {
-    string key = rd->getKey() ;
+
+void rdb :: processList(ofstream& aa, const std::shared_ptr<dbObject>rd) {
+    std::string key = rd->getKey() ;
     aa << key << "\r\n" ;
-    vector<string> ls = rd->getValues("") ;
+    std::vector<std::string> ls = rd->getValues("") ;
     int len = ls.size() ;
     for(int i=0; i<len; i++) {
         aa <<ls[i]<< "\r\n" ;
@@ -120,10 +69,10 @@ void rdb :: processList(ofstream& aa, const shared_ptr<dbObject>rd) {
 }
 
 
-void rdb :: processHash(ofstream& out, const shared_ptr<dbObject>rd) {
+void rdb :: processHash(ofstream& out, const std::shared_ptr<dbObject>rd) {
 
-    string key = rd->getKey() ;
-    string value="" ;
+    std::string key = rd->getKey() ;
+    std::string value="" ;
     int len = 0 ;
     out << key << "\r\n" ;
     //获取hash中的键值属性
@@ -134,14 +83,14 @@ void rdb :: processHash(ofstream& out, const shared_ptr<dbObject>rd) {
             break ;
         }
         int index = value.find("\r\n") ;
-        string key = value.substr(0, index) ;
-        string val = value.substr(index+2, len-index) ;
+        std::string key = value.substr(0, index) ;
+        std::string val = value.substr(index+2, len-index) ;
         out << key << ":" << val << "\r\n" ;
     }
     out <<"\r$\n" ;
 }
 
-void rdb :: processString(const string key, ofstream& out, const string value) {
+void rdb :: processString(const std::string key, ofstream& out, const std::string value) {
 
     const char * v = value.c_str() ;
     //编码类型
@@ -200,7 +149,7 @@ void rdb :: processString(const string key, ofstream& out, const string value) {
     }   
 }
 
-string rdb :: lzfCompress(string value, int& ll) {
+std::string rdb :: lzfCompress(std::string value, int& ll) {
     size_t len = value.size();  // 字符串未压缩前的长度
     size_t comprlen;  // 压缩后的长度
     size_t outlen;    // 输出缓存的最大长度
@@ -212,26 +161,22 @@ string rdb :: lzfCompress(string value, int& ll) {
     
     outlen = len-4;
     
-    if ((out = malloc(outlen+3)) == NULL) 
-    {
-        cout << "out = malloc(outlen+1)" << endl;
+    if ((out = malloc(outlen+3)) == NULL)  {
         return "";
     }
     //传入数据，数据长度，任意类型的指针
     comprlen = lzf_compress(value.data(), len, out, outlen);  
-    if (comprlen == 0) 
-    {
-        cout << "压缩失败！"<< endl ;
+    if (comprlen == 0) { 
         free(out);
         return "";
     }
     ll = comprlen ;
-    string a = (char*)out ;
+    std::string a = (char*)out ;
     free(out) ;
     return a ;
 }
 
-int rdb :: getStringEncodingType(const string value) {
+int rdb :: getStringEncodingType(const std::string value) {
 
     if(isNum(value.c_str())) {
         //如果int小于32为整数
@@ -253,8 +198,8 @@ int rdb :: getStringEncodingType(const string value) {
 }
 
 //创建rdb头部,redis标识，版本号
-string rdb :: makeHeader() {
-    string head ;
+std::string rdb :: makeHeader() {
+    std::string head ;
     //rdb文件标志
     head += "redis" ;
     head += "0001\r\n" ;   
@@ -277,14 +222,15 @@ bool rdb :: isNum(const char* num) {
     return false ;
 }
 
-int rdb :: getAllFileName(vector<string>&nameLs) {
+int rdb :: getAllFileName(std::vector<std::string>&nameLs) {
     ifstream ifs(".rdb/.redis_fileName", ios::in) ;
     if(ifs.fail()) {
-        cout << __FILE__ << "   " << __LINE__ <<"   "<<  strerror(errno)<< endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return -1 ;
     }
     while(!ifs.eof()) {
-        string file ;
+        std::string file ;
         ifs >> file ;
         nameLs.push_back(file) ;
     }
@@ -293,20 +239,23 @@ int rdb :: getAllFileName(vector<string>&nameLs) {
 }
 
 
-string rdb :: getFileInfo(const string s) {
+std::string rdb :: getFileInfo(const std::string s) {
     int fd = open(s.c_str(), O_RDWR) ;
     if(fd < 0) {
-        cout << strerror(errno) << "     " << __LINE__ << "     " << __FILE__ << endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return "" ;
     }
     struct stat st ;
     int ret = fstat(fd, &st) ;
     if(st.st_size == 0) {
-        cout << "数据库文件为空！" << endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return "" ;
     }
     if(ret < 0) {
-        cout << __FILE__ << "       " << __LINE__ << endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return "" ;
     }
     long size = st.st_size ;
@@ -316,18 +265,19 @@ string rdb :: getFileInfo(const string s) {
     //内存映射
     char* flag = (char*)mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0) ;
     if(flag == NULL) {
-            cout << __FILE__ << "    " << __LINE__ << endl ;
-            return "" ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
+        return "" ;
     }
     close(fd) ;
-    string b = flag ;
+    std::string b = flag ;
     munmap(flag, size) ;
     return b ;
 }
 
 //初始化数据库
 int rdb :: initRedis(cmdSet* cmdset) {
-    vector<string>nameLs ;
+    std::vector<std::string>nameLs ;
     int i = getAllFileName(nameLs) ;
     if(nameLs.size() == 0|| i < 0) {
         return -1 ;
@@ -336,19 +286,20 @@ int rdb :: initRedis(cmdSet* cmdset) {
         if(s.size() == 0) {
             continue ;
         }
-        string str = getFileInfo(s) ;   
+        std::string str = getFileInfo(s) ;   
         if(str.empty()) {
             return -1 ;
         } 
-        shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
+        std::shared_ptr<redisDb>db = recoverDb :: recover(str, cmdset) ;   
     }
     return 1 ;
 }
 
-string rdb::readLogFile(const string& file) {
+std::string rdb::readLogFile(const std::string& file) {
     int fd = open(file.c_str(), O_RDONLY);
     if(fd < 0) {
-        cout << __LINE__ << "  " << __FILE__ << endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return "" ;
     }
     struct stat st ;
@@ -359,20 +310,21 @@ string rdb::readLogFile(const string& file) {
         munmap(buf, st.st_size) ;
         return "" ;
     }
-    string ss = buf ;
+    std::string ss = buf ;
     munmap(buf, st.st_size) ;
     close(fd) ;
     return ss ;
 }
 
-int rdb::getLogFileName(vector<string>&logName) {
+int rdb::getLogFileName(std::vector<std::string>&logName) {
     ifstream in("../logInfo/allLogFileName", ios::in) ;
     if(in.fail()) {
-        //cout << __LINE__ << "  " << __FILE__ << endl ;
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__+strerror(errno) ;
+        aofRecord::log(s) ;
         return -1 ;   
     }
     while(!in.eof()) {
-        string s = "" ;
+        std::string s = "" ;
         in>> s ;
         logName.push_back(s) ;
     }

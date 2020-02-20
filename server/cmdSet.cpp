@@ -1,13 +1,13 @@
 #include "cmdSet.h"
 
-vector<pair<int, shared_ptr<redisDb>>>*cmdSet::db = NULL;
+vector<pair<int, std::shared_ptr<redisDb>>>*cmdSet::db = NULL;
 int cmdSet :: REDIS_NUM = 16 ;
 //初始化命令集
 cmdSet :: cmdSet() {
     //申请16个数据库
     dbLs.reserve(REDIS_NUM) ;
     for(int i=0; i<16; i++) {
-        dbLs.push_back({i ,make_shared<redisDb>(i)}) ;
+        dbLs.push_back({i ,std::make_shared<redisDb>(i)}) ;
     }
     db = &dbLs ;
 } 
@@ -43,63 +43,63 @@ void cmdSet:: asyncSave() {
 //初始化命令表
 int cmdSet :: initCmdCb() {
     //初始化set命令
-    shared_ptr<redisCommand>tset = make_shared<redisCommand>("set", -3, "wm",  1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>tset = std::make_shared<redisCommand>("set", -3, "wm",  1, 1, 1, 0, 0) ;
     //函数指针不能作为构造函数参数
     tset->setCallBack(cmdCb :: setCmd) ;
     cmdList.insert(make_pair("set", tset)) ;
 
-    shared_ptr<redisCommand>tget = make_shared<redisCommand>("get", -3, "wm",  1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>tget = std::make_shared<redisCommand>("get", -3, "wm",  1, 1, 1, 0, 0) ;
     tget->setCallBack(cmdCb :: getCmd) ;
     cmdList.insert(make_pair("get", tget)) ;
     //设置数据库命令
-    shared_ptr<redisCommand>save = make_shared<redisCommand>("save", -3, "r", 1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>save = std::make_shared<redisCommand>("save", -3, "r", 1, 1, 1, 0, 0) ;
     save->setCallBack(cmdCb :: save) ;
     cmdList.insert({"save", save}) ;
 
     //设置hash命令的回调以及相关的信息
-    shared_ptr<redisCommand>hashLs = make_shared<redisCommand>("hset", -3, "wm",  1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>hashLs = std::make_shared<redisCommand>("hset", -3, "wm",  1, 1, 1, 0, 0) ;
     hashLs->setCallBack(cmdCb :: setHash) ;
     cmdList.insert(make_pair("hset", hashLs)) ;   
 
     //设置hget命令相关信息
-    shared_ptr<redisCommand>hgetLs = make_shared<redisCommand>("hget", -3, "wm",  1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>hgetLs = std::make_shared<redisCommand>("hget", -3, "wm",  1, 1, 1, 0, 0) ;
     hgetLs->setCallBack(cmdCb :: setHget) ;
     cmdList.insert({"hget", hgetLs}) ;   
 
-    shared_ptr<redisCommand>bgSave =make_shared<redisCommand>("bgsave", -3, "wm",  1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>bgSave =std::make_shared<redisCommand>("bgsave", -3, "wm",  1, 1, 1, 0, 0) ;
     //和save一样调用相同的函数，操作文件
     bgSave->setCallBack(cmdCb :: save) ;
     cmdList.insert({"bgsave", bgSave}) ;   
 
-    shared_ptr<redisCommand>lpush =make_shared<redisCommand>("lpush", -3, "wm",  1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>lpush =std::make_shared<redisCommand>("lpush", -3, "wm",  1, 1, 1, 0, 0) ;
     lpush->setCallBack(cmdCb :: setLpush) ;
     cmdList.insert({"lpush", lpush}) ;   
 
     //从队列中弹出
-    shared_ptr<redisCommand>lpop = make_shared<redisCommand>("lpop", -3, "wm",  1, 1, 1, 0, 0);
+    std::shared_ptr<redisCommand>lpop = std::make_shared<redisCommand>("lpop", -3, "wm",  1, 1, 1, 0, 0);
     lpop->setCallBack(cmdCb :: lPop) ;
     cmdList.insert({"lpop", lpop}) ;
     
-    shared_ptr<redisCommand>blpop=make_shared<redisCommand>("blpop", -3, "wm",  1, 1, 1, 0, 0) ;
+    std::shared_ptr<redisCommand>blpop=std::make_shared<redisCommand>("blpop", -3, "wm",  1, 1, 1, 0, 0) ;
     blpop->setCallBack(cmdCb :: blPop) ;
     cmdList.insert({"blpop", blpop}) ;
 
-    shared_ptr<redisCommand>zadd = make_shared<redisCommand>("zadd", -3, "wm",  1, 1, 1, 0, 0);
+    std::shared_ptr<redisCommand>zadd = std::make_shared<redisCommand>("zadd", -3, "wm",  1, 1, 1, 0, 0);
     zadd->setCallBack(cmdCb :: sortSetAdd) ;
     cmdList.insert({"zadd", zadd}) ;
 
     //查询有序集合的
-    shared_ptr<redisCommand>zrange = make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
+    std::shared_ptr<redisCommand>zrange = std::make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
     zrange->setCallBack(cmdCb :: sortSetGetMember) ;
     cmdList.insert({"zrange", zrange}) ;
 
     //查询集合的
-    shared_ptr<redisCommand>sadd = make_shared<redisCommand>("sadd", -3, "wm",  1, 1, 1, 0, 0);
+    std::shared_ptr<redisCommand>sadd = std::make_shared<redisCommand>("sadd", -3, "wm",  1, 1, 1, 0, 0);
     sadd->setCallBack(cmdCb :: setSetValue) ;
     cmdList.insert({"sadd", sadd}) ;
 
     //查询集合的
-    shared_ptr<redisCommand>spop = make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
+    std::shared_ptr<redisCommand>spop = std::make_shared<redisCommand>("zrange", -3, "wm",  1, 1, 1, 0, 0);
     spop->setCallBack(cmdCb :: sPop) ;
     cmdList.insert({"spop", spop}) ;
 } 
@@ -117,7 +117,7 @@ int cmdSet :: initRedis() {
    rdb :: initRedis(this) ;
 }
 
-int cmdSet:: findCmd(string cmd) {
+int cmdSet:: findCmd(std::string cmd) {
     if(cmdList.find(cmd) == cmdList.end()) {
         return NOTFOUND ;
     } 
@@ -134,7 +134,7 @@ int cmdSet :: countRedis() {
     return dbLs.size() ;
 }
 
-void cmdSet :: addObjectToDb(int num, shared_ptr<dbObject>ob) {
+void cmdSet :: addObjectToDb(int num, std::shared_ptr<dbObject>ob) {
     ob->setNum(num) ;
     for(auto s : dbLs) {
         if(s.first == num) {
@@ -145,7 +145,7 @@ void cmdSet :: addObjectToDb(int num, shared_ptr<dbObject>ob) {
     return ;
 }
 
-shared_ptr<redisDb> cmdSet :: getDB(int num) {
+std::shared_ptr<redisDb> cmdSet :: getDB(int num) {
     //数据库为空
     int len = dbLs.size() ;
     for(int i=0; i<len; i++) {
@@ -160,23 +160,22 @@ void cmdSet::checkAof() {
     recoverDb::recoverByLog(&dbLs) ;
 }
 
-int cmdSet :: append(shared_ptr<redisDb> db) {
+int cmdSet :: append(std::shared_ptr<redisDb> db) {
     int num = db->getId() ;
     dbLs.push_back({num, db}) ;
     return 1 ;
 }
 
-int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
+int cmdSet :: redisCommandProc(int num, std::shared_ptr<Messages::Command>&cmd) {
     //创建一个响应
-    response = make_shared<Response>() ;
+    response = std::make_shared<Messages::Response>() ;
     //根据数据库编号找到数据库
-    shared_ptr<redisDb> wrdb = getDB(num) ;
-    string cd = cmd->cmd() ;
+    std::shared_ptr<redisDb> wrdb = getDB(num) ;
+    std::string cd = cmd->cmd() ;
     //不区分大小写a
     int a = 0 ;
     if(!strcasecmp(cd.c_str(), "set")) {
         saveTimerHandle::countModify() ;
-        cout << "完成" << endl ;
         //调用命令对应的函数
         a = cmdList[cd]->cb(wrdb, cmd, response) ;
         //处理失败
@@ -247,7 +246,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     }
 
     if(!strcasecmp(cd.c_str(), "blpop")) {
-        string aa = "blpop" ;
+        std::string aa = "blpop" ;
         //给a设置一个特殊值
         a = cmdList[aa]->cb(wrdb, cmd, response) ;
         //接收a的值进行判断
@@ -257,7 +256,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     }
     if(!strcasecmp(cd.c_str(), "zrange")) {
         //给a设置一个特殊值
-        string aa = cd.c_str() ;
+        std::string aa = cd.c_str() ;
         a = cmdList[aa]->cb(wrdb, cmd, response) ;
         //接收a的值进行判断
         if(a == 0) {
@@ -267,7 +266,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "sadd")) {
         saveTimerHandle::countModify() ;
          //给a设置一个特殊值
-        string aa = cd.c_str() ;
+        std::string aa = cd.c_str() ;
         a = cmdList[aa]->cb(wrdb, cmd, response) ;
         if(a > 1) {
             response->set_reply("1") ;
@@ -281,7 +280,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     if(!strcasecmp(cd.c_str(), "spop")) {
         saveTimerHandle::countModify() ;
         //给a设置一个特殊值
-        string aa = cd.c_str() ;
+        std::string aa = cd.c_str() ;
         a = cmdList[aa]->cb(wrdb, cmd, response) ;
         //接收a的值进行判断
         if(a == 0) {
@@ -295,7 +294,7 @@ int cmdSet :: redisCommandProc(int num, shared_ptr<Command>&cmd) {
     }
     return SUCESS ;
 }
-int redisCommand :: cb(shared_ptr<redisDb>&db, shared_ptr<Command>&wcmd, shared_ptr<Response>& res) { 
+int redisCommand :: cb(std::shared_ptr<redisDb>&db, std::shared_ptr<Messages::Command>&wcmd, std::shared_ptr<Messages::Response>& res) { 
     if(callBack == nullptr) {
         return -1;
     }

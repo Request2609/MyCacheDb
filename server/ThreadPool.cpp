@@ -6,12 +6,11 @@ threadPool :: threadPool(unsigned short size) : stop(false){
     
     for(size = 0; size < spareThreadNums; size++) {
         //初始化线程池，使用lambda表达式
-        pool.emplace_back(
-                          [this]{
+        pool.emplace_back([this]{
                             //当线程没被终止，等待有任务信号
-                          while(!this->stop) {
                           //根据信号
                           //准备接收加入到线程池中的任务并执行    
+                          while(!this->stop) {
                           std :: function <void ()> task ;
                           {
                           std :: unique_lock<std :: mutex> lock {this->muteLock} ;
@@ -22,7 +21,7 @@ threadPool :: threadPool(unsigned short size) : stop(false){
                                           }) ;
                           //终止线程池操作
                           if(this->stop && this->taskQueue.empty()) {
-                          return ;
+                            return ;
                           }
                           //这里使用右值引用，实现０赋值拷贝，提高效率
                           task = std :: move(this->taskQueue.front()) ;
@@ -32,8 +31,7 @@ threadPool :: threadPool(unsigned short size) : stop(false){
                           task() ;
                           spareThreadNums++ ;
                           }                   
-                          }
-        );
+                          });
     }
 }
 

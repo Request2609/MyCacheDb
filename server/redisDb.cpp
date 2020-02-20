@@ -1,16 +1,15 @@
 #include "redisDb.h"
-using namespace type ;
 
 //判断当前操作键值存在不存在,找到并修改
-int redisDb :: isExist(shared_ptr<Command>&cmds) {
+int redisDb :: isExist(std::shared_ptr<Command>&cmds) {
     auto ptr = aofRecord::getLogObject() ;
-    string s = "" ; 
-    string cmd = cmds->cmd() ;
+    std::string s = "" ; 
+    std::string cmd = cmds->cmd() ;
     //如果是set 命令
     int num = cmds->num() ;
     if(cmd == "set") {
         s=to_string(cmds->num())+" set" ;
-        string k = cmds->keys(0).key(0) ;
+        std::string k = cmds->keys(0).key(0) ;
         key ke(num, type::DB_STRING, k) ;
 
         auto res = db.find(ke) ;
@@ -25,10 +24,10 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         return 1 ;
     }
     if(cmd == "hset") {
-        s += to_string(num)+" "+"hset" ;
-        string k = cmds->keys(0).key(0) ;
-        string kk = cmds->keys(1).key(0) ;
-        string vv = cmds->vals(0).val(0) ;
+        s += std::to_string(num)+" "+"hset" ;
+        std::string k = cmds->keys(0).key(0) ;
+        std::string kk = cmds->keys(1).key(0) ;
+        std::string vv = cmds->vals(0).val(0) ;
         s+=" "+k+" "+kk+" "+vv ;
         key ke(num, type::DB_HASH, k) ;
         auto res = db.find(ke) ;
@@ -44,8 +43,8 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
                 return -1 ;
             }
             for(int j=0; j<lk; j++) {
-                string kk = cmds->keys(i).key(j) ;
-                string vv = cmds->vals(i-1).val(j) ;
+                std::string kk = cmds->keys(i).key(j) ;
+                std::string vv = cmds->vals(i-1).val(j) ;
                 res->second->setValue(kk, vv.c_str()) ;
                 s+=" "+kk+" "+vv ;
             }
@@ -56,8 +55,8 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
     }
     ListObject lob = cmds->lob(0) ;
     if(cmd == "lpush") {
-        s+=" "+to_string(num)+" "+"lpush" ;
-        string keys = lob.key() ;
+        s+=" "+std::to_string(num)+" "+"lpush" ;
+        std::string keys = lob.key() ;
         s+=" "+keys ;
         key ke(num, type::DB_LIST, keys) ;
         auto res = db.find(ke) ;
@@ -78,8 +77,8 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         return num ;   
     }
     if(cmd == "zadd") {
-        string keys = lob.key() ;
-        s+=" "+to_string(num)+" "+"zadd"+" "+keys ;
+        std::string keys = lob.key() ;
+        s+=" "+std::to_string(num)+" "+"zadd"+" "+keys ;
         key ke(num, type::SORT_SET, keys) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
@@ -87,16 +86,16 @@ int redisDb :: isExist(shared_ptr<Command>&cmds) {
         }
         res->second->timer = curTimer::curTime() ;
         Value val = lob.vals(0) ;
-        string score = val.val(0);
-        string value = val.val(1) ;
+        std::string score = val.val(0);
+        std::string value = val.val(1) ;
         s+=" "+score+" "+value ;
         res->second->setValue(score, value.c_str()) ;
         ptr->record(s.c_str()) ;
     }
 
     if(cmd == "sadd") {
-        string keys = lob.key() ;
-        s+=" "+to_string(num)+" "+keys ;
+        std::string keys = lob.key() ;
+        s+=" "+std::to_string(num)+" "+keys ;
         key ke(num, type::SET_SET, keys) ;
         auto res = db.find(ke) ;
         if(res == db.end()) {
@@ -121,7 +120,7 @@ long curTimer::curTime() {
     return ii ;
 }
 
-int redisDb::append(int num, int type, shared_ptr<dbObject>dob) {
+int redisDb::append(int num, int type, std::shared_ptr<dbObject>dob) {
     key k ;
     k.num = num ;
     k.type = type ;
@@ -158,14 +157,14 @@ key redisDb::getRandomKey() {
 }
     
 //遍历redis中的dbObject对象
-shared_ptr<dbObject> redisDb :: getNextDb() {
+std::shared_ptr<dbObject> redisDb :: getNextDb() {
     static auto res = db.begin();
     if(res == db.end() || !db.size()) { 
         res = db.begin() ;
         return nullptr ;
     }
     auto re = res ;
-    shared_ptr<dbObject>dob = re->second ;
+    std::shared_ptr<dbObject>dob = re->second ;
     res ++ ;
     int flag = 0 ;
     //判断当前超时
@@ -179,7 +178,7 @@ shared_ptr<dbObject> redisDb :: getNextDb() {
     return flag == 0 ? dob:nullptr ;
 }
 
-void redisDb :: append(shared_ptr<dbObject>rdb) {   
+void redisDb :: append(std::shared_ptr<dbObject>rdb) {   
     //三元组确定对象
     key k  ;
     //数据库号
@@ -199,17 +198,16 @@ void redisDb :: append(shared_ptr<dbObject>rdb) {
 }
 
 //查询数据库,get命令等
-int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
+int redisDb :: queryDb(std::shared_ptr<Response>& res, std::shared_ptr<Command>& cmd) {
     //get查询
-    string md = cmd->cmd() ;
-    int num = cmd->num() ;/*
-    cout << "当前数据库编号" << num << endl ;*/
+    std::string md = cmd->cmd() ;
+    int num = cmd->num() ;
     if(!strcasecmp(md.c_str(), "get")) {
         //在本数据库中找set对象并且查询的值
-        string key ;
+        std::string key ;
         //获取到键值
         key = cmd->keys(0).key(0) ;
-        string r = findGetRequest(key, num) ;
+        std::string r = findGetRequest(key, num) ;
         if(!r.size()) {
             res->set_reply("object is not find!") ;
         }
@@ -219,10 +217,10 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     }
 
     if(!strcasecmp(md.c_str(), "hget")) {
-        string value ;
-        string key = cmd->keys(0).key(0) ;
+        std::string value ;
+        std::string key = cmd->keys(0).key(0) ;
         value = cmd->keys(0).key(1) ;
-        string feild = findHgetRequest(key, value) ;
+        std::string feild = findHgetRequest(key, value) ;
         if(feild == "") {
             res->set_reply("no the object!") ;
             return 1;
@@ -231,8 +229,8 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     }
     int flag = 0;
     if(!strcasecmp(md.c_str(), "lpop") || !strcasecmp(md.c_str(), "blpop")) {
-        string key = cmd->lob(0).key() ;
-        string val = findListRequest(key, num) ;
+        std::string key = cmd->lob(0).key() ;
+        std::string val = findListRequest(key, num) ;
         if(!strcasecmp(md.c_str(), "blpop")) {
             flag = 1 ;
         }
@@ -248,16 +246,16 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
         res->set_reply(val) ;
     }
     if(!strcasecmp(md.c_str(), "zrange")) {
-        string key = cmd->lob(0).key() ;
-        string val = findSortSetValue(cmd) ;
+        std::string key = cmd->lob(0).key() ;
+        std::string val = findSortSetValue(cmd) ;
         if(val.empty()) {
            return -1 ; 
         }
         res->set_reply(val) ;
     }
     if(!strcasecmp(md.c_str(), "spop")) {
-        string key = cmd->lob(0).key() ;
-        string val = findSetRequest(key, num) ;
+        std::string key = cmd->lob(0).key() ;
+        std::string val = findSetRequest(key, num) ;
         if(val.empty()) {
             return -1 ;
         }
@@ -266,7 +264,7 @@ int redisDb :: queryDb(shared_ptr<Response>& res, shared_ptr<Command>& cmd) {
     return 1 ;
 }
 
-string redisDb :: findSetRequest(const string k, const int num ){
+std::string redisDb :: findSetRequest(const std::string k, const int num ){
     key ke ;
     ke.cmd = k ;
     ke.num = num ;
@@ -275,29 +273,28 @@ string redisDb :: findSetRequest(const string k, const int num ){
     if(res == db.end()) {
         return "" ;
     }
-    string ss = res->second->getValue() ;
+    std::string ss = res->second->getValue() ;
     res->second->timer = curTimer::curTime() ;
     return ss ;  
 }
 
-string redisDb :: findSortSetValue(const shared_ptr<Command>& cmd) {
+std::string redisDb :: findSortSetValue(const std::shared_ptr<Command>& cmd) {
     key  ke ;
     ListObject lob = cmd->lob(0) ;
     ke.cmd = lob.key() ;
-    string s = lob.vals(0).val(0) ;
-    string e = lob.vals(0).val(1) ;
-    string val = s+" "+e ;
+    std::string s = lob.vals(0).val(0) ;
+    std::string e = lob.vals(0).val(1) ;
+    std::string val = s+" "+e ;
     ke.num = cmd->num() ;
     ke.type = type::SORT_SET ;
     auto ret = db.find(ke) ;
     if(ret == db.end()) {
-        cout << "没找到" << endl ;
         return "" ;
     }
-    vector<string> res = ret->second->getValues(val) ;
+    vector<std::string> res = ret->second->getValues(val) ;
     ret->second->timer = curTimer::curTime() ;
     //将结果集合打包
-    string ss = "" ;
+    std::string ss = "" ;
     for(auto a : res) {
         ss+=a ;
         ss+='\n' ;
@@ -311,7 +308,7 @@ void redisDb :: processBlpop() {
 }
 
 
-string redisDb::findListRequest(const string k, const int num) {
+std::string redisDb::findListRequest(const std::string k, const int num) {
     key ke ;
     ke.num = num ;
     ke.cmd = k ;
@@ -326,9 +323,9 @@ string redisDb::findListRequest(const string k, const int num) {
         return "" ;
     }
     res->second->timer = curTimer::curTime() ;
-    string t= res->second->getValue() ;
+    std::string t= res->second->getValue() ;
     int len = res->second->objectSize() ;   
-    return t+" "+to_string(len) ;
+    return t+" "+to_std::string(len) ;
 }
 
 void redisDb :: removeDataByKey(key k) {
@@ -341,11 +338,11 @@ void redisDb :: removeDataByKey(key k) {
 }
 
 
-string redisDb :: findHgetRequest(const string k, 
-                                  const string feild) {
+std::string redisDb :: findHgetRequest(const std::string k, 
+                                  const std::string feild) {
     key ke ;
     ke.num = num ;
-    ke.type = DB_HASH ;
+    ke.type = type::DB_HASH ;
     ke.cmd = k ;
     auto res = db.find(ke) ;
     if(res == db.end()) {
@@ -367,9 +364,9 @@ void redisDb :: print() {
     }
 }
 //找相应的get请求键的值
-string redisDb :: findGetRequest(const string k, const int num) {
+std::string redisDb :: findGetRequest(const std::string k, const int num) {
     //查找
-    key ke(num, DB_STRING, k) ;
+    key ke(num, type::DB_STRING, k) ;
     auto res= db.find(ke) ;
     if(res == db.end()) {
         return "" ;

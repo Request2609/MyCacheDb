@@ -11,7 +11,7 @@
 #include <string.h>
 #include <string>
 #include <functional>
-
+#include "aofRecord.h"
 
 class aeSocket {
     typedef std::function<void()>callBack ;

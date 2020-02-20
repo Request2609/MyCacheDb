@@ -8,10 +8,10 @@
 #endif
  
 
-map<int, shared_ptr<aeEvent>>* MyTimer :: data ;
-shared_ptr<aeEpoll> MyTimer :: aep ;
+std::map<int, std::shared_ptr<aeEvent>>* MyTimer :: data ;
+std::shared_ptr<aeEpoll> MyTimer :: aep ;
 // Timer
-MyTimer::MyTimer(shared_ptr<TimerManager>& manager)
+MyTimer::MyTimer(std::shared_ptr<TimerManager>& manager)
 	: manager_(manager)
 	, m_nHeapIndex(-1) {
 }
@@ -59,7 +59,7 @@ void MyTimer :: add_time(unsigned long long now) {
 void TimerManager::add_timer(MyTimer timer) {
 	//插到数组最后一个位置上，上浮
 	timer.m_nHeapIndex = heap_.size();
-	HeapEntry entry = { timer.m_nExpires, shared_ptr<MyTimer>(new MyTimer(timer))};
+	HeapEntry entry = { timer.m_nExpires, std::shared_ptr<MyTimer>(new MyTimer(timer))};
 	heap_.push_back(entry);
     //调整队列的元素位置,保持二叉搜索树的特性
 	up_heap(heap_.size() - 1);
@@ -100,7 +100,6 @@ void TimerManager :: modify_timers(int fd) {
     
 void TimerManager :: printTime(long now) {
     for(auto res : heap_) {
-        cout <<"客户端超时时间"<< res.time <<"       现在时间：" << now << endl ; 
     } 
 }
 
@@ -111,7 +110,7 @@ void TimerManager::detect_timers(int i) {
     //时间到
     while (!heap_.empty()) {
         //超时的话就调用相应的函数，并将对象一处堆
-        shared_ptr<MyTimer> timer = heap_[0].timer ;
+        std::shared_ptr<MyTimer> timer = heap_[0].timer ;
         if(heap_[0].time <= now) {
             remove_timer(timer->m_nHeapIndex);
             timer->on_timer(now,  i);

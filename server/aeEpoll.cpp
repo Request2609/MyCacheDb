@@ -1,11 +1,13 @@
 #include "aeEpoll.h"
+
 int aeEpoll :: add(int fd, int events) {
-	struct epoll_event ev ;
-	ev.data.fd = fd ;
-	ev.events = events ;
-	if(epoll_ctl(epFd, EPOLL_CTL_ADD, fd, &ev) < 0) {
-		std::cout << __FILE__ << "         " << __LINE__ << std::endl  ;
-		return 0 ;
+    struct epoll_event ev ;
+    ev.data.fd = fd ;
+    ev.events = events ;
+    if(epoll_ctl(epFd, EPOLL_CTL_ADD, fd, &ev) < 0) {
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__ ;
+        aofRecord::log(s) ;
+        return 0 ;
 	}
 	return 1 ;
 }
@@ -22,31 +24,35 @@ int aeEpoll :: modify(int fd, int event) {
 	struct epoll_event ev ;
 	//设置套接字
 	ev.data.fd = fd ;
-	//设置事件监听类型
-	ev.events = event ;
-	if(epoll_ctl(epFd, EPOLL_CTL_MOD, fd, &ev) < 0) {
-		std::cout << __FILE__ << "      "<< __LINE__ << std::endl ;
-		return -1 ;
-	}
-	return 1 ;
+    //设置事件监听类型
+    ev.events = event ;
+    if(epoll_ctl(epFd, EPOLL_CTL_MOD, fd, &ev) < 0) {
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__ ;
+        aofRecord::log(s) ;
+        return -1 ;
+    }
+    return 1 ;
 }
 int aeEpoll :: del(int fd) {
-	if(epoll_ctl(epFd, EPOLL_CTL_DEL, fd, NULL) < 0) {
-		std::cout <<  __FILE__ << "       " << __LINE__ << std::endl ;
-		return -1 ;
-	}
-	return 1 ;
+    if(epoll_ctl(epFd, EPOLL_CTL_DEL, fd, NULL) < 0) {
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__ ;
+        aofRecord::log(s) ;
+        return -1 ;
+    }
+    return 1 ;
 }
 //将所有活跃事件收起来ls
 int aeEpoll :: wait(std::vector<epoll_event>&ls, int t) {
-	int eventNum = epoll_wait(epFd, &eventFds[0], eventFds.capacity(), t) ;
-	if(eventNum < 0 && errno != EINTR) {
-		std::cout << errno << "     " << strerror(errno) << "      " << __FILE__ << "         " << __LINE__ <<  std::endl ;
-		return -1 ;
-	} else {
-		for (int i=0; i < eventNum; i++) {
-			ls.push_back(eventFds[i]) ;
-		}
-	}
+    int eventNum = epoll_wait(epFd, &eventFds[0], eventFds.capacity(), t) ;
+    if(eventNum < 0 && errno != EINTR) {
+        std::string s = "         " +std::to_string(__LINE__) +__FILE__ ;
+        aofRecord::log(s) ;
+        return -1 ;
+    } 
+    else {
+        for (int i=0; i < eventNum; i++) {
+            ls.push_back(eventFds[i]) ;
+        }
+    }
 	return eventNum ;
 }

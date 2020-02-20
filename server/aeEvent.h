@@ -13,6 +13,12 @@
 
 #define SIZE 4096
 
+//事件
+namespace event {
+    const int timeout = 1 ;
+    const int commonMsg = 2 ;
+}
+
 class TimerManager ;
 
 //创建连接事件信息

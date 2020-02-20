@@ -27,7 +27,7 @@ void saveTimerHandle::countModify() {
     }
 }
 
-int saveTimerHandle::setEpoll(shared_ptr<aeEpoll>aep) {
+int saveTimerHandle::setEpoll(std::shared_ptr<aeEpoll>aep) {
     if(sth == nullptr) {
         getSaveTimerObject() ;
     }

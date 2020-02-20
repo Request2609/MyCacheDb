@@ -1,20 +1,20 @@
 #include "rpc.h"
 
 rpc :: rpc()  {
-    cmd = shared_ptr<Command>(new Command) ;
+    cmd = std::shared_ptr<Messages::Command>(new Messages::Command) ;
     parseMethod = requestMethod ;
 }
 
 
 //处理结果，并返回相应的结果
-shared_ptr<Command> rpc :: getParseString(const char* buf) {
+std::shared_ptr<Messages::Command> rpc :: getParseString(const char* buf) {
     //在消息处理处，反序列化
     auto res = parseMethod(buf) ;
     return res ;
 }
 
 
-int rpc :: response(shared_ptr<Response>res, int fd) {
+int rpc :: response(std::shared_ptr<Messages::Response>res, int fd) {
     //回复客户端
     //序列化，转化成string
     char buf[4096] ;
@@ -29,9 +29,9 @@ int rpc :: response(shared_ptr<Response>res, int fd) {
 }
 
 ///反序列化
-shared_ptr<Command> requestMethod(const char* buf) {
-    Command cmd ;
+std::shared_ptr<Messages::Command> requestMethod(const char* buf) {
+    Messages::Command cmd ;
     cmd.ParseFromArray(buf, 4096) ;
-    shared_ptr<Command>comm = make_shared<Command>(cmd) ;
+    std::shared_ptr<Messages::Command>comm = make_shared<Messages::Command>(cmd) ;
     return comm ;
 }

@@ -1,6 +1,6 @@
 #include "serializeParse.h"
 
-Command parseString(string& aa) {
+Messages::Command parseString(std::string& aa) {
     Command cmm ;
     cmm.ParseFromString(aa) ;
     return cmm ;
