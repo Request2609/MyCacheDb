@@ -16,7 +16,6 @@
 #include "rdb.h"
 #include "cmdCb.h"
 
-using namespace Messages ;
 
 enum {
     NOTFOUND =   1,
@@ -41,11 +40,15 @@ class saveTimerHandle ;
 class redisCommand {
     //该命令的的处理函数
     typedef std::function<int(std::shared_ptr<redisDb>&, 
-                              std::shared_ptr<Command>&, std::shared_ptr<Response>&)>call ;
-    typedef std::function<int(std::vector<pair<int, std::shared_ptr<redisDb>>>&db)> saveCall;
+                              std::shared_ptr<Messages::Command>&, 
+                              std::shared_ptr<Messages::Response>&)>call ;
+
+    typedef std::function<int(std::vector<pair<int, 
+                              std::shared_ptr<redisDb>>>&db)> saveCall;
 public :
     redisCommand(std::string name, int arity, std::string flag,  
-                 int fir, int last, int keyStep, long long msecond, long long calls) {
+                 int fir, int last, int keyStep, 
+                 long long msecond, long long calls) {
             this->name = name ;
             this->arity = arity ;
             this->flags = flag ;
@@ -58,16 +61,21 @@ public :
 
     ~redisCommand() {}
 public :
-    int saveCb(std::vector<pair<int, std::shared_ptr<redisDb>>>&db) { return save(db) ; } 
-    int cb(std::shared_ptr<redisDb>&db, std::shared_ptr<Command>&wcmd, 
-           std::shared_ptr<Response>& res) ;
+    int saveCb(std::vector<pair<int, std::shared_ptr<redisDb>>>&db) { 
+        return save(db) ; 
+    } 
+    int cb(std::shared_ptr<redisDb>&db, std::shared_ptr<Messages::Command>&wcmd, 
+           std::shared_ptr<Messages::Response>& res) ;
     void setCallBack(saveCall save) { 
-        this->save = save ;}
+        this->save = save ;
+    }
     void setCallBack(call cb) { 
         this->callBack = cb ; 
     }
     int append(int num, int type, std::shared_ptr<dbObject>ptr) ;
-    std::string getName() { return name ; }
+    std::string getName() { 
+        return name ; 
+    }
     //函数指针，指向命令的具体实现
 private :
     call callBack ;
@@ -97,17 +105,21 @@ public:
 public :
     static int REDIS_NUM;
     int initCmdCb() ;
-    int getSize() { return dbLs.size() ; }
+    int getSize() { 
+        return dbLs.size() ; 
+    }
     int expend(int num) ;
     int countRedis() ;
     int initRedis() ;
-    int redisCommandProc(int num, std::shared_ptr<Command>& cmd) ;
+    int redisCommandProc(int num, std::shared_ptr<Messages::Command>& cmd) ;
     void addObjectToDb(int num, std::shared_ptr<dbObject>ob) ;
     std::shared_ptr<redisDb> getDB(int num) ;
     //扩大数据库
     //返回命令集合
     int findCmd(std::string cmd) ;  
-    std::shared_ptr<Response> getResponse() { return response ; }
+    std::shared_ptr<Messages::Response> getResponse() { 
+        return response ; 
+    }
     int append(std::shared_ptr<redisDb> db) ;
     void print() ;
     static int backUp() ;
@@ -119,7 +131,7 @@ private:
     static std::vector<pair<int, std::shared_ptr<redisDb>>>*db ;
     std::shared_ptr<rdb> save ;
     //回复，响应
-    std::shared_ptr<Response> response ;
+    std::shared_ptr<Messages::Response> response ;
     //数据库,键值是数据库编号码,之后数据库对象
     std::vector<pair<int, std::shared_ptr<redisDb>>>dbLs ;
     //命令名称，命令类型

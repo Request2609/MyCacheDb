@@ -16,7 +16,6 @@
 #include "dbObject.h"
 #include "msg.pb.h"
 
-using namespace Messages ;
 
 class recoverDb ;
 
@@ -28,6 +27,7 @@ namespace type {
     const int SORT_SET = 6 ;
     const int SET_SET = 7 ;
 } 
+
 class curTimer ;
 class simpleLru ;
 class redisDb ;
@@ -65,7 +65,9 @@ public :
 class hashFunc {
 public :
     size_t operator()(const key& k) const{
-        return (((std::hash<int>()(k.num)<<1)^(std::hash<std::string>()(k.cmd)<<1))>>1)^(std::hash<int>()(k.type) >> 1) ;
+        return (((std::hash<int>()(k.num)<<1)^
+            (std::hash<std::string>()(k.cmd)<<1))>>1)^
+            (std::hash<int>()(k.type) >> 1) ;
     }   
 } ;
 
@@ -98,23 +100,31 @@ public :
     int append(int num, int type, std::shared_ptr<dbObject>dob) ;
     long getMaxMem() { return MAX_SIZE; }
     bool isFull(long size) { return size>MAX_SIZE ; }
-    int isEmpty() { return db.size() ; }
+    int isEmpty() { 
+        return db.size() ; 
+    }
     void print() ;
-    void setId(int id) { this->num = id ; }
-    int getId() { return num ; }
+    void setId(int id) { 
+        this->num = id ; 
+    }
+    int getId() { 
+        return num ; 
+    }
     std::shared_ptr<dbObject>getNextDb() ;
     std::string findGetRequest(const std::string name, const int num) ;
     std::string findHgetRequest(const std::string key, const std::string field) ;
     std::string findListRequest(const std::string key, const int num) ;
     key getRandomKey() ;
-    std::string findSortSetValue(const std::shared_ptr<Command>&cmd) ;
+    std::string findSortSetValue(const std::shared_ptr<Messages::Command>&cmd) ;
     std::string findSetRequest(const std::string key, const int num );
     void processBlpop() ;
-    int queryDb(std::shared_ptr<Response>& res, std::shared_ptr<Command>& cmd) ;
+    int queryDb(std::shared_ptr<Messages::Response>& res, std::shared_ptr<Messages::Command>& cmd) ;
     void append(std::shared_ptr<dbObject>rdb) ;
-    int getSize() { return db.size(); }
+    int getSize() { 
+        return db.size(); 
+    }
         //命令键
-    int isExist(std::shared_ptr<Command>&cmds) ;
+    int isExist(std::shared_ptr<Messages::Command>&cmds) ;
     //获取key
     //删除当前数据库中的一个对象
     void removeDataByKey(key k) ;

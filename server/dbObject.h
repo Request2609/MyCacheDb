@@ -43,20 +43,41 @@ public :
 public :
     std::vector<std::string> getValues(const std::string s) {}
     void print() {}
-    long long getEndTime() { return timeout ; }
-    void setEndTime(long long e) {this->timeout = e ;}
-    int getType() { return type ; }
-    void setType(int type) { this->type = type ; }
-    void setKey(std::string k) { this->key = k ; }
+    long long getEndTime() { 
+        return timeout ; 
+    }
+    void setEndTime(long long e) {
+        this->timeout = e ;
+    }
+    int getType() { 
+        return type ; 
+    }
+    void setType(int type) { 
+        this->type = type ; 
+    }
+    void setKey(std::string k) { 
+        this->key = k ; 
+    }
     void setValue(std::string value, ...)  ;
-    void setName(std::string name) { this->name = name ; }
-    void setNum(int num) { this->num = num ; }
-    std::string  getName() { return name ; }
-    std::string getKey() { return key ; }
-    int getNum() { return num ; }
+    void setName(std::string name) { 
+        this->name = name ; 
+    }
+    void setNum(int num) { 
+        this->num = num ; 
+    }
+    std::string  getName() { 
+        return name ; 
+    }
+    std::string getKey() { 
+        return key ; 
+    }
+    int getNum() { 
+        return num ; 
+    }
     std::string getValue() ;
-    int objectSize() { return 1 ;}
-
+    int objectSize() { 
+        return 1 ;
+    }
 private :
     //类型
     std::set<std::string> ls ;
@@ -82,19 +103,45 @@ public :
 public :
     std::vector<std::string> getValues(const std::string s) {}
     void print() ;
-    long long getEndTime() { return timeout ; }
-    void setEndTime(long long e) {this->timeout = e ;} 
-    int getType() { return type ; }
-    void setType(int type) { this->type = type ; }
-    void setKey(std::string k) { this->key = k ; } 
-    void setValue(std::string value, ...)  { this->value =  value ; }
-    void setName(std::string name) { this->name = name ; }
-    void setNum(int num) { this->num = num ; }
-    std::string  getName() { return name ; }
-    std::string getKey() { return key ; }
-    int getNum() { return num ; }
-    std::string getValue() { return value ; }
-    int objectSize() { return 1 ;}
+    long long getEndTime() { 
+        return timeout ; 
+    }
+    void setEndTime(long long e) {
+        this->timeout = e ;
+    } 
+    int getType() { 
+        return type ; 
+    }
+    void setType(int type) { 
+        this->type = type ; 
+    }
+    void setKey(std::string k) { 
+        this->key = k ; 
+    } 
+    void setValue(std::string value, ...)  { 
+        this->value =  value ; 
+    }
+    void setName(std::string name) { 
+        this->name = name ; 
+    }
+    void setNum(int num) { 
+        this->num = num ; 
+    }
+    std::string  getName() { 
+        return name ; 
+    }
+    std::string getKey() { 
+        return key ; 
+    }
+    int getNum() { 
+        return num ; 
+    }
+    std::string getValue() { 
+        return value ; 
+    }
+    int objectSize() { 
+        return 1 ;
+    }
 public :
     //类型
     int type ;
@@ -102,7 +149,7 @@ public :
     std::string name ;
     long long timeout ;
     //当前设置的超时时间
-    map<std::string, long long> expire ;
+    std::map<std::string, long long> expire ;
     //所在数据库编号
     int num ;
     //命令键值
@@ -120,22 +167,40 @@ public :
 public :
     void print() ;
     //set操作
-    long long  getEndTime() { return timeout ; }
+    long long  getEndTime() { 
+        return timeout ; 
+    }
     void setEndTime(long long e) {}
-    int getType()  { return type; }
-    void setType(int type) { this->type = type ; }
-    void setKey(std::string k) {key = k ;}
+    int getType()  { 
+        return type; 
+    }
+    void setType(int type) { 
+        this->type = type ; 
+    }
+    void setKey(std::string k) {
+        key = k ;
+    }
     void setValue(std::string v, ...) ;
     void setName(std::string name) {
         this->name =name ;
     }
-    void setNum(int num) { this->num = num ; }
-    std::string  getName() { return "" ;}
-    std::string getKey() { return key ; }
-    int getNum() { return num ; }
+    void setNum(int num) { 
+        this->num = num ; 
+    }
+    std::string  getName() { 
+        return "" ;
+    }
+    std::string getKey() { 
+        return key ; 
+    }
+    int getNum() { 
+        return num ; 
+    }
     std::string getValue() ;
     std::vector<std::string> getValues(const std::string s) ;
-    int objectSize() { return ls.size() ; }
+    int objectSize() { 
+        return ls.size() ; 
+    }
 private :
     long long timeout ;
     int count ;
@@ -156,19 +221,41 @@ public :
 public :
     void print() ;
     std::vector<std::string> getValues(const std::string s) ;
-    long long getEndTime() { return timeout ; }
-    void setEndTime(long long e) {this->timeout = e ;} 
-    int getType() { return type ; }
-    void setType(int type) { this->type = type ; }
-    void setKey(std::string k) { this->key = k ; } 
+    long long getEndTime() { 
+        return timeout ; 
+    }
+    void setEndTime(long long e) {
+        this->timeout = e ;
+    } 
+    int getType() { 
+        return type ; 
+    }
+    void setType(int type) { 
+        this->type = type ; 
+    }
+    void setKey(std::string k) { 
+        this->key = k ; 
+    } 
     void setValue(std::string key, ...) ;
-    void setName(std::string name) { this->name = name ; }
-    void setNum(int num) { this->num = num ; }
-    std::string  getName() { return name ; }
-    std::string getKey() { return key ; }
-    int getNum() { return num ; }
+    void setName(std::string name) { 
+        this->name = name ; 
+    }
+    void setNum(int num) { 
+        this->num = num ; 
+    }
+    std::string  getName() { 
+        return name ; 
+    }
+    std::string getKey() { 
+        return key ; 
+    }
+    int getNum() { 
+        return num ; 
+    }
     std::string getValue() ;
-    int objectSize() { return values.size() ;}
+    int objectSize() { 
+        return values.size() ;
+    }
 public :
     //类型
     int type ;
@@ -194,19 +281,43 @@ public :
 public :
     std::vector<std::string> getValues(const std::string s) ;
     void print() {}
-    long long getEndTime() { return timeout ; }
-    void setEndTime(long long e) {this->timeout = e ;}
-    int getType() { return type ; }
-    void setType(int type) { this->type = type ; }
-    void setKey(std::string k) { this->key = k ; }
+    long long getEndTime() { 
+        return timeout ; 
+    }
+    void setEndTime(long long e) {
+        this->timeout = e ;
+    }
+    int getType() { 
+        return type ; 
+    }
+    void setType(int type) { 
+        this->type = type ; 
+    }
+    void setKey(std::string k) { 
+        this->key = k ; 
+    }
     void setValue(std::string value, ...)  ;
-    void setName(std::string name) { this->name = name ; }
-    void setNum(int num) { this->num = num ; }
-    std::string  getName() { return name ; }
-    std::string getKey() { return key ; }
-    int getNum() { return num ; }
-    std::string getValue() { value = ""; return value ; }
-    int objectSize() { return 1 ;}
+    void setName(std::string name) { 
+        this->name = name ; 
+    }
+    void setNum(int num) { 
+        this->num = num ; 
+    }
+    std::string  getName() { 
+        return name ; 
+    }
+    std::string getKey() { 
+        return key ; 
+    }
+    int getNum() { 
+        return num ; 
+    }
+    std::string getValue() { 
+        value = ""; return value ; 
+    }
+    int objectSize() { 
+        return 1 ;
+    }
 public :
     std::shared_ptr<rb_tree>rbt ;
     //类型

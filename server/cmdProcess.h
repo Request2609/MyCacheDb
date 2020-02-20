@@ -17,7 +17,6 @@
 #include "aofRecord.h"
 
 #define SIZE 4096
-using namespace Messages ;
 
 class rpc ;
 class cmdSet ;
@@ -61,7 +60,7 @@ public :
     int processMsg(std::shared_ptr<aeEvent>&tmp) ;
     int sendMsg(std::shared_ptr<aeEvent>tmp) ;
     void getAfterKeyPart() ;
-    int findCmd(std::shared_ptr<::Command>tmp) ;
+    int findCmd(std::shared_ptr<Messages::Command>tmp) ;
 private :
     //命令集
     //键值以后的部分成员

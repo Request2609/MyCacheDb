@@ -17,7 +17,9 @@ class aeSocket {
     typedef std::function<void()>callBack ;
 public:
     aeSocket() {sockFd = -1 ;}
-    ~aeSocket() {close(sockFd) ;}
+    ~aeSocket() {
+        close(sockFd) ;
+    }
 public :
     int anetCreateSocket() ;
     int setReuseAddr() ;
@@ -31,8 +33,12 @@ public :
     int acceptClient() ;
 public :
     static int setNoBlocking(int fd) ;
-    static int getReadFd() { return fdPair[0]; }
-    static int getWriteFd() { return fdPair[1]; }
+    static int getReadFd() { 
+        return fdPair[0]; 
+    }
+    static int getWriteFd() { 
+        return fdPair[1]; 
+    }
     static int createSocketPair() ;
     static int createEventFd() ;
 private:

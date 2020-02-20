@@ -12,7 +12,6 @@
 #include "aeEvent.h"
 #include "msg.pb.h"
 
-using namespace Messages ;
 
 const int timeSlot = 10000;
 
@@ -28,8 +27,6 @@ class aeEventloop {
     typedef std::function<int(std::shared_ptr<aeEvent>)> callBack ;
     
 public :
-    //数据库数组
-    //vector<shared_ptr<redisDb>>db ;
     //客户端的读写回调
     callBack  readCall ;
     callBack writeCall ;
@@ -80,7 +77,9 @@ public :
     static int notifyToSave(int fd) ;
 public :
     void initDataInfo() ;
-    std::shared_ptr<aeEpoll> getEp() { return aep ; }
+    std::shared_ptr<aeEpoll> getEp() { 
+        return aep ; 
+    }
     int addTimerEvent() ;
     //时间事件回调
     void setReadCallBack(callBack readCb) { 

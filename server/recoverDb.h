@@ -11,7 +11,6 @@
 #include "msg.pb.h"
 #include "cmdCb.h" 
 
-using namespace Messages ;
 class cmdSet ;
 class redisDb ;
 class dbObject ;
@@ -57,11 +56,11 @@ public:
     static void parseAndExecAofCmd(const char*, std::vector<std::pair<int, std::shared_ptr<redisDb>>>&) ;
     static std::vector<std::string> split(const std::string &s, 
                                 const std::string &seperator) ;
-    static int aofString(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str) ;
-    static int aofHash(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str) ;
-    static int aofList(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str) ;
-    static int aofSortSet(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str ) ;
-    static int aofSet(std::shared_ptr<Command>&cmd, const std::vector<std::string>& str ) ;
+    static int aofString(std::shared_ptr<Messages::Command>&cmd, const std::vector<std::string>& str) ;
+    static int aofHash(std::shared_ptr<Messages::Command>&cmd, const std::vector<std::string>& str) ;
+    static int aofList(std::shared_ptr<Messages::Command>&cmd, const std::vector<std::string>& str) ;
+    static int aofSortSet(std::shared_ptr<Messages::Command>&cmd, const std::vector<std::string>& str ) ;
+    static int aofSet(std::shared_ptr<Messages::Command>&cmd, const std::vector<std::string>& str ) ;
     static std::shared_ptr<redisDb> getDb(int num, const std::vector<std::pair<int, std::shared_ptr<redisDb>>>&) ;
     static int getTime() ;
 };

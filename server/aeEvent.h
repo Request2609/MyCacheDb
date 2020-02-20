@@ -14,11 +14,6 @@
 #define SIZE 4096
 
 class TimerManager ;
-//事件
-namespace event {
-    const int timeout = 1 ;
-    const int commonMsg = 2 ;
-}
 
 //创建连接事件信息
 class aeEvent :public std::enable_shared_from_this<aeEvent>{
@@ -61,30 +56,74 @@ private :
 public :
     static long times ;
 public :
-    int getIndex() { return timerIndex ; }
-    void setIndex(int index) { timerIndex = index ; }
-    int getBlpopTime() { return blpopTimeout ; }
-    void setBlpopTime(int times) { blpopTimeout = times ; }
-    int getWriteFd() { return writeFd ;}
-    void setWriteFd(int fd) { this->writeFd = fd ;}
-    void setMask(int mask) { this->mask = mask ; }
-    int getMask() { return mask ; }
-    int getNum() { return num ; }
-    void setNum(int num) { this->num = num ; }
-    int setNoBlock(int fd) { return sock.setNoBlocking(fd) ; }
-    void setServFd(int fd) { servFd = fd ; }
-    int getServFd() { return servFd ; }
-    void setConnFd(int connFd) { this->connFd = connFd ; }
-    int getConnFd() { return connFd ; }
-    void setEvent(epoll_event* event) {ev = event ;}
-    epoll_event* getEvent() { return ev; }
-    aeSocket* getSocket() {   return &sock ; }
+    int getIndex() { 
+        return timerIndex ; 
+    }
+    void setIndex(int index) { 
+        timerIndex = index ; 
+    }
+    int getBlpopTime() { 
+        return blpopTimeout ; 
+    }
+    void setBlpopTime(int times) { 
+        blpopTimeout = times ; 
+    }
+    int getWriteFd() { 
+        return writeFd ;
+    }
+    void setWriteFd(int fd) { 
+        this->writeFd = fd ;
+    }
+    void setMask(int mask) { 
+        this->mask = mask ; 
+    }
+    int getMask() { 
+        return mask ; 
+    }
+    int getNum() { 
+        return num ; 
+    }
+    void setNum(int num) { 
+        this->num = num ; 
+    }
+    int setNoBlock(int fd) { 
+        return sock.setNoBlocking(fd) ; 
+    }
+    void setServFd(int fd) { 
+        servFd = fd ; 
+    }
+    int getServFd() { 
+        return servFd ; 
+    }
+    void setConnFd(int connFd) { 
+        this->connFd = connFd ; 
+    }
+    int getConnFd() { 
+        return connFd ; 
+    }
+    void setEvent(epoll_event* event) {
+        ev = event ;
+    }
+    epoll_event* getEvent() { 
+        return ev; 
+    }
+    aeSocket* getSocket() {   
+        return &sock ; 
+    }
     int processRead() ;
     int processWrite() ;
-    buffer* getBuf() { return &buf ; }
-    void setReadCallBack(callBack cb) { readFunc = cb ;}
-    void setWriteCallBack(callBack cb) { writeFunc = cb; }
-    shared_ptr<aeEpoll> getEp() { return aep ; }
+    buffer* getBuf() { 
+        return &buf ; 
+    }
+    void setReadCallBack(callBack cb) { 
+        readFunc = cb ;
+    }
+    void setWriteCallBack(callBack cb) { 
+        writeFunc = cb; 
+    }
+    shared_ptr<aeEpoll> getEp() { 
+        return aep ; 
+    }
     void setAep(shared_ptr<aeEpoll>aep) {
         this->aep = aep ;
     }
