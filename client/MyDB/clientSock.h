@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-using namespace std ;
 
 class clientSock
 {
@@ -14,7 +13,7 @@ public:
     ~clientSock() {close(sockFd) ;}
 public :
     int anetCreateSock() ;
-    int clientConnect(string ip, string port) ;
+    int clientConnect(std::string ip, std::string port) ;
     int setnoBlocking() ;
 private:
     int sockFd ;

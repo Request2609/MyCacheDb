@@ -6,12 +6,12 @@
 #include <mutex>
 #include <memory>
 #include <queue>
-using namespace std ;
+
 class syncQueue {
 public:
     ~syncQueue() {}
-    static shared_ptr<syncQueue>getQueue() ;
-    void addToResponse(long num, const string s) ;
+    static std::shared_ptr<syncQueue>getQueue() ;
+    void addToResponse(long num, const std::string s) ;
     long addToQueue() ;
     void getResponse() ;
     int reqEmpty() ;
@@ -20,9 +20,9 @@ public:
 private:
     void addRequest() ;
     syncQueue() {}
-    static shared_ptr<syncQueue>que ;
-    queue<long> req ;
-    unordered_map<long, string> response ;
-    mutex mute;
+    static std::shared_ptr<syncQueue>que ;
+    std::queue<long> req ;
+    std::unordered_map<long, std::string> response ;
+    std::mutex mute;
 };
 

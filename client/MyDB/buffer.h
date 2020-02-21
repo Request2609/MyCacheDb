@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-using namespace std ;
 
 class buffer
 {
@@ -26,7 +25,7 @@ public :
     }
 
 private:
-    vector<char>ls ;
+    std::vector<char>ls ;
     long readIndex ;
     long writeIndex ;
 };

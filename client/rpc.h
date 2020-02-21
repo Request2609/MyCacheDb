@@ -10,29 +10,30 @@
 #include "aeEpoll.h"
 
 #define BFSIZE 4096
-using namespace Messages ;
-using namespace std ;
 
 class syncQueue ;
 class threadPool ;
 class clientLoop ;
 
 class rpc {
-    typedef function<int(int fd, vector<string>&ls, int num)> call ;
-    typedef function<Response(string*)> parse ;
+    typedef function<int(int fd, std::vector<string>&ls, int num)> call ;
+    typedef function<Messages::Response(string*)> parse ;
 public:
     rpc() ;
     ~rpc() ;
 public :
-    Response getParseString(string* buff) ;
+    Messages::Response getParseString(string* buff) ;
     //设置相应的callMethod方法
     void setCallMethod(call cb) ;
     //反序列化函数
     void setCallMethod(parse par) ; 
     int init() ;
     //ip和端口
-    void setAddress(string ip, string port) { ipPort.first = ip;  ipPort.second = port ;}
-    int sendRequest(vector<string>&argStl, int num) ;
+    void setAddress(string ip, string port) { 
+        ipPort.first = ip;  
+        ipPort.second = port ;
+    }
+    int sendRequest(std::vector<string>&argStl, int num) ;
     int Connect(int& servFd) ;
     void disConnect() { close(conFd) ; }
     int getResponse() ;
@@ -41,11 +42,11 @@ public :
 private :
     clientSock client ;
     int conFd ;
-    static shared_ptr<aeEpoll> aep ;   
-    shared_ptr<syncQueue> que ;
-    shared_ptr<threadPool> pool ;
-    pair<string, string> ipPort ;
-    shared_ptr<Command>cmd ;
+    static std::shared_ptr<aeEpoll> aep ;   
+    std::shared_ptr<syncQueue> que ;
+    std::shared_ptr<threadPool> pool ;
+    std::pair<string, string> ipPort ;
+    std::shared_ptr<Messages::Command>cmd ;
     call request ;
     //反序列化函数
     parse parseMethod ;

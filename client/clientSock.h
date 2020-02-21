@@ -4,17 +4,20 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
+#include "aofRecord.h"
 
-using namespace std ;
-
-class clientSock
-{
+class clientSock {
 public:
-    clientSock() { sockFd = -1 ;}
-    ~clientSock() {close(sockFd) ;}
+    clientSock() { 
+        sockFd = -1 ;
+    }
+    ~clientSock() {
+        close(sockFd) ;
+    }
 public :
     int anetCreateSock() ;
-    int clientConnect(string ip, string port) ;
+    int clientConnect(std::string ip, std::string port) ;
     int setnoBlocking() ;
 private:
     int sockFd ;

@@ -2,9 +2,9 @@
 
 int clientLoop:: mode = 0;
 //使用gpb命名空间
-vector<string> clientLoop :: split(const string &s, const string &seperator){
-    vector<string> result;
-    typedef string::size_type string_size;
+std::vector<std::string> clientLoop :: split(const std::string &s, const std::string &seperator){
+    std::vector<std::string> result;
+    typedef std::string::size_type string_size;
     string_size i = 0;
     while(i != s.size()){
         //找到字符串中首个不等于分隔符的字母；
@@ -39,12 +39,13 @@ vector<string> clientLoop :: split(const string &s, const string &seperator){
 }
 
 int clientLoop :: getIpPort() {
-    ifstream in("../conf/IP_PORT.conf", ios::in|ios::out) ;   
+    std::ifstream in("../conf/IP_PORT.conf", std::ios::in|std::ios::out) ;   
     if(in.fail()) {
-        cout << __FILE__ << "     " << __LINE__ << endl ;
+        std::string s =std::to_string(__LINE__) +"  "+ +strerror(errno) + __FILE__;
+        aofRecord::log(s) ;
         return -1 ;
     }
-    string info;
+    std::string info;
     while(!in.eof()) {
         in>> info >> ip ;
         in>> info >> port ;
@@ -52,12 +53,12 @@ int clientLoop :: getIpPort() {
     in.close() ;
 }
 
-int clientLoop::init(string ip, string port) {
-    client = make_shared<clientSock>() ;
-    cmd = make_shared<cmds>() ;
+int clientLoop::init(std::string ip, std::string port) {
+    client = std::make_shared<clientSock>() ;
+    cmd = std::make_shared<cmds>() ;
     this->ip = ip ;
     this->port = port ;
-    rc = make_shared<rpc>() ;
+    rc = std::make_shared<rpc>() ;
     rc->init() ;
     rc->setAddress(ip, port) ;
     rc->setCallMethod(request::sendReq) ;
@@ -69,32 +70,31 @@ int clientLoop::init() {
     if(ret < 0 || ip.empty()||port.empty()) {
         return -1;
     }
-    client = make_shared<clientSock>() ;
-    cmd = make_shared<cmds>() ;
-    rc = make_shared<rpc>() ;
+    client = std::make_shared<clientSock>() ;
+    cmd = std::make_shared<cmds>() ;
+    rc = std::make_shared<rpc>() ;
     rc->init() ;
     rc->setAddress(ip, port) ;
     rc->setCallMethod(request::sendReq) ;
     return 1 ;
 }
 
-int clientLoop :: sendRequest(string md, ...) {
+int clientLoop :: sendRequest(std::string md, ...) {
     va_list va ;
     int num = cmd->isCmdExist(md) ;
     if(num < 0) {
-        cout << "命令不存在" << endl ;
+        std::cout << "命令不存在" << std::endl ;
         return -1;
     }
     va_start(va, md) ;
     char* val = va_arg(va, char*) ;
-    vector<string>ls ;
+    std::vector<std::string>ls ;
     ls.push_back(md) ;
     while(strcasecmp(val, END)) {
         ls.push_back(val) ;
         val = va_arg(va, char*) ;
     }
     if(ls.empty())  {
-        cout << "kongde" << endl ;
         return  -1;
     } 
 
@@ -102,13 +102,12 @@ int clientLoop :: sendRequest(string md, ...) {
     if(servFd <= 0) {
         int ret = rc->Connect(servFd) ;
         if(ret < 0) { 
-            cout << "连不上服务器" << endl ;
+            std::cout << "连不上服务器" << std::endl ;
             return  -1;
         }
     }
     int res = rc->sendRequest(ls, num) ;
     if(res == -5 || res == -1) {
-        cout << "没有发送成功" << endl ;
         return -1;
     }
     if(res != 1) {
@@ -138,13 +137,13 @@ void clientLoop :: start() {
     //连接服务器
     int ret = rc->Connect(servFd) ;
     if(ret < 0) {
-        cout << "服务器找不到！" << endl ;
+        std::cout << "服务器找不到！" << std::endl ;
         return ;
     }
     num = 0 ;
     //处理命令
     while(!stop) {
-        string cmd, res; 
+        std::string cmd, res; 
         char* p = readline("myRedis >> ") ;
         //加入历史列表
         add_history(p) ;
@@ -161,7 +160,7 @@ void clientLoop :: start() {
         //退出
         if(cmd == "quit" || cmd == "q") {
             rc->disConnect() ; 
-            cout << "bye bye!" << endl ; 
+            std::cout << "bye bye!" << std::endl ; 
             break ;
         }
         //解析并序列化发送命令
@@ -180,7 +179,7 @@ int clientLoop :: setEndSig() {
 }
 
 //向服务器发送请求
-int clientLoop :: sendRequest(string& res) {
+int clientLoop :: sendRequest(std::string& res) {
     int ret = 0;
     int len = res.size() ;
     if(len < SIZE) {
@@ -191,14 +190,15 @@ int clientLoop :: sendRequest(string& res) {
         //使用servFd发送消息
         ret = writen(servFd, buff, sizeof(buff)) ;  
         if(ret < 0) {
-            cout << __FILE__ << "     " << __LINE__ << "          " << strerror(errno)<< endl ;
+            std::string s =std::to_string(__LINE__) +"  "+ +strerror(errno) + __FILE__;
+            aofRecord::log(s) ;
             return  -1 ;
         }
     }
     return ret ;
 }
 
-int clientLoop :: processMsg(Command& cmd, string& res) {
+int clientLoop :: processMsg(Messages::Command& cmd, std::string& res) {
     int ret = 0 ;
     //第一个是命令
     //第二个是key
@@ -210,14 +210,14 @@ int clientLoop :: processMsg(Command& cmd, string& res) {
     //第一个是命令
     cmd.set_cmd(cmdStl[0]) ;
     //第二个是key
-    Key* keys = cmd.add_keys() ;
+    Messages::Key* keys = cmd.add_keys() ;
     
     //设置值
-    Value* val = cmd.add_vals() ;
+    Messages::Value* val = cmd.add_vals() ;
     
     //设置值,值可能重复
     for(int i=2; i<len; i++) {
-        string* a = val->add_val() ;
+        std::string* a = val->add_val() ;
         *a = cmdStl[i] ;
     }
     //将设置好的结果序列化成string

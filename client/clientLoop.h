@@ -19,9 +19,6 @@
 
 class syncQueue ;
 #define SIZE 4096
-using namespace Messages ;
-using namespace placeholders ;
-using namespace std ;
 #define END  "\r\n" 
 class rpc ;
 class cmds ;
@@ -40,27 +37,28 @@ public:
         }
     }
 public : 
-    vector<string> split(const string &s, const string &seperator) ;
+    std::vector<std::string> split(const std::string &s, 
+                                   const std::string &seperator) ;
     int recvInfo() ;
     void start() ;
-    int processMsg(Command& cmd, string& res) ;
-    int sendRequest(string& res) ;
+    int processMsg(Command& cmd, std::string& res) ;
+    int sendRequest(std::string& res) ;
     int setEndSig() ;
     int getIpPort() ;
     int init() ;
-    int init(string ip, string port) ;
-    int sendRequest(string type, ...) ;
+    int init(std::string ip, std::string port) ;
+    int sendRequest(std::string type, ...) ;
     int getResult() ;
     static int mode ;
 private:
-    shared_ptr<cmds>cmd ;
-    string port ;
-    string ip ;
+    std::shared_ptr<cmds>cmd ;
+    std::string port ;
+    std::string ip ;
     bool stop ;
-    shared_ptr<clientSock> client;
+    std::shared_ptr<clientSock> client;
     buffer bf ;
-    shared_ptr<rpc>rc;
-    vector<string> cmdStl ;
+    std::shared_ptr<rpc>rc;
+    std::vector<std::string> cmdStl ;
     int servFd ;
     int num ;
 };

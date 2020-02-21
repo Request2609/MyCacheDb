@@ -2,8 +2,8 @@
 
 void cmds :: build() {
  
-    cmdList.insert(make_pair("set", 3)) ;
-    cmdList.insert(make_pair("get", 2)) ;
+    cmdList.insert(std::make_pair("set", 3)) ;
+    cmdList.insert(std::make_pair("get", 2)) ;
     //验证命令
     cmdList.insert({"save", 1}) ;
     //-1代表不定参数
@@ -24,7 +24,7 @@ cmds :: cmds() {
 
 cmds :: ~cmds() {}
 
-int cmds ::isCmdExist(string cmd) {
+int cmds ::isCmdExist(std::string cmd) {
     for(auto s : cmdList) {
         if(s.first == cmd) {
             return s.second ;
@@ -35,7 +35,7 @@ int cmds ::isCmdExist(string cmd) {
 
 //匹配键值对
 //创建命令表
-int request :: processCmd(vector<string>&res, Command& com) {
+int request :: processCmd(std::vector<std::string>&res, Messages::Command& com) {
     //创建命令集合
     static cmds cd ;
     cd.build() ;
@@ -59,7 +59,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "get")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {
-            cout << "error command!" << endl ;
+            std::cout << "error command!" << std::endl ;
             return -1 ;
         }   
         cmdProcess :: setGet(res, com) ;
@@ -67,7 +67,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "save")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {
-            cout << "error command!" << endl ;
+            std::cout << "error command!" << std::endl ;
             return -1 ;
         }
         cmdProcess :: setSave(res, com) ;
@@ -76,7 +76,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "hset")) {
         //不定参数,哈希表的总参数个数是偶数
         if(cd.cmdList[res[0]] != -1 || (len%2))  {
-            cout << "error command!" << endl ;
+            std::cout << "error command!" << std::endl ;
             return -1 ;
         } 
         cmdProcess :: setHset(res, com) ;
@@ -84,7 +84,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
 
     else if(!strcasecmp(res[0].c_str(), "lpop")) {
         if(cd.cmdList[res[0]] != len) {
-            cout << "error command" << endl ;
+            std::cout << "error command" << std::endl ;
             return -1 ;
         }
         cmdProcess :: setLPopObject(res, com) ;      
@@ -93,7 +93,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "hget")) {
         int ret = cd.cmdList[res[0]] ;
         if(ret != len) {
-            cout << "command error!" << endl ;
+            std::cout << "command error!" << std::endl ;
             return -1 ;
         }
         cmdProcess :: setHget(res, com) ;
@@ -101,7 +101,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "bgsave")) {
         int ret = cd.cmdList[res[0]] ; 
         if(ret != len) {
-            cout << "command error!" << endl ;
+            std::cout << "command error!" << std::endl ;
             return -1 ;
         }
         cmdProcess :: setSave(res, com) ;
@@ -113,7 +113,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "zadd")) {
         int ret = cd.cmdList[res[0]] ;  
         if(len < ret ) {
-            cout << "command error!" << endl ;
+            std::cout << "command error!" << std::endl ;
             return -1 ;
         }
         cmdProcess::setZadd(res, com) ;
@@ -121,7 +121,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "sadd")) {
         int ret = cd.cmdList[res[0]] ;  
         if(ret != -1 ) {
-            cout << "command error!" << endl ;
+            std::cout << "command error!" << std::endl ;
             return -1 ;
         }
         cmdProcess::setSadd(res, com) ;
@@ -130,7 +130,7 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "sPop")) {
         int ret = cd.cmdList[res[0]] ;  
         if(ret != -1 ) {
-            cout << "command error!" << endl ;
+            std::cout << "command error!" << std::endl ;
             return -1 ;
         }
         cmdProcess::setSpop(res, com) ;
@@ -139,27 +139,27 @@ int request :: processCmd(vector<string>&res, Command& com) {
     else if(!strcasecmp(res[0].c_str(), "zrange")) {
         int ret = cd.cmdList[res[0]] ;  
         if(len < ret ) {
-            cout << "command error!" << endl ;
+            std::cout << "command error!" << std::endl ;
             return -1 ;
         }
         cmdProcess::setZRange(res, com) ;
     }
 
     else {
-        cout << "command not found" << endl ;
+        std::cout << "command not found" << std::endl ;
         return -1 ;
     }
     return 1 ;
 }
 
 
-int request :: sendReq(int fd, vector<string>&res, int num) {
-    Command cmd ;
+int request :: sendReq(int fd, std::vector<std::string>&res, int num) {
+    Messages::Command cmd ;
     cmds cd ;
     cd.build() ;
     //没找到命令
     if(!cd.isCmdExist(res[0])) {
-        cout << "command not found!"<< endl ;  
+        std::cout << "command not found!"<< std::endl ;  
         return -1 ;
     }
     else {
@@ -191,14 +191,14 @@ int request :: isConnect(int conFd) {
     }
 }
 
-int request :: sendAfterSerial(int fd, Command& cmd) { 
+int request :: sendAfterSerial(int fd, Messages::Command& cmd) { 
     char buff[REQ_SIZE] ;
     bzero(buff, sizeof(buff)) ;
-    string a ;
+    std::string a ;
     if(clientLoop::mode == 0) {
         auto que = syncQueue::getQueue() ;
         long seq = que->addToQueue() ;
-        string s = to_string(seq) ;
+        std::string s = std::to_string(seq) ;
         cmd.set_seq(s) ;
         cmd.set_status(111) ;
     }
@@ -212,7 +212,7 @@ int request :: sendAfterSerial(int fd, Command& cmd) {
     }
 
     if(send(fd, buff, sizeof(buff), 0) < 0) {
-        cout << "errno connect    " << strerror(errno) << endl ;
+        std::cout << "errno connect    " << strerror(errno) << std::endl ;
         return -1;
     }
     

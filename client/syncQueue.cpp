@@ -1,9 +1,9 @@
 #include "syncQueue.h"
 
-shared_ptr<syncQueue> syncQueue::que ;
-shared_ptr<syncQueue> syncQueue::getQueue() {
+std::shared_ptr<syncQueue> syncQueue::que ;
+std::shared_ptr<syncQueue> syncQueue::getQueue() {
     if(que == nullptr) {
-        que = shared_ptr<syncQueue>(new syncQueue) ;
+        que = std::shared_ptr<syncQueue>(new syncQueue) ;
     }
     return que ;
 }
@@ -27,19 +27,18 @@ void syncQueue::getResponse() {
     }
 }
 
-void syncQueue::addToResponse(long num, const string s) {
-    lock_guard<mutex>lk(mute) ;
+void syncQueue::addToResponse(long num, const std::string s) {
+    std::lock_guard<std::mutex>lk(mute) ;
     response.insert({num, s}) ;
 }
 
 int syncQueue::getResponse(long num) {
     auto ret = response.find(num) ;
     if(ret == response.end()) {
-        cout << "还没收到命令回复"<< endl ;
+        std::cout << "还没收到命令回复"<< std::endl ;
         return -1 ;
     }
     else {
-        //cout << ret->second << endl ;
         response.erase(ret) ;
         return 1 ;
     }

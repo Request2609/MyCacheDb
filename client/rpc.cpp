@@ -1,15 +1,15 @@
 #include "rpc.h"
 
-shared_ptr<aeEpoll> rpc::aep ;
+std::shared_ptr<aeEpoll> rpc::aep ;
 //处理结果，并返回相应的结果
-Response rpc :: getParseString(string* buff) {
+Messages::Response rpc :: getParseString(std::string* buff) {
     //在消息处理处，反序列化
     auto res = parseMethod(buff) ;
     return res ;
 }
 
 rpc :: rpc() {
-    cmd = make_shared<Command>() ;
+    cmd = std::make_shared<Messages::Command>() ;
 }
 
 rpc :: ~rpc() {
@@ -17,14 +17,14 @@ rpc :: ~rpc() {
 }
 
 void rpc :: setCallMethod(call cb) { 
-    request = move(cb); 
+    request = std::move(cb); 
 }   
 
 int rpc :: getResponse() {
 
     int flag = clientLoop::mode ;
     if(flag == 0) {
-        vector<epoll_event>ls ;
+        std::vector<epoll_event>ls ;
         if(rpc::aep->wait(ls)) {
             int num = ls.size() ;
             for(int i=0; i<num; i++) {
@@ -37,33 +37,35 @@ int rpc :: getResponse() {
         }
     }
     else {
-        string res  ;
+        std::string res  ;
         char buf[BFSIZE] ;
         int n = 0 ;
         n = read(conFd, buf, sizeof(buf)) ;
         if(n < 0) {
-            cout << __FILE__ <<"    " << __LINE__ << strerror(errno)<< endl ;
+            std::string s =std::to_string(__LINE__) +"  "+ +strerror(errno) + __FILE__;
+            aofRecord::log(s) ;
             return 0;
         }
-        Response re ;
+        Messages::Response re ;
         //反序列化
         re.ParseFromArray(buf, sizeof(buf)) ;
         res = re.reply() ;
-        cout << res << endl ;
+        std::cout << res << std::endl ;
     }
     return 1 ;
 }
 
 void rpc :: readInfo(int fd) {
-    string res  ;
+    std::string res  ;
     char buf[BFSIZE] ;
     int n = 0 ;
     n = read(fd, buf, sizeof(buf)) ;
     if(n < 0) {
-        cout << __FILE__ <<"    " << __LINE__ << strerror(errno)<< endl ;
+        std::string s =std::to_string(__LINE__) +"  "+ +strerror(errno) + __FILE__;
+        aofRecord::log(s) ;
         return ;
     }
-    Response re ;
+    Messages::Response re ;
     //反序列化
     re.ParseFromArray(buf, sizeof(buf)) ;
     res = re.reply() ;
@@ -74,7 +76,7 @@ void rpc :: readInfo(int fd) {
 }
 
 void rpc :: setCallMethod(parse par) {
-    parseMethod = move(par) ;
+    parseMethod = std::move(par) ;
 }
 
 //连接服务器

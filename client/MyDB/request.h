@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <iostream>
+#include <map>
 #include <vector>
 #include <arpa/inet.h>
  #include<netinet/tcp.h>
@@ -12,8 +13,6 @@
 #include "clientLoop.h"
 
 #define REQ_SIZE 4096 
-using namespace std ;
-using namespace Messages ;
 class cmds ;
 class cmdProcess ;
 class syncQueue ;
@@ -25,18 +24,19 @@ public:
     ~cmds() ;
 public :
     //一个命令
-    map<string, int>cmdList ;
+    std::map<string, int>cmdList ;
 public :
     void build() ;
-    int isCmdExist(string cmd) ;
+    int isCmdExist(std::string cmd) ;
 };
 
 class request {
 public :
     static int isConnect(int fd) ;
-    static int sendAfterSerial(int fd, Command& cmd) ;
-    static int sendReq(int fd, vector<string>&res, int num) ;
-    static int processCmd(vector<string>&res, Command&com) ;
+    static int sendAfterSerial(int fd, Messages::Command& cmd) ;
+    static int sendReq(int fd, std::vector<std::string>&res, int num) ;
+    static int processCmd(std::vector<std::string>&res, 
+                          Messages::Command&com) ;
 private :
     static int num ;
 } ;
