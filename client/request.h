@@ -24,7 +24,7 @@ public:
     ~cmds() ;
 public :
     //一个命令
-    std::map<string, int>cmdList ;
+    std::map<std::string, int>cmdList ;
 public :
     void build() ;
     int isCmdExist(std::string cmd) ;

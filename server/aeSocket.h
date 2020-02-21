@@ -16,7 +16,9 @@
 class aeSocket {
     typedef std::function<void()>callBack ;
 public:
-    aeSocket() {sockFd = -1 ;}
+    aeSocket() {
+        sockFd = -1 ;
+    }
     ~aeSocket() {
         close(sockFd) ;
     }

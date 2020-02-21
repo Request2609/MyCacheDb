@@ -64,7 +64,8 @@ public :
     int saveCb(std::vector<pair<int, std::shared_ptr<redisDb>>>&db) { 
         return save(db) ; 
     } 
-    int cb(std::shared_ptr<redisDb>&db, std::shared_ptr<Messages::Command>&wcmd, 
+    int cb(std::shared_ptr<redisDb>&db,
+           std::shared_ptr<Messages::Command>&wcmd, 
            std::shared_ptr<Messages::Response>& res) ;
     void setCallBack(saveCall save) { 
         this->save = save ;
@@ -111,7 +112,8 @@ public :
     int expend(int num) ;
     int countRedis() ;
     int initRedis() ;
-    int redisCommandProc(int num, std::shared_ptr<Messages::Command>& cmd) ;
+    int redisCommandProc(int num, 
+                         std::shared_ptr<Messages::Command>& cmd) ;
     void addObjectToDb(int num, std::shared_ptr<dbObject>ob) ;
     std::shared_ptr<redisDb> getDB(int num) ;
     //扩大数据库

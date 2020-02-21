@@ -75,7 +75,8 @@ private :
     void fix_up_insert(NODE cur) ;
     void insert_by_bst_way(NODE cur) ;
     void fix_delete_tree(NODE cur) ;
-    void getByScore(int start, int end, NODE root, std::map<int, std::set<std::string>>&) ;
+    void getByScore(int start, int end, NODE root, 
+                    std::map<int, std::set<std::string>>&) ;
 private :
     int num ;
     NODE root ;

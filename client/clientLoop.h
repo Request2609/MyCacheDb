@@ -41,7 +41,7 @@ public :
                                    const std::string &seperator) ;
     int recvInfo() ;
     void start() ;
-    int processMsg(Command& cmd, std::string& res) ;
+    int processMsg(Messages::Command& cmd, std::string& res) ;
     int sendRequest(std::string& res) ;
     int setEndSig() ;
     int getIpPort() ;

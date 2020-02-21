@@ -79,13 +79,13 @@ public:
     static int save(const std::shared_ptr<redisDb> db, char* fileName) ;
     static int  initRedis(cmdSet* cmdset) ;
     static std::string  getFileInfo(const std::string s) ;
-    static int getAllFileName(vector<std::string>& nameLs) ;
+    static int getAllFileName(std::vector<std::string>& nameLs) ;
     static bool isRedis(const char* buffer) ;
     static std::string tmpFileName(const char* fileName) ;
-    static int getLogFileName(vector<std::string>&logName) ;
+    static int getLogFileName(std::vector<std::string>&logName) ;
     static std::string readLogFile(const std::string& file) ; 
 public :
-    static void processString(const std::string key, ofstream& aa, const std::string value) ;
+    static void processString(const std::string key, std::ofstream& aa, const std::string value) ;
     static void processHash(std::ofstream& aa, const std::shared_ptr<dbObject>rd) ;
     static void processList(std::ofstream& aa, const std::shared_ptr<dbObject>rd) ;
 } ;

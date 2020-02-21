@@ -14,7 +14,8 @@ class aeEpoll ;
 
 class MyTimer {
     typedef std ::function <int(int fd)> wakeBlPopCall ;
-    typedef std::function<int(std::map<int, std::shared_ptr<aeEvent>>&eventData, int, std::shared_ptr<aeEpoll>&aep)>Func; 
+    typedef std::function<int(std::map<int, std::shared_ptr<aeEvent>>&eventData, 
+                              int, std::shared_ptr<aeEpoll>&aep)>Func; 
 public :
     //访问aeEventloop中的对象
     static std::map<int, std::shared_ptr<aeEvent>>* data ;
@@ -27,14 +28,20 @@ public:
 	//启动一个定时器
     void start (Func func, unsigned int ms, TimerType type);
     void start (wakeBlPopCall func, unsigned int ms, TimerType type);
-    void setFd(int fd) { this->fd = fd ; }
-    int getFd() { return fd ; }
+    void setFd(int fd) { 
+        this->fd = fd ; 
+    }
+    int getFd() { 
+        return fd ; 
+    }
     //终止一个定时器
 	void stop ();
     void setTimeSlot(int timer) {
         m_nInterval = timer ;
     }  
-    int getIndex() { return m_nHeapIndex  ;}
+    int getIndex() { 
+        return m_nHeapIndex  ;
+    }
 private :
 	//执行
 	void on_timer(unsigned long long now, int flag);

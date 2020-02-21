@@ -98,8 +98,12 @@ public :
     //获取当前数据库id
     //判断数据库是否为空
     int append(int num, int type, std::shared_ptr<dbObject>dob) ;
-    long getMaxMem() { return MAX_SIZE; }
-    bool isFull(long size) { return size>MAX_SIZE ; }
+    long getMaxMem() { 
+        return MAX_SIZE; 
+    }
+    bool isFull(long size) { 
+        return size>MAX_SIZE ; 
+    }
     int isEmpty() { 
         return db.size() ; 
     }
@@ -118,7 +122,8 @@ public :
     std::string findSortSetValue(const std::shared_ptr<Messages::Command>&cmd) ;
     std::string findSetRequest(const std::string key, const int num );
     void processBlpop() ;
-    int queryDb(std::shared_ptr<Messages::Response>& res, std::shared_ptr<Messages::Command>& cmd) ;
+    int queryDb(std::shared_ptr<Messages::Response>& res, 
+                std::shared_ptr<Messages::Command>& cmd) ;
     void append(std::shared_ptr<dbObject>rdb) ;
     int getSize() { 
         return db.size(); 

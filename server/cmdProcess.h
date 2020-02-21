@@ -55,7 +55,9 @@ public :
     //时间事件回调
 public :
     int initRedis() ;
-    void setRpc(std::shared_ptr<rpc>rc) { this->rc = rc ; }
+    void setRpc(std::shared_ptr<rpc>rc) { 
+        this->rc = rc ; 
+    }
     void setRpcMethod() ;
     int processMsg(std::shared_ptr<aeEvent>&tmp) ;
     int sendMsg(std::shared_ptr<aeEvent>tmp) ;

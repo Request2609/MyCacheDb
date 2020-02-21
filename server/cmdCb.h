@@ -31,19 +31,42 @@ class cmdCb {
 public:
     cmdCb() {}
     ~cmdCb() {}
-    static int setLpush(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>& res) ;
-    static int setHash(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>& res) ;
+    static int setLpush(std::shared_ptr<redisDb>&wcmd, 
+                        std::shared_ptr<Messages::Command>&tmp, 
+                        std::shared_ptr<Messages::Response>& res) ;
+    static int setHash(std::shared_ptr<redisDb>&wcmd, 
+                       std::shared_ptr<Messages::Command>&tmp, 
+                       std::shared_ptr<Messages::Response>& res) ;
     static int save(std::vector<std::pair<int, std::shared_ptr<redisDb>>>&dbLs) ;
-    static int isKeyExist(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&cmd) ;
-    static int setCmd(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>& res);
-    static int getCmd(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>& res) ;
+    static int isKeyExist(std::shared_ptr<redisDb>&wcmd, 
+                          std::shared_ptr<Messages::Command>&cmd) ;
+    static int setCmd(std::shared_ptr<redisDb>&wcmd, 
+                      std::shared_ptr<Messages::Command>&tmp, 
+                      std::shared_ptr<Messages::Response>& res);
+    static int getCmd(std::shared_ptr<redisDb>&wcmd, 
+                      std::shared_ptr<Messages::Command>&tmp, 
+                      std::shared_ptr<Messages::Response>& res) ;
     static int bgSave(std::vector<std::pair<int, std::shared_ptr<redisDb>>>&dbLs) ;
-    static int setHget(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>& res) ;
-    static int lPop(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>& res) ;
+    static int setHget(std::shared_ptr<redisDb>&wcmd, 
+                       std::shared_ptr<Messages::Command>&tmp, 
+                       std::shared_ptr<Messages::Response>& res) ;
+    static int lPop(std::shared_ptr<redisDb>&wcmd, 
+                    std::shared_ptr<Messages::Command>&tmp, 
+                    std::shared_ptr<Messages::Response>& res) ;
     static std::vector<std::string>getList() ;
-    static int  blPop(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>&res) ;
-    static int sortSetAdd(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>&res) ;
-    static int sortSetGetMember(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>&res) ;
-    static int setSetValue(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>&res) ;
-    static int sPop(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>&res) ;
+    static int  blPop(std::shared_ptr<redisDb>&wcmd, 
+                      std::shared_ptr<Messages::Command>&tmp, 
+                      std::shared_ptr<Messages::Response>&res) ;
+    static int sortSetAdd(std::shared_ptr<redisDb>&wcmd, 
+                          std::shared_ptr<Messages::Command>&tmp, 
+                          std::shared_ptr<Messages::Response>&res) ;
+    static int sortSetGetMember(std::shared_ptr<redisDb>&wcmd, 
+                                std::shared_ptr<Messages::Command>&tmp, 
+                                std::shared_ptr<Messages::Response>&res) ;
+    static int setSetValue(std::shared_ptr<redisDb>&wcmd, 
+                           std::shared_ptr<Messages::Command>&tmp, 
+                           std::shared_ptr<Messages::Response>&res) ;
+    static int sPop(std::shared_ptr<redisDb>&wcmd, 
+                    std::shared_ptr<Messages::Command>&tmp, 
+                    std::shared_ptr<Messages::Response>&res) ;
 };

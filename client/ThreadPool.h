@@ -40,7 +40,6 @@ template<class F, class... Args>
 auto threadPool :: commit(F&& f, Args&&... args)-> std :: future<decltype(f(args...))> {
     
     if(stop.load()) {
-        std::cout << "-----" << std::endl ;
        throw std :: runtime_error("线程池已经停止工作")  ;
     }
     //获取函数返回值类型
