@@ -7,7 +7,7 @@ MyCacheDB是一个基于C/S架构的小型缓存数据库，支持string，hash�
 - 处理器：Intel® Core™ i5-7300HQ CPU @ 2.50GHz × 4
 - 内存：7.7 GiB
 - 依赖：[Google Protocol Buffers](https://github.com/protocolbuffers/protobuf)，机器需支持proto命令
-- 编译器：Gcc编译器
+- 编译器：GCC编译器
 
 ### 特性
 
