@@ -94,7 +94,8 @@ int cmdCb :: setHget(std::shared_ptr<redisDb>&db,
     return 1 ;
 }
 
-int cmdCb :: isKeyExist(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&cmd) {
+int cmdCb :: isKeyExist(std::shared_ptr<redisDb>&wcmd, 
+                        std::shared_ptr<Messages::Command>&cmd) {
        int ret = wcmd->isExist(cmd) ;
        return ret ;
 }
@@ -203,12 +204,16 @@ int cmdCb :: setSetValue(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages
     return ret;
 }
 
-int cmdCb :: sPop(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>&res) {
+int cmdCb :: sPop(std::shared_ptr<redisDb>&wcmd, 
+                  std::shared_ptr<Messages::Command>&tmp, 
+                  std::shared_ptr<Messages::Response>&res) {
     int ret = wcmd->queryDb(res, tmp) ;
     return ret ;
 }
 
-int cmdCb::sortSetGetMember(std::shared_ptr<redisDb>&wcmd, std::shared_ptr<Messages::Command>&tmp, std::shared_ptr<Messages::Response>&res) {
+int cmdCb::sortSetGetMember(std::shared_ptr<redisDb>&wcmd, 
+                            std::shared_ptr<Messages::Command>&tmp, 
+                            std::shared_ptr<Messages::Response>&res) {
     int ret = wcmd->queryDb(res, tmp) ;
     return ret ;
 }

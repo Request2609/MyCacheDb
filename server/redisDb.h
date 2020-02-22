@@ -74,7 +74,8 @@ public :
 class equalFunc {
 public :
     bool operator() (const key& k1, const key& k2) const{
-        return k1.num == k2.num && k1.type == k2.type && k1.cmd == k2.cmd ;
+        return k1.num == k2.num && 
+            k1.type == k2.type && k1.cmd == k2.cmd ;
     }   
 } ;
 
