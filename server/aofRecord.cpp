@@ -3,7 +3,11 @@
 
 INITIALIZE_EASYLOGGINGPP
 const char* LOG_CONF= "../conf/aofLog.conf" ;
+const int THREAD_NUM = 8 ;
 
+aofRecord::aofRecord() {
+    pool = std::make_shared<threadPool>(THREAD_NUM) ;
+}
 
 std::shared_ptr<aofRecord>aofRecord::rcd ;
 
@@ -39,9 +43,15 @@ int aofRecord::init() {
 
 void aofRecord::record(const char* s) {
     const std::string ss = s ;
-    LOG(INFO) << s ;
+    //线程池就行异步持久化
+    pool->commit(aofRecord::writeAofLog, ss) ;
 }  
 
 void aofRecord::log(const std::string& s) {
     LOG(ERROR)<<s ;
+}
+
+
+void aofRecord::writeAofLog(const std::string s) {
+    LOG(INFO)<<s ;
 }

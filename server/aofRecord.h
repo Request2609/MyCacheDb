@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <memory>
+#include "ThreadPool.h"
+
 class aofRecord {
 public:
     ~aofRecord() ;
@@ -11,7 +13,9 @@ public:
     static void errorCall(const char* file, std::size_t size) ;
     void record(const char*s) ;   
     static void log(const std::string& s) ;
+    static void writeAofLog(const std::string s) ; 
 private:
-    aofRecord() {}
+    aofRecord() ;
+    std::shared_ptr<threadPool> pool ;
 };
 
