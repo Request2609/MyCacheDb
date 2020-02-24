@@ -23,9 +23,8 @@ enum {
     KEYINVALID = 3,
     SUCESS = 4,
     PROCESSERROR = -1 
-} ; 
-//暂时没用
-typedef int *redisGetKeysProc();
+} ;
+
 class rdb ;
 class cmdSet ;
 class redisDb ;
@@ -67,6 +66,7 @@ public :
     int cb(std::shared_ptr<redisDb>&db,
            std::shared_ptr<Messages::Command>&wcmd, 
            std::shared_ptr<Messages::Response>& res) ;
+
     void setCallBack(saveCall save) { 
         this->save = save ;
     }

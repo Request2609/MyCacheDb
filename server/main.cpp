@@ -6,7 +6,8 @@
 //保证只创建一次
 static cmdProcess cmdPro ;
 static std::shared_ptr<rpc>rc = nullptr ;
-int readOnMessage(std::shared_ptr<aeEvent>tmp) { 
+
+static int readOnMessage(std::shared_ptr<aeEvent>tmp) { 
     if(rc == nullptr) {
         //从文件中读取数据库中的数据
         cmdPro.initRedis() ; 

@@ -37,7 +37,8 @@ private:
 };
 
 template<class F, class... Args> 
-auto threadPool :: commit(F&& f, Args&&... args)-> std :: future<decltype(f(args...))> {
+auto threadPool :: commit(F&& f, Args&&... args)
+    -> std :: future<decltype(f(args...))> {
     
     //获取函数返回值类型
     using retType = decltype(f(args...)) ;

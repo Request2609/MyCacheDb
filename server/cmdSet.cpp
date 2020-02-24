@@ -12,17 +12,23 @@ cmdSet :: cmdSet() {
     db = &dbLs ;
 } 
 
+static void sigHandle(int signo) {
+    if(signo == SIGCHLD) {
+        wait(NULL) ;
+    }
+    return ;
+}
+
+
 int cmdSet :: backUp() {
     if(aeEventloop::canSave == 1&& db!=NULL) {
         asyncSave() ;
     }
 }
 
+
 void cmdSet:: asyncSave() {
-    int stat ;
-    pid_t wpid ;
-    //非阻塞wait
-    wpid = waitpid(-1, &stat, WNOHANG) ;
+
     int fd = aeSocket::getWriteFd() ;
     aeEventloop::canSave = 0 ;    
     pid_t pid = fork() ;
@@ -42,6 +48,7 @@ void cmdSet:: asyncSave() {
 
 //初始化命令表
 int cmdSet :: initCmdCb() {
+    signal(SIGCHLD, sigHandle) ;
     //初始化set命令
     std::shared_ptr<redisCommand>tset = std::make_shared<redisCommand>("set", -3, "wm",  1, 1, 1, 0, 0) ;
     //函数指针不能作为构造函数参数
