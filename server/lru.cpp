@@ -133,6 +133,7 @@ void searchTree::recover() {
                 swap(tmp, heap[index]) ;
             }
             tmp = heap[index] ;
+            index++ ;
             continue ;
         }
         //只有左下标小于size，是最后一个节点
