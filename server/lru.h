@@ -39,6 +39,7 @@ public :
     void swap(std::shared_ptr<key>&key1, 
               std::shared_ptr<key>&key2) ;
 private:
+    bool isExist(const std::shared_ptr<treeNode>&tmp) ;
     int size = 0 ;
     //二叉堆
     std::vector<std::shared_ptr<treeNode>>heap ;

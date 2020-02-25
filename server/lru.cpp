@@ -76,6 +76,7 @@ int searchTree::insert(const key& k) {
     }
     //当前堆的大小
     int size = heap.size() ;
+    //堆满了，就删除堆顶元素，然后重新调整堆
     if(size == FULL_SIZE) {
         if(*(heap[0]->key) > k) {
             delKey = tmp->k ;
@@ -88,9 +89,24 @@ int searchTree::insert(const key& k) {
             return 0 ;
         }   
     }
+    if(isExist(tmp)){
+        return 0 ;
+    }
+    //这个键不存在将键存到堆中
     heap.push_back(tmp) ;
     //恢复堆结构
     recover() ;
+}
+
+//查看这个键是否已经存在树中，要是存的，就将时间更新
+bool searchTree::isExist(const std::shared_ptr<treeNode>&node) {
+    for(int i=0; i<heap.size(); i++) {
+        if(*(node->k) == *(heap[i]->k)) {
+            heap[i]->k->timer = node->k->timer ;
+            return true ;
+        }
+    }
+    return false ;
 }
 
 void searchTree::recover() {
@@ -103,11 +119,6 @@ void searchTree::recover() {
         left = index*2+1 ;
         right = index*2+2 ;
         if(right<len) {
-            //要是有相等的键在堆中，就不用返回
-            if(*(tmp->k)==*(heap[left]->k)||
-               *(tmp->k)==*(heap[right]->k)) {
-                    return ;
-            }
             if(*(heap[left]->k)<=*(heap[left]->k)) {
                 index = left ;
             }           
