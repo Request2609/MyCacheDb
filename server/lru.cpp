@@ -1,7 +1,12 @@
 #include "lru.h"
 
 std::shared_ptr<simpleLru>simpleLru::sl ;
+std::shared_ptr<key> searchTree::delKey = nullptr;
+
 const int FULL_SIZE = 10 ;
+
+searchTree::searchTree() {
+}
 
 std::shared_ptr<simpleLru>simpleLru::getSimpleLru() {
     if(sl == nullptr) {
@@ -10,22 +15,28 @@ std::shared_ptr<simpleLru>simpleLru::getSimpleLru() {
     return sl ;
 }
 
+void searchTree::swap(std::shared_ptr<key>&key1, 
+          std::shared_ptr<key>&key2) {
+    auto tmp = std::move(key1) ;
+    key1 = std::move(key2) ;
+    key2 = std::move(tmp) ;
+}
 //统计lru
-void simpleLru::statistic(const key& k) {
+int simpleLru::statistic(const key& k) {
     if(sl == nullptr) {
         getSimpleLru() ;
         sl->init() ;
     }       
-    sl->updateAndEliminate(k) ;
+    return sl->updateAndEliminate(k) ;
 }
 
 void simpleLru::init() {
     st = std::make_shared<searchTree>() ;
 }
 
-void simpleLru:: updateAndEliminate(const key&k) {
+int simpleLru:: updateAndEliminate(const key&k) {
     key kk = k ;
-    st->insert(k) ;
+    return st->insert(k) ;
 }
 
 long simpleLru::getMem() {
@@ -53,40 +64,72 @@ long simpleLru::getMem() {
     fb.close() ;
     return atoi(ss.c_str()) ; 
 }
-void searchTree::insert(const key& k) {
-    if(root == nullptr) {
-        root = std::make_shared<treeNode>(k) ;
-        root->left = nullptr ;
-        root->right = nullptr ;
+
+//插入一个元素
+int searchTree::insert(const key& k) {
+    auto tmp = std::make_shared<treeNode>(k) ;
+    if(heap.empty()) {
+        tmp->left = nullptr ;
+        tmp->right = nullptr ;
+        heap.push_back(k) ;
+        return 0;
     }
-    else {
-        if(size == FULL_SIZE) {
-            root = deleteOne() ;
+    //当前堆的大小
+    int size = heap.size() ;
+    if(size == FULL_SIZE) {
+        if(*(heap[0]->key) > k) {
+            delKey = tmp->k ;
+            return 1 ;
         }
-        auto ptr = std::make_shared<treeNode>(k) ;
-        auto tmp = root ;
-        std::shared_ptr<treeNode>pre ;
-        while(tmp != nullptr) {
-            if(*(ptr->k)==*(tmp->k)) {
-                tmp->k->timer = ptr->k->timer ;
-                break ;
+        else {
+            delKey = heap[0] ;
+            heap[0] = tmp ;
+            recover()  ;     
+            return 0 ;
+        }   
+    }
+    heap.push_back(tmp) ;
+    //恢复堆结构
+    recover() ;
+}
+
+void searchTree::recover() {
+    int index=  0 ;
+    int left = 0 ;
+    int right = 0 ;
+    int len = heap.size() ;
+    auto tmp = heap[0] ;
+    while(right<len) {
+        left = index*2+1 ;
+        right = index*2+2 ;
+        if(right<len) {
+            //要是有相等的键在堆中，就不用返回
+            if(*(tmp->k)==*(heap[left]->k)||
+               *(tmp->k)==*(heap[right]->k)) {
+                    return ;
             }
-            else if(tmp->right != nullptr&&*(ptr->k) > *(tmp->k)){
-                tmp = tmp->left ;
+            if(*(heap[left]->k)<=*(heap[left]->k)) {
+                index = left ;
+            }           
+            else {
+                index = right ;
             }
-            else if(tmp->left != nullptr&&*(ptr->k)<*(tmp->k)){
-                tmp = tmp->right ;
+            //同样直接返回
+            if(*(tmp->k)==*(heap[index]->k)) {
+                return ;
             }
-            else if(tmp->left == nullptr&&*(ptr->k)<*(tmp->k)) {
-                ptr->left = tmp->left ;
-                tmp->left = ptr->left ;
-                break ;
+            if(*(tmp->k)<*(heap[index]->k)) {
+                swap(tmp, heap[index]) ;
             }
-            else if(tmp->right == nullptr && *(ptr->k)>*(tmp->k)) {
-                ptr->right = tmp->right ;
-                tmp->right = ptr ;
-                break ;
+            tmp = heap[index] ;
+            continue ;
+        }
+        //只有左下标小于size，是最后一个节点
+        if(left<size) {
+            if(*(tmp->k)<*(heap[left]->k)) {
+                swap(tmp, heap[left]) ;
             }
+            break ;
         }
     }
 }
@@ -95,21 +138,7 @@ treeNode::treeNode(const key k) {
     this->k = std::make_shared<key>(k) ;
 }
 
-std::shared_ptr<treeNode>searchTree::deleteOne() {
-    auto tmp = root->left ;
-    auto pre = root ;
-    //删除一个根
-    if(tmp == nullptr) {
-        root = nullptr ;
-        return  nullptr;
-    }
-    while(tmp) {
-        pre = tmp ;
-        tmp = tmp->right ;
-    }
-    pre->left = root->left ;
-    pre->right = root->right ;
-    pre->k = root->k ;
-    return pre ;
+std::shared_ptr<key> searchTree::getDelKey() {
+    return delKey ;
 }
-    
+

@@ -134,6 +134,7 @@ public :
     //获取key
     //删除当前数据库中的一个对象
     void removeDataByKey(key k) ;
+    static void removeObject(const key& k) ;
 } ;
 
 class curTimer{

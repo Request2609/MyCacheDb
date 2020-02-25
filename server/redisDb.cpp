@@ -136,7 +136,16 @@ int redisDb::append(int num, int type, std::shared_ptr<dbObject>dob) {
     if(isFull(simpleLru::getMem())) {
         key k = getRandomKey() ;
         k.timer = db[k]->timer;
-        simpleLru::statistic(k) ;
+        simpleLru::statistic(k) ; 
+        auto res = searchTree::getDelKey() ;
+        //要是返回删除的键不为空，从数据库中找出键删掉
+        if(res != nullptr) {
+            auto del = db.find(*res) ;   
+            if(del != db.end()) {
+                db.erase(del) ;
+            }
+            res = nullptr ;
+        }
     }
 }
 
@@ -193,7 +202,15 @@ void redisDb :: append(std::shared_ptr<dbObject>rdb) {
     if(isFull(simpleLru::getMem())) {
         key k = getRandomKey() ;
         k.timer = db[k]->timer;
-        simpleLru::statistic(k);
+        simpleLru::statistic(k) ; 
+        auto res = searchTree::getDelKey() ;
+        if(res != nullptr) {
+            auto del = db.find(*res) ;   
+            if(del != db.end()) {
+                db.erase(del) ;
+            }
+            res = nullptr ;
+        }
     }
 }
 
@@ -325,7 +342,7 @@ std::string redisDb::findListRequest(const std::string k, const int num) {
     res->second->timer = curTimer::curTime() ;
     std::string t= res->second->getValue() ;
     int len = res->second->objectSize() ;   
-    return t+" "+to_std::string(len) ;
+    return t+" "+std::to_string(len) ;
 }
 
 void redisDb :: removeDataByKey(key k) {
@@ -336,7 +353,6 @@ void redisDb :: removeDataByKey(key k) {
         }
     }
 }
-
 
 std::string redisDb :: findHgetRequest(const std::string k, 
                                   const std::string feild) {

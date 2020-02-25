@@ -9,12 +9,12 @@ class key ;
 class simpleLru {
 public:
     ~simpleLru() {}
-    static void statistic(const key& k) ;
+    static int statistic(const key& k) ;
     static long getMem() ;
 private:
     simpleLru():size(0) {}
     void init() ;
-    void updateAndEliminate(const key& k) ;
+    int updateAndEliminate(const key& k) ;
     static std::shared_ptr<simpleLru>getSimpleLru() ;
     int size ;
     static std::shared_ptr<simpleLru>sl ;
@@ -30,13 +30,18 @@ struct treeNode {
 
 class searchTree {
 public :
-    searchTree() {
-    }
+    searchTree() ;
     ~searchTree() {
     }
-    void insert(const key& k) ;
-    std::shared_ptr<treeNode> deleteOne() ;
+    int insert(const key& k) ;
+    void recover() ;
+    static std::shared_ptr<key> getDelKey() ;
+    void swap(std::shared_ptr<key>&key1, 
+              std::shared_ptr<key>&key2) ;
 private:
     int size = 0 ;
-    std::shared_ptr<treeNode>root ;
+    //二叉堆
+    std::vector<std::shared_ptr<treeNode>>heap ;
+    static shared_ptr<key> delKey ;
+    
 } ;
