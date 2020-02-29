@@ -12,7 +12,7 @@
 #include "syncQueue.h"
 #include "clientLoop.h"
 
-#define REQ_SIZE 4096 
+const int REQ_SIZE = 4096 ;
 class cmds ;
 class cmdProcess ;
 class syncQueue ;

@@ -14,7 +14,7 @@ int syncQueue::reqEmpty() {
 
 long syncQueue::addToQueue() {
     struct timeval start;
-    gettimeofday( &start, NULL );
+    gettimeofday(&start, NULL);
     long ii = start.tv_sec+start.tv_usec;
     req.push(ii) ;
     return ii ;

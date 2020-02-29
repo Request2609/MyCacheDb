@@ -204,6 +204,7 @@ int request :: sendAfterSerial(int fd, Messages::Command& cmd) {
     }
 
     //序列化的结果
+    
     cmd.SerializeToArray(buff, REQ_SIZE) ;
     //检验是否与服务器器建立了
     int ret = isConnect(fd) ;
@@ -215,7 +216,6 @@ int request :: sendAfterSerial(int fd, Messages::Command& cmd) {
         std::cout << "errno connect    " << strerror(errno) << std::endl ;
         return -1;
     }
-    
     cmd.clear_cmd() ;
     return 1 ;
 }
